@@ -9,5 +9,4 @@ namespace VotingSoftware.Controllers
             return View(); //Index view
         }
     }
-
 }

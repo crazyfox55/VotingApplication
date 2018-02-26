@@ -2,12 +2,11 @@
 using System;
 namespace VotingSoftware.Controllers
 {
-    public class UserLoginController : Controller
+    public class UserDashboardController : Controller
     {
         public IActionResult Index()
         {
             return View(); //Index view
         }
     }
-
 }
