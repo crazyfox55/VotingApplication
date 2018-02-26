@@ -25,10 +25,10 @@
         </div>
     </div>
     <div class="form-group">
-        <a asp-area="" asp-controller="User" asp-action="Login" class="nav-link">Already have an account?</a>
+        <button type="submit" class="btn btn-primary">Create Account</button>
     </div>
-    <button type="submit" class="btn btn-primary">Create Account</button>
 </form>
+<a asp-area="" asp-controller="User" asp-action="Login" class="nav-link">Already have an account?</a>
 <p>
     @ViewData["errors"]
 </p>

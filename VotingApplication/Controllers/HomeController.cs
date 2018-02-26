@@ -17,7 +17,8 @@ namespace VotingApplication.Controllers
 
         public IActionResult Index()
         {
-            mContext.Database.EnsureCreated();
+            /* Don't need this database call
+             * mContext.Database.EnsureCreated();
 
             if (mContext.Settings.Any() == false)
             {
@@ -29,17 +30,19 @@ namespace VotingApplication.Controllers
 
                 mContext.SaveChanges();
             }
-            ViewData["hello"] = "goodbye";
+            */
 
             return View(); //Index view
         }
         
+        /* example of authorizing a user trying to use a particular request
         [Authorize]
         [Route("private")]
         public IActionResult Private()
         {
             return Content($"this is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
         }
+        */
 
         public IActionResult Error()
         {

@@ -27,6 +27,7 @@ namespace VotingApplication.Controllers
         [Authorize]
         public IActionResult Dashboard()
         {
+            ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Dashboard/Index"); //Index view
         }
 
@@ -35,6 +36,7 @@ namespace VotingApplication.Controllers
             return View("Registration/Index"); //Index view
         }
         
+        // this should be POST or somehting not URL
         public async Task<IActionResult> CreateUserAsync(string username, string email, string password)
         {
             var user = new ApplicationUser
@@ -56,6 +58,7 @@ namespace VotingApplication.Controllers
             return View("Registration/Index");
         }
 
+        // this should be POST or somehting not URL
         public async Task<IActionResult> SubmitLoginAsync(string username, string password, string returnUrl = null)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
@@ -70,7 +73,9 @@ namespace VotingApplication.Controllers
                 return Redirect(returnUrl);
             }
 
-            return RedirectToAction(nameof(Login));
+            ViewData["errors"] = result.ToString();
+
+            return View("Login/Index");
         }
 
         public async Task<IActionResult> LogoutAsync()
