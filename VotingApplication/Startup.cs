@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -40,9 +37,29 @@ namespace VotingApplication
                 // forgot password links, phone number verification codes etc...
                 .AddDefaultTokenProviders();
 
-            // TODO: change login URL
-            // TODO: change cookie timeout
+            // change password policy
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            });
 
+            // alter application cookie info
+            services.ConfigureApplicationCookie(options =>
+            {
+                // redirect to login page
+                options.LoginPath = "/User/Login";
+                options.LogoutPath = "/User/Logout";
+
+                // cookie expires in 5 minutes
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+            });
+            
             services.AddMvc();
         }
 

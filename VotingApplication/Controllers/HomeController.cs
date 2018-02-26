@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace VotingApplication.Controllers
 {
@@ -9,7 +12,7 @@ namespace VotingApplication.Controllers
 
         public HomeController(ApplicationDbContext context)
         {
-            this.mContext = context;
+            mContext = context;
         }
 
         public IActionResult Index()
@@ -26,10 +29,16 @@ namespace VotingApplication.Controllers
 
                 mContext.SaveChanges();
             }
-
-
+            ViewData["hello"] = "goodbye";
 
             return View(); //Index view
+        }
+        
+        [Authorize]
+        [Route("private")]
+        public IActionResult Private()
+        {
+            return Content($"this is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
         }
 
         public IActionResult Error()

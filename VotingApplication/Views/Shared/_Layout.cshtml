@@ -1,11 +1,44 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <title>Title</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     </head>
 
     <body>
-        @RenderBody()
+        <nav class="navbar navbar-toggleable-md navbar-expand-md navbar-dark bg-dark">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Voting Online</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav mr-auto mt-2 mt-md-0">
+                    <li class="nav-item ">
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-area="" asp-controller="About" asp-action="Index" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-controller="User" asp-action="Dashboard" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-controller="User" asp-action="Login" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-controller="User" asp-action="Registration" class="nav-link">Create Account</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-controller="User" asp-action="LogoutAsync" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
+            @RenderBody()
+        </div>
     </body>
 </html>
