@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "VotingApplication": {
+    "kestrel": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
