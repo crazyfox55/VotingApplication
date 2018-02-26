@@ -17,20 +17,7 @@ namespace VotingApplication.Controllers
 
         public IActionResult Index()
         {
-            /* Don't need this database call
-             * mContext.Database.EnsureCreated();
-
-            if (mContext.Settings.Any() == false)
-            {
-                mContext.Settings.Add(new SettingsDataModel
-                {
-                    Name = "BackgroundColor",
-                    Value = "Red"
-                });
-
-                mContext.SaveChanges();
-            }
-            */
+            mContext.Database.EnsureCreated();
 
             return View(); //Index view
         }

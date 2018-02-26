@@ -10,6 +10,7 @@ namespace VotingApplication
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<SettingsDataModel> Settings { get; set; }
+        public DbSet<VoterRegistrationDataModel> Registration { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
