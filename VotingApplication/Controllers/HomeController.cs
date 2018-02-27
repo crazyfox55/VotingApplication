@@ -19,17 +19,8 @@ namespace VotingApplication.Controllers
         {
             mContext.Database.EnsureCreated();
 
-            return View(); //Index view
+            return View();
         }
-        
-        /* example of authorizing a user trying to use a particular request
-        [Authorize]
-        [Route("private")]
-        public IActionResult Private()
-        {
-            return Content($"this is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
-        }
-        */
 
         public IActionResult Error()
         {
