@@ -37,7 +37,20 @@ namespace VotingApplication.Controllers
         {
             return View("Registration/Index"); //Index view
         }
-        
+        public IActionResult Profile()
+        {
+            ViewData["UserName"] = HttpContext.User.Identity.Name;
+            return View("Profile/Index"); //Index view
+        }
+        public IActionResult ChangePassword()
+        {
+            return View("Profile/ChangePassword");
+        }
+        public IActionResult AddSecurityQuestions()
+        {
+            return View("Profile/SecurityQuestions");
+        }
+
         // this should be POST or somehting not URL
         public async Task<IActionResult> CreateUserAsync(string username, string email, string password)
         {
