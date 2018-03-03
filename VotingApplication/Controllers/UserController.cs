@@ -50,6 +50,47 @@ namespace VotingApplication.Controllers
         {
             return View("Profile/SecurityQuestions");
         }
+        public IActionResult ForgotPassword()
+        {
+            return View("ForgotPassword/Index"); //Index view
+        }
+
+        //needs to be finished
+        [HttpPost]
+        public IActionResult SendResetEmail(string emailInput)
+        {
+           
+            var fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting System");
+            var toAddress = new MailAddress("cole-pierce@uiowa.edu", emailInput);
+            if (emailInput != null)
+            {
+                toAddress = new MailAddress(emailInput, emailInput);
+            }
+                
+            const string fromPassword = "Team6Admin";
+                const string subject = "Reset Password";
+                string body = "Reset link";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    smtp.Send(message);
+                }
+            return View("ForgotPassword/CheckEmail");
+        }
+
 
         // this should be POST or somehting not URL
         public async Task<IActionResult> CreateUserAsync(string username, string email, string password)

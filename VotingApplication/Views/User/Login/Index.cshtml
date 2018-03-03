@@ -1,4 +1,5 @@
-﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
+﻿
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
 <form class="form-signin" action="/user/submitloginasync" data-toggle="validator" role="form">
     <h2 class="form-signin-heading">User Login</h2>
     <div class="form-group">
@@ -16,7 +17,10 @@
     </div>
 </form>
 <a asp-area="" asp-controller="User" asp-action="Registration" class="nav-link">New User?</a>
+<a asp-area="" asp-controller="User" asp-action="ForgotPassword" class="nav-link">Forgot Password</a>
 <p>
     @ViewData["errors"]
 </p>
+
+
 
