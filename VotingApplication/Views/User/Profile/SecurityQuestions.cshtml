@@ -1,14 +1,10 @@
 ﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<form class="form-signin" action="TODO: change me" data-toggle="validator" role="form">
+<form class="form-signin" action="/user/submitSecurityQuestionsAsync" data-toggle="validator" role="form">
     <!-- Quesions From: http://stumbleforward.com/2012/08/20/the-10-most-common-password-security-questions/ -->
-
     <h2 class="form-signin-heading">Add Security Questions</h2>
     <div class="form-group">
-        <label for="sel1">Security Question One (select one):</label>
-        <select class="form-control" style=" height:40px;" id="q1">
+        <label for="sel1" class="control-label">Security Question One (select one):</label>
+        <select class="form-control" id="sel1">
             <option>What Is your favorite book?</option>
             <option>What is the name of the road you grew up on?</option>
             <option>What is your mother’s maiden name?</option>
@@ -17,13 +13,13 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="questionOneAnswer" class="control-label">Question One Answer</label>
-        <input type="text" class="form-control" id="questionOneAnswer" placeholder="Answer" name="AnswerOne" required>
+        <label for="answerOne" class="control-label">Question One Answer</label>
+        <input type="text" class="form-control" id="answerOne" placeholder="Answer" name="answerOne" required>
         <div class="help-block with-errors"></div>
     </div>
     <div class="form-group">
-        <label for="sel1">Security Question Two (select one):</label>
-        <select class="form-control" style=" height:40px;" id="q2">
+        <label for="sel2" class="control-label">Security Question Two (select one):</label>
+        <select class="form-control" id="sel2">
             <option>Where did you meet your spouse?</option>
             <option>Where did you go to high school/college?</option>
             <option>What is your favorite food?</option>
@@ -32,8 +28,8 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="questionTwoAnswer" class="control-label">Question Two Answer</label>
-        <input type="text" class="form-control" id="questionTwoAnswer" placeholder="Answer " name="AnswerTwo" required>
+        <label for="answerTwo" class="control-label">Question Two Answer</label>
+        <input type="text" class="form-control" id="answerTwo" placeholder="Answer " name="answerTwo" required>
         <div class="help-block with-errors"></div>
     </div>
     <div class="form-group">

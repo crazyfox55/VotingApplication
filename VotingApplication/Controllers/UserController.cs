@@ -37,19 +37,24 @@ namespace VotingApplication.Controllers
         {
             return View("Registration/Index"); //Index view
         }
+
+        [Authorize]
         public IActionResult Profile()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Profile/Index"); //Index view
         }
+
         public IActionResult ChangePassword()
         {
             return View("Profile/ChangePassword");
         }
+
         public IActionResult AddSecurityQuestions()
         {
             return View("Profile/SecurityQuestions");
         }
+
         public IActionResult ForgotPassword()
         {
             return View("ForgotPassword/Index"); //Index view
