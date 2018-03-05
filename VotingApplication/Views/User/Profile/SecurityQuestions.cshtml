@@ -1,0 +1,39 @@
+﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
+<form class="form-signin" action="/user/submitSecurityQuestionsAsync" data-toggle="validator" role="form">
+    <!-- Quesions From: http://stumbleforward.com/2012/08/20/the-10-most-common-password-security-questions/ -->
+    <h2 class="form-signin-heading">Add Security Questions</h2>
+    <div class="form-group">
+        <label for="sel1" class="control-label">Security Question One (select one):</label>
+        <select class="form-control" id="sel1">
+            <option>What Is your favorite book?</option>
+            <option>What is the name of the road you grew up on?</option>
+            <option>What is your mother’s maiden name?</option>
+            <option>What was the name of your first/current/favorite pet?</option>
+            <option>What was the first company that you worked for?</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="answerOne" class="control-label">Question One Answer</label>
+        <input type="text" class="form-control" id="answerOne" placeholder="Answer" name="answerOne" required>
+        <div class="help-block with-errors"></div>
+    </div>
+    <div class="form-group">
+        <label for="sel2" class="control-label">Security Question Two (select one):</label>
+        <select class="form-control" id="sel2">
+            <option>Where did you meet your spouse?</option>
+            <option>Where did you go to high school/college?</option>
+            <option>What is your favorite food?</option>
+            <option>What city were you born in?</option>
+            <option>Where is your favorite place to vacation?</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="answerTwo" class="control-label">Question Two Answer</label>
+        <input type="text" class="form-control" id="answerTwo" placeholder="Answer " name="answerTwo" required>
+        <div class="help-block with-errors"></div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Confirm</button>
+    </div>
+</form>
+

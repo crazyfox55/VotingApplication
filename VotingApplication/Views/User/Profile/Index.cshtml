@@ -1,0 +1,9 @@
+﻿<h1>User Profile</h1>
+
+<p>
+    Username:   @(ViewData["UserName"])
+    <!-- get other info as well later-->
+</p>
+<a asp-area="" asp-controller="User" asp-action="ChangePassword" class="nav-link">Change Password</a>
+<a asp-area="" asp-controller="User" asp-action="AddSecurityQuestions" class="nav-link">Add Security Questions</a>
+
