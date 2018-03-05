@@ -5,37 +5,28 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
+using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
     public class UserController : Controller
     {
-        protected SignInManager<ApplicationUser> mSignInManager;
-        protected UserManager<ApplicationUser> mUserManager;
+        protected SignInManager<ApplicationUser> _SignInManager;
+        protected UserManager<ApplicationUser> _UserManager;
 
         public UserController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager)
         {
-            mSignInManager = signInManager;
-            mUserManager = userManager;
+            _SignInManager = signInManager;
+            _UserManager = userManager;
         }
-
-        public IActionResult Login()
-        {
-            return View("Login/Index"); //Index view
-        }
-
+        
         [Authorize]
         public IActionResult Dashboard()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Dashboard/Index"); //Index view
-        }
-
-        public IActionResult Registration()
-        {
-            return View("Registration/Index"); //Index view
         }
 
         [Authorize]
@@ -96,71 +87,167 @@ namespace VotingApplication.Controllers
             return View("ForgotPassword/CheckEmail");
         }
 
-
-        // this should be POST or somehting not URL
-        public async Task<IActionResult> CreateUserAsync(string username, string email, string password)
+        #region Registration
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Registration()
         {
-            var user = new ApplicationUser
-            {
-                UserName = username,
-                Email = email
-            };
-            
-            var result = await mUserManager.CreateAsync(user, password: password);
-
-            if (result.Succeeded)
-            {
-                var fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting System");
-                var toAddress = new MailAddress(email, username);
-                const string fromPassword = "Team6Admin";
-                const string subject = "Welcome Confirmation Email";
-                string body = "Hello " + username;
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                };
-                using (var message = new MailMessage(fromAddress, toAddress)
-                {
-                    Subject = subject,
-                    Body = body
-                })
-                {
-                    smtp.Send(message);
-                }
-                await mSignInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction(nameof(Dashboard));
-            }
-
-            ViewData["errors"] = result.ToString();
-
-            return View("Registration/Index");
+            return View("Registration/Index"); //Index view
         }
 
-        // this should be POST or somehting not URL
-        public async Task<IActionResult> SubmitLoginAsync(string username, string password, string returnUrl = null)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Registration(RegistrationViewModel model, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email
+                };
+
+                var result = await _UserManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    var fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting System");
+                    var toAddress = new MailAddress(model.Email, model.Username);
+                    const string fromPassword = "Team6Admin";
+                    const string subject = "Welcome Confirmation Email";
+                    string body = "Hello " + model.Username;
+
+                    var smtp = new SmtpClient
+                    {
+                        Host = "smtp.gmail.com",
+                        Port = 587,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                    };
+                    using (var message = new MailMessage(fromAddress, toAddress)
+                    {
+                        Subject = subject,
+                        Body = body
+                    })
+                    {
+                        smtp.Send(message);
+                    }
+
+                    await _SignInManager.SignInAsync(user, isPersistent: false);
+
+                    return RedirectToAction(nameof(Dashboard));
+                }
+                //AddErrors(result);
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Code);
+                }
+                //ViewData["errors"] = result.ToString();
+            }
+            
+            return View("Registration/Index", model);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyPassword(string password)
+        {
+            if (_UserManager != null)
+            {
+                string errors = "";
+
+                IdentityResult result;
+
+                foreach (var validator in _UserManager.PasswordValidators)
+                {
+                    result = await validator.ValidateAsync(_UserManager, null, password);
+                    foreach (var error in result.Errors)
+                    {
+                        errors += error.Description + "\n";
+                    }
+                }
+                if (errors != string.Empty)
+                {
+                    return Json($"{errors}");
+                }
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyUser(string username, string email)
+        {
+            if (_UserManager != null)
+            {
+                string errorTarget = username == null ? "Email" : "UserName";
+
+                var user = new ApplicationUser
+                {
+                    UserName = username,
+                    Email = email
+                };
+
+                string errors = "";
+
+                IdentityResult result;
+
+                foreach (var validator in _UserManager.UserValidators)
+                {
+                    result = await validator.ValidateAsync(_UserManager, user);
+                    foreach(var error in result.Errors)
+                    {
+                        if(error.Code.Contains(errorTarget))
+                            errors += error.Description + "\n";
+                    }
+                }
+                if (errors != string.Empty)
+                {
+                    return Json($"{errors}");
+                }
+            }
+
+            return Json(true);
+        }
+        #endregion
+
+        #region Login
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View("Login/Index"); //Index view
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
 
-            var result = await mSignInManager.PasswordSignInAsync(username, password, true, false);
-
-            if (result.Succeeded)
+            if (ModelState.IsValid)
             {
-                if (string.IsNullOrEmpty(returnUrl))
-                    return RedirectToAction(nameof(Dashboard));
+                var result = await _SignInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: true, lockoutOnFailure: false);
 
-                return Redirect(returnUrl);
+                if (result.Succeeded)
+                {
+                    if (string.IsNullOrEmpty(returnUrl))
+                        return RedirectToAction(nameof(Dashboard));
+
+                    return Redirect(returnUrl);
+                }
+
+                ViewData["errors"] = result.ToString();
             }
 
-            ViewData["errors"] = result.ToString();
-
-            return View("Login/Index");
+            return View("Login/Index", model);
         }
+        #endregion
 
         public async Task<IActionResult> LogoutAsync()
         {

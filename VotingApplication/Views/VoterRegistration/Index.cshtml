@@ -1,27 +1,31 @@
-﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
-<form class="form-signin" action="/voterRegistration/createVoterRegistration" data-toggle="validator" role="form">
-    <h2 class="form-signin-heading">Voter Registration</h2>
+﻿@model VoterRegistrationViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Voter Registration";
+    ViewData["Submit"] = "Register";
+}
+
+<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
-        <label for="inputFirstname" class="sr-only">First Name</label>
-        <input id="inputFirstname" maxlength="64" class="form-control" placeholder="First Name" name="firstName" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="inputLastname" class="sr-only">Last Name</label>
-        <input id="inputLastname" maxlength="64" class="form-control" placeholder="Last Name" name="lastName" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="inputID" class="sr-only">ID</label>
-        <input id="inputID" class="form-control" placeholder="ID" name="identification" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="Identification"></label>
+        <input asp-for="Identification" class="form-control" placeholder="Identification" />
+        <span asp-validation-for="Identification" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="inputSS#" class="sr-only">SS#</label>
-        <input type="password" maxlength="10" id="inputSS#" class="form-control" placeholder="SS#" name="ssNumber" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="SSNumber"></label>
+        <input asp-for="SSNumber" class="form-control" placeholder="Social Security Number" />
+        <span asp-validation-for="SSNumber" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <button class="btn btn-primary" type="submit">Register</button>
-    </div>
+    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
