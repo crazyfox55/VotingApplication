@@ -15,3 +15,19 @@ You can watch requests coming into your SQL server by going to Tools -> SQL Serv
 
 Your now ready to debug and program within this application. Make sure your work is done within a branch, instead of the Master. Then you can submit a pull request when the feature is complete. The expectation is that the branch will be deleted after the pull request is accepted.
 
+
+
+Client side validation of forms:
+https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation
+
+Identity Tutorial:
+https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?tabs=visual-studio%2Caspnetcore2x
+
+Identity Demo:
+https://github.com/aspnet/Docs/tree/master/aspnetcore/security/authentication/identity/sample/src/ASPNETCore-IdentityDemoComplete/IdentityDemo
+
+Identity Source:
+https://github.com/aspnet/Identity/tree/85f8a49aef68bf9763cd9854ce1dd4a26a7c5d3c
+
+Editing data Tutorial:
+https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/introduction/examining-the-edit-methods-and-edit-view
