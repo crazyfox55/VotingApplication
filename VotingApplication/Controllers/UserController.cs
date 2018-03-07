@@ -36,16 +36,19 @@ namespace VotingApplication.Controllers
             return View("Profile/Index"); //Index view
         }
 
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View("Profile/ChangePassword");
         }
 
+        [Authorize]
         public IActionResult AddSecurityQuestions()
         {
             return View("Profile/SecurityQuestions");
         }
 
+        [AllowAnonymous]
         public IActionResult ForgotPassword()
         {
             return View("ForgotPassword/Index"); //Index view
@@ -90,8 +93,10 @@ namespace VotingApplication.Controllers
         #region Registration
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Registration()
+        public IActionResult Registration(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             return View("Registration/Index"); //Index view
         }
 
@@ -141,12 +146,6 @@ namespace VotingApplication.Controllers
 
                     return RedirectToAction(nameof(Dashboard));
                 }
-                //AddErrors(result);
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Code);
-                }
-                //ViewData["errors"] = result.ToString();
             }
             
             return View("Registration/Index", model);
@@ -198,6 +197,7 @@ namespace VotingApplication.Controllers
                 foreach (var validator in _UserManager.UserValidators)
                 {
                     result = await validator.ValidateAsync(_UserManager, user);
+                    
                     foreach(var error in result.Errors)
                     {
                         if(error.Code.Contains(errorTarget))
@@ -217,8 +217,10 @@ namespace VotingApplication.Controllers
         #region Login
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             return View("Login/Index"); //Index view
         }
 

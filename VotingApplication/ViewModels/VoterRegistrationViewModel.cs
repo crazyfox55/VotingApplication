@@ -15,6 +15,7 @@ namespace VotingApplication.ViewModels
         public string LastName { get; set; }
 
         [Required]
+        [StringLength(maximumLength: 256, ErrorMessage = "Maximum length of {0}")]
         [Display(Name = "Identification")]
         public string Identification { get; set; }
 

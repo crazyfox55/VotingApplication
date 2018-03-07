@@ -8,18 +8,18 @@ namespace VotingApplication.Controllers
 {
     public class HomeController : Controller
     {
-        protected ApplicationDbContext mContext;
+        protected ApplicationDbContext _Context;
         
         public HomeController(ApplicationDbContext context)
         {
-            mContext = context;
+            _Context = context;
         }
 
         [AllowAnonymous]
         public IActionResult Index()
         {
             //remove, each user does not need to ensure the database is created when they navigate to the homepage
-            mContext.Database.EnsureCreated();
+            _Context.Database.EnsureCreated();
 
             return View();
         }

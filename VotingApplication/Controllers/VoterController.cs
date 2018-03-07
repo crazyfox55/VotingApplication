@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
@@ -18,7 +17,7 @@ namespace VotingApplication.Controllers
         [Authorize]
         public IActionResult Registration()
         {
-            return View("Index"); //Index view
+            return View("Registration/Index"); //Index view
         }
         
         [HttpPost]
@@ -27,19 +26,24 @@ namespace VotingApplication.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
 
-            var registration = new VoterRegistrationDataModel()
+            if (ModelState.IsValid)
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Identification = model.Identification,
-                SSNumber = model.SSNumber
-            };
-            
-            _Context.Registration.Add(registration);
+                var registration = new VoterRegistrationDataModel()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Identification = model.Identification,
+                    SSNumber = model.SSNumber
+                };
 
-            _Context.SaveChanges();
+                _Context.Registration.Add(registration);
 
-            return RedirectToAction("Dashboard","User");
+                _Context.SaveChanges();
+
+                return RedirectToAction("Dashboard", "User");
+            }
+
+            return View("Registration/Index", model);
         }
     }
 }
