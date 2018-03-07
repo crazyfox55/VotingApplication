@@ -20,9 +20,9 @@ namespace VotingApplication.ViewModels
         public string Identification { get; set; }
 
         [Required]
-        [StringLength(maximumLength: 9, MinimumLength = 9, ErrorMessage = "Not a valid Social Security Number, must be 9 numbers")]
-        [DataType(DataType.Password)]
+        [DataType(DataType.PhoneNumber)]
         [Display(Name = "Social Security Number")]
+        [RegularExpression(@"^(\d{3}-\d{2}-\d{4}|XXX-XX-XXXX)$", ErrorMessage = "You must provide a proper social security number seperated by \'-\'.")]
         public string SSNumber { get; set; }
     }
 }

@@ -11,7 +11,7 @@
     })
 </script>
 
-<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" >
+<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>
@@ -24,6 +24,9 @@
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+    <div class="text-danger">
+        @Html.ValidationSummary()
+    </div>
 </form>
 <a asp-area="" asp-controller="User" asp-action="Registration" class="nav-link">New User?</a>
 <a asp-area="" asp-controller="User" asp-action="ForgotPassword" class="nav-link">Forgot Password?</a>

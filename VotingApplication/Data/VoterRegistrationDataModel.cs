@@ -30,7 +30,7 @@ namespace VotingApplication
         public string Identification { get; set; }
 
         [Required]
-        [MaxLength(9)]
+        [MaxLength(11)]
         [Display(Name = "Social Security Number")]
         public string SSNumber { get; set; }
 

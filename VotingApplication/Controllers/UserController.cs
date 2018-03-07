@@ -243,8 +243,10 @@ namespace VotingApplication.Controllers
 
                     return Redirect(returnUrl);
                 }
-
-                ViewData["errors"] = result.ToString();
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                }
             }
 
             return View("Login/Index", model);
