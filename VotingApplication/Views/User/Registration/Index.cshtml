@@ -1,34 +1,41 @@
-﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
-<form action="/user/createUserAsync" data-toggle="validator" role="form">
-    <h2 class="form-signin-heading">Create Account</h2>
+﻿@model RegistrationViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Create Account";
+    ViewData["Submit"] = "Create";
+}
+
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
+<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" autocomplete="off">
+    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
-        <label for="inputUsername" class="control-label">UserName</label>
-        <input type="text" class="form-control" id="inputUsername" placeholder="Choose Username" name="username" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" placeholder="Choose Username" />
+        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="inputEmail" class="control-label">Email</label>
-        <input type="email" class="form-control" id="inputEmail" placeholder="Email" data-error="Email address is invalid" name="email" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" placeholder="Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="inputPassword" class="control-label">Password</label>
+        <label asp-for="Password"></label>
         <div class="form-horizontal row">
             <div class="form-group col-sm-6">
-                <input type="password" data-minlength="5" class="form-control" id="inputPassword" placeholder="Password" name="password" required>
-                <label class="help-block with-errors"></label>
+                <input asp-for="Password" class="form-control" placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group col-sm-6">
-                <input type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="The passwords must match" placeholder="Confirm" required>
-                <label class="help-block with-errors"></label>
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Create Account</button>
-    </div>
+    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
 <a asp-area="" asp-controller="User" asp-action="Login" class="nav-link">Already have an account?</a>
-<p>
-    @ViewData["errors"]
-</p>

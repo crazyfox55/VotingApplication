@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VotingApplication
 {
-    public class SecurityQuestions
+    public class SecurityQuestionsDataModel
     {
         //[Key]
         //public string Id { get; set; }
