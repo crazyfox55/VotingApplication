@@ -40,20 +40,31 @@ namespace VotingApplication
             // change password policy
             services.Configure<IdentityOptions>(options =>
             {
+                // Password settings
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 5;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+
+                // Lockout settings
+                // we will not be using lockout.
+                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                //options.Lockout.MaxFailedAccessAttempts = 10;
+                //options.Lockout.AllowedForNewUsers = true;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
             });
 
             // alter application cookie info
             services.ConfigureApplicationCookie(options =>
             {
                 // redirect to login page
-                options.LoginPath = "/User/Login";
-                options.LogoutPath = "/User/Logout";
+                options.LoginPath = "/Authentication/Login";
+                options.LogoutPath = "/Authentication/Logout";
+                options.AccessDeniedPath = "/User/AccessDenied";
 
                 // cookie expires in 5 minutes
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
@@ -78,7 +89,7 @@ namespace VotingApplication
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Shared/Error");
             }
 
             app.UseStaticFiles();
