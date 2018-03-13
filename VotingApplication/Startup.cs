@@ -62,8 +62,8 @@ namespace VotingApplication
             services.ConfigureApplicationCookie(options =>
             {
                 // redirect to login page
-                options.LoginPath = "/User/Login";
-                options.LogoutPath = "/User/Logout";
+                options.LoginPath = "/Authentication/Login";
+                options.LogoutPath = "/Authentication/Logout";
                 options.AccessDeniedPath = "/User/AccessDenied";
 
                 // cookie expires in 5 minutes
@@ -89,7 +89,7 @@ namespace VotingApplication
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Shared/Error");
             }
 
             app.UseStaticFiles();
