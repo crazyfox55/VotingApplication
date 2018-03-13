@@ -6,18 +6,18 @@ namespace VotingApplication.ViewModels
     public class RegistrationViewModel
     {
         [Required]
-        [Remote(action: "VerifyUser", controller: "User")]
+        [Remote(action: "VerifyUser", controller: "Registration")]
         [Display(Name = "Username")]
         public string Username { get; set; }
 
         [Required]
         [EmailAddress]
-        [Remote(action: "VerifyUser", controller: "User")]
+        [Remote(action: "VerifyUser", controller: "Registration")]
         [Display(Name = "Email")]
         public string Email { get; set; }
         
         [Required]
-        [Remote(action: "VerifyPassword", controller: "User")]
+        [Remote(action: "VerifyPassword", controller: "Registration")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }

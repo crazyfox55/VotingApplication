@@ -1,9 +1,4 @@
 ﻿@model LoginViewModel
-@{
-    // move this code into the C# class so it is easier to edit
-    ViewData["Purpose"] = "User Login";
-    ViewData["Submit"] = "Login";
-}
 
 <script>
     $.validator.setDefaults({
@@ -11,7 +6,7 @@
     })
 </script>
 
-<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+<form asp-action="LoginAsync" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>
@@ -28,5 +23,5 @@
         @Html.ValidationSummary()
     </div>
 </form>
-<a asp-area="" asp-controller="User" asp-action="Registration" class="nav-link">New User?</a>
+<a asp-area="" asp-controller="Registration" asp-action="Register" class="nav-link">New User?</a>
 <a asp-area="" asp-controller="User" asp-action="ForgotPassword" class="nav-link">Forgot Password?</a>
