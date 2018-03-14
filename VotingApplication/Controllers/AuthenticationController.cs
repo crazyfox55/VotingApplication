@@ -6,6 +6,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
+    [AllowAnonymous]
     public class AuthenticationController : Controller
     {
         protected SignInManager<ApplicationUser> _SignInManager;
@@ -17,7 +18,6 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -30,7 +30,6 @@ namespace VotingApplication.Controllers
         [HttpPost]
         // this is not implemented yet
         //[RequireHttps]
-        [AllowAnonymous]
         public async Task<IActionResult> LoginAsync(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -80,7 +79,6 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> LogoutAsync()
         {
             await _SignInManager.SignOutAsync();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace VotingApplication.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         protected ApplicationDbContext _Context;
@@ -14,8 +15,8 @@ namespace VotingApplication.Controllers
         {
             _Context = context;
         }
-
-        [AllowAnonymous]
+        
+        [HttpGet]
         public IActionResult Index()
         {
             //remove, each user does not need to ensure the database is created when they navigate to the homepage
@@ -23,8 +24,8 @@ namespace VotingApplication.Controllers
 
             return View();
         }
-
-        [AllowAnonymous]
+        
+        [HttpGet]
         public IActionResult Error()
         {
             return View(); //Error view
