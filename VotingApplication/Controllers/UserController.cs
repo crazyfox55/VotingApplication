@@ -9,6 +9,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         protected SignInManager<ApplicationUser> _SignInManager;
@@ -22,27 +23,27 @@ namespace VotingApplication.Controllers
             _UserManager = userManager;
         }
         
-        [Authorize]
+        [HttpGet]
         public IActionResult Dashboard()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Dashboard/Index"); //Index view
         }
 
-        [Authorize]
+        [HttpGet]
         public IActionResult Profile()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Profile/Index"); //Index view
         }
 
-        [Authorize]
+        [HttpGet]
         public IActionResult ChangePassword()
         {
             return View("Profile/ChangePassword");
         }
 
-        [Authorize]
+        [HttpGet]
         public IActionResult AddSecurityQuestions()
         {
             return View("Profile/SecurityQuestions");
@@ -89,9 +90,5 @@ namespace VotingApplication.Controllers
                 }
             return View("ForgotPassword/CheckEmail");
         }
-
-        
-        
-        
     }
 }

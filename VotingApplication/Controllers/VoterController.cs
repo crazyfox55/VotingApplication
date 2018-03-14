@@ -4,6 +4,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
+    [Authorize]
     public class VoterController : Controller
     {
         protected ApplicationDbContext _Context;
@@ -14,14 +15,12 @@ namespace VotingApplication.Controllers
         }
         
         [HttpGet]
-        [Authorize]
         public IActionResult Registration()
         {
             return View("Registration/Index"); //Index view
         }
         
         [HttpPost]
-        [Authorize]
         public IActionResult Registration(VoterRegistrationViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;

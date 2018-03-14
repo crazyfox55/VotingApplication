@@ -8,6 +8,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
+    [AllowAnonymous]
     public class RegistrationController : Controller
     {
 
@@ -23,7 +24,6 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Register()
         {
             ViewData["Purpose"] = "Create Account";
@@ -35,7 +35,6 @@ namespace VotingApplication.Controllers
         [HttpPost]
         // this is not implemented yet
         //[RequireHttps]
-        [AllowAnonymous]
         public async Task<IActionResult> RegisterAsync(RegistrationViewModel model)
         {
             ViewData["Purpose"] = "Create Account";
@@ -133,7 +132,6 @@ namespace VotingApplication.Controllers
         #endregion
         
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> EmailConfirmedAsync(string username, string token)
         {
             if (username != null && token != null)
@@ -155,7 +153,6 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult RequestEmailConfirmation()
         {
             var model = new ConfirmEmailViewModel();
@@ -164,7 +161,6 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> EmailConfirmationSentAsync(ConfirmEmailViewModel model)
         {
             if (ModelState.IsValid)
