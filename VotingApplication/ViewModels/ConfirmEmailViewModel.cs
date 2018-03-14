@@ -9,6 +9,16 @@ namespace VotingApplication.ViewModels
 {
     public class ConfirmEmailViewModel
     {
+        public enum Status
+        {
+            Sent,
+            Request,
+            Error,
+        }
+
+        [HiddenInput]
+        public Status State { get; set; }
+
         [Required]
         [EmailAddress]
         [Remote(action: "VerifyEmail", controller: "Registration")]

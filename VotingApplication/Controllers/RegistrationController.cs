@@ -55,7 +55,9 @@ namespace VotingApplication.Controllers
                 {
                     await SendConfirmationEmailAsync(user);
 
-                    return View("EmailConfirmationSent");
+                    var modelEmail = new ConfirmEmailViewModel();
+                    modelEmail.State = ConfirmEmailViewModel.Status.Sent;
+                    return View("EmailConfirmationSent", modelEmail);
                 }
             }
 
@@ -129,8 +131,7 @@ namespace VotingApplication.Controllers
             return Json(true);
         }
         #endregion
-
-        //[AcceptVerbs("Get", "Post")]
+        
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> EmailConfirmedAsync(string username, string token)
@@ -145,21 +146,21 @@ namespace VotingApplication.Controllers
                     {
                         return View("EmailConfirmed");
                     }
-                    else
-                    {
-                        foreach (IdentityError error in confirm.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid user.");
                 }
             }
-            
-            return View("EmailConfirmationSent", new ConfirmEmailViewModel());
+
+            var model = new ConfirmEmailViewModel();
+            model.State = ConfirmEmailViewModel.Status.Error;
+            return View("EmailConfirmationSent", model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult RequestEmailConfirmation()
+        {
+            var model = new ConfirmEmailViewModel();
+            model.State = ConfirmEmailViewModel.Status.Request;
+            return View("EmailConfirmationSent", model);
         }
 
         [HttpPost]
@@ -171,10 +172,12 @@ namespace VotingApplication.Controllers
                 var user = await _UserManager.FindByEmailAsync(model.Email);
 
                 await SendConfirmationEmailAsync(user);
-                
-                return View("EmailConfirmationSent");
+
+                model.Email = "";
+                model.State = ConfirmEmailViewModel.Status.Sent;
+                return View("EmailConfirmationSent", model);
             }
-            
+
             return View("EmailConfirmationSent", model);
         }
         
