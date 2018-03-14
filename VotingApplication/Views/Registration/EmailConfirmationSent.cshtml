@@ -1,0 +1,32 @@
+﻿@model ConfirmEmailViewModel
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
+<h1>Email Confirmation Sent</h1>
+@if (Model == null)
+{
+    <p>
+        Check your email for a confirmation letter, once your email is confirmed you will be able to login.
+    </p>
+}
+else
+{
+    <p>
+        Unable to confirm your email, try resending the confirmation email.
+    </p>
+    <div class="text-danger">
+        @Html.ValidationSummary()
+    </div>
+}
+<form asp-action="EmailConfirmationSentAsync" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" autocomplete="off">
+    <h4 class="form-signin-heading">Lost Email Confirmation.</h4>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" placeholder="Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Resend Confirmation Email</button>
+</form>
