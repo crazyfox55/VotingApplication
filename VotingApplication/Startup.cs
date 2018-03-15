@@ -36,7 +36,7 @@ namespace VotingApplication
                 // adds a provider that generates unique keys and hashes for things like
                 // forgot password links, phone number verification codes etc...
                 .AddDefaultTokenProviders();
-
+            
             // change password policy
             services.Configure<IdentityOptions>(options =>
             {
@@ -56,6 +56,7 @@ namespace VotingApplication
 
                 // User settings
                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             // alter application cookie info

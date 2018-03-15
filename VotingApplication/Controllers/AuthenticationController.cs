@@ -6,6 +6,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
+    [AllowAnonymous]
     public class AuthenticationController : Controller
     {
         protected SignInManager<ApplicationUser> _SignInManager;
@@ -17,7 +18,6 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -30,7 +30,6 @@ namespace VotingApplication.Controllers
         [HttpPost]
         // this is not implemented yet
         //[RequireHttps]
-        [AllowAnonymous]
         public async Task<IActionResult> LoginAsync(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -57,15 +56,29 @@ namespace VotingApplication.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                    if (result.IsLockedOut)
+                    {
+                        ModelState.AddModelError(string.Empty, "Account is locked out.");
+                    }
+                    else if (result.IsNotAllowed)
+                    {
+                        ModelState.AddModelError(string.Empty, "Email confirmation required.");
+                    }
+                    else if (result.RequiresTwoFactor)
+                    {
+                        ModelState.AddModelError(string.Empty, "Two factor authentication required.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                    }
                 }
             }
-
+            
             return View("Login", model);
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> LogoutAsync()
         {
             await _SignInManager.SignOutAsync();

@@ -8,6 +8,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
+    [AllowAnonymous]
     public class RegistrationController : Controller
     {
 
@@ -23,10 +24,8 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register(string returnUrl = null)
+        public IActionResult Register()
         {
-            ViewData["ReturnUrl"] = returnUrl;
             ViewData["Purpose"] = "Create Account";
             ViewData["Submit"] = "Create";
 
@@ -36,10 +35,8 @@ namespace VotingApplication.Controllers
         [HttpPost]
         // this is not implemented yet
         //[RequireHttps]
-        [AllowAnonymous]
-        public async Task<IActionResult> RegisterAsync(RegistrationViewModel model, string returnUrl = null)
+        public async Task<IActionResult> RegisterAsync(RegistrationViewModel model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             ViewData["Purpose"] = "Create Account";
             ViewData["Submit"] = "Create";
 
@@ -55,47 +52,18 @@ namespace VotingApplication.Controllers
 
                 if (result.Succeeded)
                 {
-                    var fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting System");
-                    var toAddress = new MailAddress(model.Email, model.Username);
-                    const string fromPassword = "Team6Admin";
-                    const string subject = "Welcome Confirmation Email";
-                    string body = "Hello " + model.Username;
+                    await SendConfirmationEmailAsync(user);
 
-                    var smtp = new SmtpClient
-                    {
-                        Host = "smtp.gmail.com",
-                        Port = 587,
-                        EnableSsl = true,
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = false,
-                        Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                    };
-                    using (var message = new MailMessage(fromAddress, toAddress)
-                    {
-                        Subject = subject,
-                        Body = body
-                    })
-                    {
-                        smtp.Send(message);
-                    }
-
-                    await _SignInManager.SignInAsync(user, isPersistent: false);
-
-                    if (string.IsNullOrEmpty(returnUrl))
-                    {
-                        string action = nameof(UserController.Dashboard);
-                        string controller = nameof(UserController);
-                        controller = controller.Remove(controller.Length - 10);
-                        return RedirectToAction(action, controller);
-                    }
-
-                    return Redirect(returnUrl);
+                    var modelEmail = new ConfirmEmailViewModel();
+                    modelEmail.State = ConfirmEmailViewModel.Status.Sent;
+                    return View("EmailConfirmationSent", modelEmail);
                 }
             }
 
             return View("Register", model);
         }
 
+        #region Verify Registration View Model
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
@@ -161,5 +129,118 @@ namespace VotingApplication.Controllers
 
             return Json(true);
         }
+        #endregion
+        
+        [HttpGet]
+        public async Task<IActionResult> EmailConfirmedAsync(string username, string token)
+        {
+            if (username != null && token != null)
+            {
+                var user = await _UserManager.FindByNameAsync(username);
+                if (user != null)
+                {
+                    var confirm = await _UserManager.ConfirmEmailAsync(user, token);
+                    if (confirm.Succeeded)
+                    {
+                        return View("EmailConfirmed");
+                    }
+                }
+            }
+
+            var model = new ConfirmEmailViewModel();
+            model.State = ConfirmEmailViewModel.Status.Error;
+            return View("EmailConfirmationSent", model);
+        }
+
+        [HttpGet]
+        public IActionResult RequestEmailConfirmation()
+        {
+            var model = new ConfirmEmailViewModel();
+            model.State = ConfirmEmailViewModel.Status.Request;
+            return View("EmailConfirmationSent", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EmailConfirmationSentAsync(ConfirmEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _UserManager.FindByEmailAsync(model.Email);
+
+                await SendConfirmationEmailAsync(user);
+
+                model.Email = "";
+                model.State = ConfirmEmailViewModel.Status.Sent;
+                return View("EmailConfirmationSent", model);
+            }
+
+            return View("EmailConfirmationSent", model);
+        }
+        
+        private async Task SendConfirmationEmailAsync(ApplicationUser user)
+        {
+            if (_UserManager != null && user != null)
+            {
+                string confirmationToken = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
+                const string action = nameof(EmailConfirmedAsync);
+                string controller = nameof(RegistrationController);
+                controller = controller.Remove(controller.Length - 10);
+                string confirmationTokenLink = Url.Action(action, controller, new
+                {
+                    username = user.UserName,
+                    token = confirmationToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                MailAddress fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting Online");
+                MailAddress toAddress = new MailAddress(user.Email, user.UserName);
+                const string fromPassword = "Team6Admin";
+                const string subject = "Welcome, Confirmation Email";
+                string body = $"Hello {user.UserName}.\nPlease confirm your email address by following this <a href=\"{confirmationTokenLink}\">link</a>.\nThank you.";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+
+                var message = new MailMessage
+                {
+                    From = fromAddress,
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                };
+
+                message.To.Add(toAddress);
+                await smtp.SendMailAsync(message);
+            }
+        }
+
+        [HttpGet]
+        // this is not implemented yet
+        //[RequireHttps]
+        public async Task<IActionResult> VerifyEmail(string email)
+        {
+            if (_UserManager != null)
+            {
+                var user = await _UserManager.FindByEmailAsync(email);
+                
+                if(user == null)
+                {
+                    return Json($"Email: {email} is not valid for any user.");
+                }
+                else if (user.EmailConfirmed)
+                {
+                    return Json($"Email: {email} is already confirmed.");
+                }
+            }
+
+            return Json(true);
+        }
+
     }
 }
