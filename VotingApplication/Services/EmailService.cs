@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace VotingApplication.Services
 {
-    public interface IEmailSender
+    public interface IEmailService
     {
         Task SendEmailAsync(ApplicationUser user, string subject, string body);
     }
 
-    public class EmailSender : IEmailSender
+    public class EmailService : IEmailService
     {
         public async Task SendEmailAsync(ApplicationUser user, string subject, string body)
         {

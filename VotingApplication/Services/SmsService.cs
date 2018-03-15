@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace VotingApplication.Services
 {
-    public interface ISmsSender
+    public interface ISmsService
     {
         Task SendSmsAsync(ApplicationUser user, string body);
     }
 
-    public class SmsSender : ISmsSender
+    public class SmsService : ISmsService
     {
         public Task SendSmsAsync(ApplicationUser user, string body)
         {

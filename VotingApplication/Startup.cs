@@ -75,8 +75,8 @@ namespace VotingApplication
 
             // Adds an email and sms service to the services container. This allows for these services to be injected into controllers.
             // See the following link for more details https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection 
-            services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<ISmsSender, SmsSender>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ISmsService, SmsService>();
 
             services.AddMvc();
         }

@@ -12,11 +12,11 @@ namespace VotingApplication.Controllers
     {
         
         protected UserManager<ApplicationUser> _userManager;
-        protected IEmailSender _emailService;
+        protected IEmailService _emailService;
 
         public RegistrationController(
             UserManager<ApplicationUser> userManager,
-            IEmailSender emailService)
+            IEmailService emailService)
         {
             _userManager = userManager;
             _emailService = emailService;
