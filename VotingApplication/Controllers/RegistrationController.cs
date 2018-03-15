@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
+using VotingApplication.Services;
 using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
@@ -11,18 +10,19 @@ namespace VotingApplication.Controllers
     [AllowAnonymous]
     public class RegistrationController : Controller
     {
-
-        protected SignInManager<ApplicationUser> _SignInManager;
-        protected UserManager<ApplicationUser> _UserManager;
+        
+        protected UserManager<ApplicationUser> _userManager;
+        protected IEmailSender _emailService;
 
         public RegistrationController(
-            SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IEmailSender emailService)
         {
-            _SignInManager = signInManager;
-            _UserManager = userManager;
+            _userManager = userManager;
+            _emailService = emailService;
         }
 
+        #region Register User
         [HttpGet]
         public IActionResult Register()
         {
@@ -48,11 +48,27 @@ namespace VotingApplication.Controllers
                     Email = model.Email
                 };
 
-                var result = await _UserManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    await SendConfirmationEmailAsync(user);
+                    // send email confirmation.
+                    // message setup.
+                    string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    const string action = nameof(EmailConfirmedAsync);
+                    string controller = nameof(RegistrationController);
+                    controller = controller.Remove(controller.Length - 10);
+                    string confirmationTokenLink = Url.Action(action, controller, new
+                    {
+                        username = user.UserName,
+                        token = confirmationToken
+                    }, protocol: HttpContext.Request.Scheme);
+
+                    const string subject = "Welcome, Confirmation Email";
+                    string body = $"Hello {user.UserName}.\nPlease confirm your email address by following this <a href=\"{confirmationTokenLink}\">link</a>.\nThank you.";
+
+                    // actual send
+                    await _emailService.SendEmailAsync(user, subject, body);
 
                     var modelEmail = new ConfirmEmailViewModel();
                     modelEmail.State = ConfirmEmailViewModel.Status.Sent;
@@ -62,6 +78,7 @@ namespace VotingApplication.Controllers
 
             return View("Register", model);
         }
+        #endregion
 
         #region Verify Registration View Model
         [HttpGet]
@@ -69,15 +86,15 @@ namespace VotingApplication.Controllers
         //[RequireHttps]
         public async Task<IActionResult> VerifyPassword(string password)
         {
-            if (_UserManager != null)
+            if (_userManager != null)
             {
                 string errors = "";
 
                 IdentityResult result;
 
-                foreach (var validator in _UserManager.PasswordValidators)
+                foreach (var validator in _userManager.PasswordValidators)
                 {
-                    result = await validator.ValidateAsync(_UserManager, null, password);
+                    result = await validator.ValidateAsync(_userManager, null, password);
                     foreach (var error in result.Errors)
                     {
                         errors += error.Description + "\n";
@@ -97,7 +114,7 @@ namespace VotingApplication.Controllers
         //[RequireHttps]
         public async Task<IActionResult> VerifyUser(string username, string email)
         {
-            if (_UserManager != null)
+            if (_userManager != null)
             {
                 string errorTarget = username == null ? "Email" : "UserName";
 
@@ -111,9 +128,9 @@ namespace VotingApplication.Controllers
 
                 IdentityResult result;
 
-                foreach (var validator in _UserManager.UserValidators)
+                foreach (var validator in _userManager.UserValidators)
                 {
-                    result = await validator.ValidateAsync(_UserManager, user);
+                    result = await validator.ValidateAsync(_userManager, user);
 
                     foreach (var error in result.Errors)
                     {
@@ -130,16 +147,17 @@ namespace VotingApplication.Controllers
             return Json(true);
         }
         #endregion
-        
+
+        #region Confirmation Email: Affirm, Request, Resend
         [HttpGet]
         public async Task<IActionResult> EmailConfirmedAsync(string username, string token)
         {
             if (username != null && token != null)
             {
-                var user = await _UserManager.FindByNameAsync(username);
+                var user = await _userManager.FindByNameAsync(username);
                 if (user != null)
                 {
-                    var confirm = await _UserManager.ConfirmEmailAsync(user, token);
+                    var confirm = await _userManager.ConfirmEmailAsync(user, token);
                     if (confirm.Succeeded)
                     {
                         return View("EmailConfirmed");
@@ -165,23 +183,11 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _UserManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
 
-                await SendConfirmationEmailAsync(user);
-
-                model.Email = "";
-                model.State = ConfirmEmailViewModel.Status.Sent;
-                return View("EmailConfirmationSent", model);
-            }
-
-            return View("EmailConfirmationSent", model);
-        }
-        
-        private async Task SendConfirmationEmailAsync(ApplicationUser user)
-        {
-            if (_UserManager != null && user != null)
-            {
-                string confirmationToken = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
+                // send email confirmation.
+                // message setup.
+                string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 const string action = nameof(EmailConfirmedAsync);
                 string controller = nameof(RegistrationController);
                 controller = controller.Remove(controller.Length - 10);
@@ -191,43 +197,30 @@ namespace VotingApplication.Controllers
                     token = confirmationToken
                 }, protocol: HttpContext.Request.Scheme);
 
-                MailAddress fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting Online");
-                MailAddress toAddress = new MailAddress(user.Email, user.UserName);
-                const string fromPassword = "Team6Admin";
                 const string subject = "Welcome, Confirmation Email";
                 string body = $"Hello {user.UserName}.\nPlease confirm your email address by following this <a href=\"{confirmationTokenLink}\">link</a>.\nThank you.";
 
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                };
+                // actual send
+                await _emailService.SendEmailAsync(user, subject, body);
 
-                var message = new MailMessage
-                {
-                    From = fromAddress,
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                };
-
-                message.To.Add(toAddress);
-                await smtp.SendMailAsync(message);
+                model.Email = "";
+                model.State = ConfirmEmailViewModel.Status.Sent;
+                return View("EmailConfirmationSent", model);
             }
-        }
 
+            return View("EmailConfirmationSent", model);
+        }
+        #endregion
+
+        #region Verify Confirm Email View Model
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
         public async Task<IActionResult> VerifyEmail(string email)
         {
-            if (_UserManager != null)
+            if (_userManager != null)
             {
-                var user = await _UserManager.FindByEmailAsync(email);
+                var user = await _userManager.FindByEmailAsync(email);
                 
                 if(user == null)
                 {
@@ -241,6 +234,6 @@ namespace VotingApplication.Controllers
 
             return Json(true);
         }
-
+        #endregion
     }
 }

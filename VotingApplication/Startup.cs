@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VotingApplication.Services;
 
 namespace VotingApplication
 {
@@ -71,7 +72,12 @@ namespace VotingApplication
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
             });
-            
+
+            // Adds an email and sms service to the services container. This allows for these services to be injected into controllers.
+            // See the following link for more details https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection 
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<ISmsSender, SmsSender>();
+
             services.AddMvc();
         }
 
