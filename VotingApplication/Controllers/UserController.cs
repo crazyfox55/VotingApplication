@@ -49,6 +49,12 @@ namespace VotingApplication.Controllers
             return View("Profile/SecurityQuestions");
         }
 
+        [HttpPost]
+        public IActionResult AddSecurityQuestions(SecurityQuestionViewModel model)
+        {
+            return View("Profile/SecurityQuestions", model);
+        }
+
         [AllowAnonymous]
         public IActionResult ForgotPassword()
         {
