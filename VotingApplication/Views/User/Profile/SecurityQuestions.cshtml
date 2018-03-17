@@ -1,39 +1,53 @@
-﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
-<form class="form-signin" action="/user/submitSecurityQuestionsAsync" data-toggle="validator" role="form">
+﻿@model SecurityQuestionViewModel
+
+<form asp-action="AddSecurityQuestionsAsync" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" autocomplete="off">
     <!-- Quesions From: http://stumbleforward.com/2012/08/20/the-10-most-common-password-security-questions/ -->
     <h2 class="form-signin-heading">Add Security Questions</h2>
     <div class="form-group">
-        <label for="sel1" class="control-label">Security Question One (select one):</label>
-        <select class="form-control" id="sel1">
+        <label asp-for="SecurityQuestionOne"></label>
+        <select asp-for="SecurityQuestionOne" class="form-control">
+            <option disabled selected>Select a question.</option>
             <option>What Is your favorite book?</option>
             <option>What is the name of the road you grew up on?</option>
             <option>What is your mother’s maiden name?</option>
             <option>What was the name of your first/current/favorite pet?</option>
             <option>What was the first company that you worked for?</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="answerOne" class="control-label">Question One Answer</label>
-        <input type="password" class="form-control" id="answerOne" placeholder="Answer" name="answerOne" required>
-        <div class="help-block with-errors"></div>
-    </div>
-    <div class="form-group">
-        <label for="sel2" class="control-label">Security Question Two (select one):</label>
-        <select class="form-control" id="sel2">
+            <!--Below options added from question two, we validate that they select different questions-->
             <option>Where did you meet your spouse?</option>
             <option>Where did you go to high school/college?</option>
             <option>What is your favorite food?</option>
             <option>What city were you born in?</option>
             <option>Where is your favorite place to vacation?</option>
         </select>
+        <span asp-validation-for="SecurityQuestionOne" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="answerTwo" class="control-label">Question Two Answer</label>
-        <input type="password" class="form-control" id="answerTwo" placeholder="Answer " name="answerTwo" required>
-        <div class="help-block with-errors"></div>
+        <label asp-for="SecurityAnswerOne"></label>
+        <input asp-for="SecurityAnswerOne" class="form-control" placeholder="Answer One">
+        <span asp-validation-for="SecurityAnswerOne" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Confirm</button>
+        <label asp-for="SecurityQuestionTwo"></label>
+        <select asp-for="SecurityQuestionTwo" class="form-control">
+            <option disabled selected>Select a question.</option>
+            <option>What Is your favorite book?</option>
+            <option>What is the name of the road you grew up on?</option>
+            <option>What is your mother’s maiden name?</option>
+            <option>What was the name of your first/current/favorite pet?</option>
+            <option>What was the first company that you worked for?</option>
+            <!--Above options added from question one, we validate that they select different questions-->
+            <option>Where did you meet your spouse?</option>
+            <option>Where did you go to high school/college?</option>
+            <option>What is your favorite food?</option>
+            <option>What city were you born in?</option>
+            <option>Where is your favorite place to vacation?</option>
+        </select>
+        <span asp-validation-for="SecurityQuestionTwo" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label asp-for="SecurityAnswerTwo"></label>
+        <input asp-for="SecurityAnswerTwo" class="form-control" placeholder="Answer Two">
+        <span asp-validation-for="SecurityAnswerTwo" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Confirm</button>
 </form>
-

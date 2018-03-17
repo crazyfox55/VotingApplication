@@ -12,14 +12,11 @@ namespace VotingApplication.Controllers
     [Authorize]
     public class UserController : Controller
     {
-        protected SignInManager<ApplicationUser> _SignInManager;
         protected UserManager<ApplicationUser> _UserManager;
 
         public UserController(
-            SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager)
         {
-            _SignInManager = signInManager;
             _UserManager = userManager;
         }
         
@@ -44,17 +41,56 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddSecurityQuestions()
+        public async Task<IActionResult> AddSecurityQuestionsAsync()
         {
-            return View("Profile/SecurityQuestions");
+            var user = await _UserManager.FindByNameAsync(User.Identity.Name);
+            var model = new SecurityQuestionViewModel
+            {
+                SecurityQuestionOne = user.SecurityQuestionOne,
+                SecurityQuestionTwo = user.SecurityQuestionTwo,
+                SecurityAnswerOne = user.SecurityAnswerOne,
+                SecurityAnswerTwo = user.SecurityAnswerTwo
+            };
+
+            return View("Profile/SecurityQuestions", model);
         }
 
-        [AllowAnonymous]
-        public IActionResult ForgotPassword()
+        [HttpPost]
+        public async Task<IActionResult> AddSecurityQuestionsAsync(SecurityQuestionViewModel model)
         {
-            return View("ForgotPassword/Index"); //Index view
-        }
+            if (ModelState.IsValid)
+            {
+                // get the current user
+                var user = await _UserManager.FindByNameAsync(User.Identity.Name);
 
+                user.SecurityQuestionOne = model.SecurityQuestionOne;
+                user.SecurityQuestionTwo = model.SecurityQuestionTwo;
+                user.SecurityAnswerOne = model.SecurityAnswerOne;
+                user.SecurityAnswerTwo = model.SecurityAnswerTwo;
+
+                // update the database
+                var result = await _UserManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    // TODO: show that the security questions were saved then redirect
+                    return RedirectToAction(nameof(Profile));
+                }
+
+                foreach (IdentityError error in result.Errors)
+                {
+                    // these errors can be displayed in the web page by adding:
+                    /* <div class="text-danger">
+                     *      @Html.ValidationSummary()
+                     * </div>
+                     */
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            return View("Profile/SecurityQuestions", model);
+        }
+        
         //needs to be finished
         [HttpPost]
         public IActionResult SendResetEmail(string emailInput)
