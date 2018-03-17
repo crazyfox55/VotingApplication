@@ -140,7 +140,7 @@ namespace VotingApplication.Controllers
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
                     if (result.Succeeded)
                     {
-                        return View("ResetPasswordConfirmed");
+                        return View("ResetPasswordComplete");
                     }
                 }
                 
@@ -177,8 +177,7 @@ namespace VotingApplication.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-
-                // send email confirmation.
+                
                 // message setup.
                 string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -204,7 +203,7 @@ namespace VotingApplication.Controllers
         }
         #endregion
 
-        #region Verify - Confirm Reset Password View Model
+        #region Verify - Reset Password Email View Model
         /// <summary>
         /// This verifies that the email is for some user and that the email is confirmed.
         /// </summary>
