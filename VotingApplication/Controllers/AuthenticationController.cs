@@ -107,7 +107,7 @@ namespace VotingApplication.Controllers
         /// <param name="token">The token to verify the password change.</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> ResetPasswordConfirmedAsync(string username, string token)
+        public async Task<IActionResult> ResetPasswordAsync(string username, string token)
         {
             if (username != null && token != null)
             {
@@ -120,10 +120,8 @@ namespace VotingApplication.Controllers
                     return View("ResetPassword", temp);
                 }
             }
-
-            var model = new ConfirmResetPasswordViewModel();
-            model.State = ConfirmResetPasswordViewModel.Status.Error;
-            return View("ResetPasswordConfirmation", model);
+            
+            return View("ResetPasswordEmailError");
         }
 
         /// <summary>
@@ -144,13 +142,9 @@ namespace VotingApplication.Controllers
                     {
                         return View("ResetPasswordConfirmed");
                     }
-                    else
-                    {
-                        var temp = new ConfirmResetPasswordViewModel();
-                        temp.State = ConfirmResetPasswordViewModel.Status.Error;
-                        return View("ResetPasswordConfirmation", temp);
-                    }
                 }
+                
+                return View("ResetPasswordEmailError");
             }
             
             return View("ResetPassword", model);
@@ -161,18 +155,15 @@ namespace VotingApplication.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult RequestResetPasswordConfirmation()
+        public IActionResult RequestResetPasswordEmail()
         {
-            var model = new ConfirmResetPasswordViewModel();
-            model.State = ConfirmResetPasswordViewModel.Status.Request;
-            return View("ResetPasswordConfirmation", model);
+            return View("ResetPasswordEmailRequest");
         }
 
         [HttpPost]
-        public IActionResult RequestResetPasswordConfirmation(ConfirmResetPasswordViewModel model)
+        public IActionResult RequestResetPasswordEmail(ResetPasswordEmailViewModel model)
         {
-            model.State = ConfirmResetPasswordViewModel.Status.Request;
-            return View("ResetPasswordConfirmation", model);
+            return View("ResetPasswordEmailRequest", model);
         }
 
         /// <summary>
@@ -181,7 +172,7 @@ namespace VotingApplication.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> ResetPasswordConfirmationAsync(ConfirmResetPasswordViewModel model)
+        public async Task<IActionResult> SendResetPasswordEmailAsync(ResetPasswordEmailViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -189,28 +180,27 @@ namespace VotingApplication.Controllers
 
                 // send email confirmation.
                 // message setup.
-                string confirmationToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                string action = nameof(ResetPasswordConfirmedAsync);
+                string action = nameof(ResetPasswordAsync);
                 string controller = nameof(AuthenticationController);
                 controller = controller.Remove(controller.Length - 10);
-                string confirmationTokenLink = Url.Action(action, controller, new
+                string resetTokenLink = Url.Action(action, controller, new
                 {
                     username = user.UserName,
-                    token = confirmationToken
+                    token = resetToken
                 }, protocol: HttpContext.Request.Scheme);
 
-                const string subject = "Confirmation Reset Password";
-                string body = $"Hello {user.UserName}.\nYou can reset your password by following this <a href=\"{confirmationTokenLink}\">link</a>.";
+                const string subject = "Reset Password";
+                string body = $"Hello {user.UserName}.\nYou can reset your password by following this <a href=\"{resetTokenLink}\">link</a>.";
 
                 // actual send
                 await _emailService.SendEmailAsync(user, subject, body);
                 
-                model.State = ConfirmResetPasswordViewModel.Status.Sent;
-                return View("ResetPasswordConfirmation", model);
+                return View("ResetPasswordEmailSent", model);
             }
 
-            return View("ResetPasswordConfirmation", model);
+            return View("ResetPasswordRequest", model);
         }
         #endregion
 
