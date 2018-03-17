@@ -90,13 +90,7 @@ namespace VotingApplication.Controllers
 
             return View("Profile/SecurityQuestions", model);
         }
-
-        [AllowAnonymous]
-        public IActionResult ForgotPassword()
-        {
-            return View("ForgotPassword/Index"); //Index view
-        }
-
+        
         //needs to be finished
         [HttpPost]
         public IActionResult SendResetEmail(string emailInput)
