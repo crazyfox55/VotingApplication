@@ -64,6 +64,7 @@ namespace VotingApplication
                 // redirect to login page
                 options.LoginPath = "/User/Login";
                 options.LogoutPath = "/User/Logout";
+                options.AccessDeniedPath = "/User/AccessDenied";
 
                 // cookie expires in 5 minutes
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
