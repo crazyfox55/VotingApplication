@@ -26,6 +26,7 @@
                     <li class="nav-item ">
                         <a asp-area="" asp-controller="User" asp-action="Dashboard" class="nav-link">Dashboard</a>
                     </li>
+                    <!--
                     <li class="nav-item ">
                         <a asp-area="" asp-controller="User" asp-action="Login" class="nav-link">Login</a>
                     </li>
@@ -38,6 +39,26 @@
                     <li class="nav-item ">
                         <a asp-area="" asp-controller="User" asp-action="LogoutAsync" class="nav-link">Logout</a>
                     </li>
+                    -->
+                    @if(User.Identity.IsAuthenticated)
+                    {
+                    <li class="nav-item">
+                        <a asp-area="" asp-controller="User" asp-action="Profile" class="nav-link">Profile</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-area="" asp-controller="User" asp-action="LogoutAsync" class="nav-link">Logout</a>
+                    </li>
+                    }
+                    else
+                    {
+                    <li class="nav-item ">
+                        <a asp-area="" asp-controller="User" asp-action="Login" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a asp-area="" asp-controller="User" asp-action="Registration" class="nav-link">Create Account</a>
+                    </li>
+                        
+                    }
                 </ul>
             </div>
         </nav>
