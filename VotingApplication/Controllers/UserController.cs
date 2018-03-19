@@ -40,6 +40,64 @@ namespace VotingApplication.Controllers
             return View("Profile/ChangePassword");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _UserManager.FindByNameAsync(User.Identity.Name);
+                var authenticate = await _UserManager.CheckPasswordAsync(user, model.Password);
+                if (authenticate)
+                {
+                    var result = await _UserManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(Profile));
+                    }
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                }
+            }
+
+            return View("Profile/ChangePassword", model);
+        }
+
+        #region Verify Change Password View Model
+        [HttpGet]
+        // this is not implemented yet
+        //[RequireHttps]
+        public async Task<IActionResult> VerifyNewPassword(string newpassword)
+        {
+            if (_UserManager != null)
+            {
+                string errors = "";
+
+                IdentityResult result;
+
+                foreach (var validator in _UserManager.PasswordValidators)
+                {
+                    result = await validator.ValidateAsync(_UserManager, null, newpassword);
+                    foreach (var error in result.Errors)
+                    {
+                        errors += error.Description + "\n";
+                    }
+                }
+                if (errors != string.Empty)
+                {
+                    return Json($"{errors}");
+                }
+            }
+
+            return Json(true);
+        }
+        #endregion
+
         [HttpGet]
         public async Task<IActionResult> AddSecurityQuestionsAsync()
         {
