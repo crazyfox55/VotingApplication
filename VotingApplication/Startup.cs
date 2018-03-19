@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VotingApplication.Services;
 
 namespace VotingApplication
 {
@@ -36,30 +37,47 @@ namespace VotingApplication
                 // adds a provider that generates unique keys and hashes for things like
                 // forgot password links, phone number verification codes etc...
                 .AddDefaultTokenProviders();
-
+            
             // change password policy
             services.Configure<IdentityOptions>(options =>
             {
+                // Password settings
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 5;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+
+                // Lockout settings
+                // we will not be using lockout.
+                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                //options.Lockout.MaxFailedAccessAttempts = 10;
+                //options.Lockout.AllowedForNewUsers = true;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             // alter application cookie info
             services.ConfigureApplicationCookie(options =>
             {
                 // redirect to login page
-                options.LoginPath = "/User/Login";
-                options.LogoutPath = "/User/Logout";
+                options.LoginPath = "/Authentication/Login";
+                options.LogoutPath = "/Authentication/Logout";
+                options.AccessDeniedPath = "/User/AccessDenied";
 
                 // cookie expires in 5 minutes
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
             });
-            
+
+            // Adds an email and sms service to the services container. This allows for these services to be injected into controllers.
+            // See the following link for more details https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection 
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ISmsService, SmsService>();
+
             services.AddMvc();
         }
 
@@ -78,7 +96,7 @@ namespace VotingApplication
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Shared/Error");
             }
 
             app.UseStaticFiles();
