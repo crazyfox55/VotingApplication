@@ -1,0 +1,211 @@
+﻿@model VoterRegistrationViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Voter Registration";
+    ViewData["Submit"] = "Register";
+}
+
+<body>
+    @*<button type="button" class="btn btn-info">User Info</button>
+        <button type="button" class="btn btn-danger">Delete User</button>*@
+    @*<p>
+        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Delete User
+        </a>
+    </p>
+    <div class="collapse" id="collapseDanger">
+        <div class="card card-body">
+            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+            <button type="button" class="btn btn-danger">Delete</button>
+        </div>
+    </div>*@
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">User Number</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Username</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Test</td>
+                <td>Test</td>
+                <td>TestUser</td>
+                <td>
+                    <p>
+                        <a class="btn btn-info" data-toggle="collapse" href="#collapseInfo" role="button" aria-expanded="false" aria-controls="collapseInfo">
+                            User Info
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseInfo">
+                        <div class="card card-body">
+                            User Info here.
+                        </div>
+                    </div>
+
+                    <p>
+                        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger" role="button" aria-expanded="false" aria-controls="collapseDanger">
+                            Delete User
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseDanger">
+                        <div class="card card-body">
+                            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Anes</td>
+                <td>Kapo</td>
+                <td>aneskapo</td>
+                <td>
+                    <p>
+                        <a class="btn btn-info" data-toggle="collapse" href="#collapseInfo1" role="button" aria-expanded="false" aria-controls="collapseInfo">
+                            User Info
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseInfo1">
+                        <div class="card card-body">
+                            User Info here.
+                        </div>
+                    </div>
+                    <p>
+                        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger1" role="button" aria-expanded="false" aria-controls="collapseDanger">
+                            Delete User
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseDanger1">
+                        <div class="card card-body">
+                            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>David</td>
+                <td>McDermott</td>
+                <td>davidmcdermott</td>
+                <td>
+                    <p>
+                        <a class="btn btn-info" data-toggle="collapse" href="#collapseInfo2" role="button" aria-expanded="false" aria-controls="collapseInfo">
+                            User Info
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseInfo2">
+                        <div class="card card-body">
+                            User Info here.
+                        </div>
+                    </div>
+                    <p>
+                        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger2" role="button" aria-expanded="false" aria-controls="collapseDanger">
+                            Delete User
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseDanger2">
+                        <div class="card card-body">
+                            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">4</th>
+                <td>Cole</td>
+                <td>Pierce</td>
+                <td>colepierce</td>
+                <td>
+                    <p>
+                        <a class="btn btn-info" data-toggle="collapse" href="#collapseInfo3" role="button" aria-expanded="false" aria-controls="collapseInfo">
+                            User Info
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseInfo3">
+                        <div class="card card-body">
+                            User Info here.
+                        </div>
+                    </div>
+                    <p>
+                        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger3" role="button" aria-expanded="false" aria-controls="collapseDanger">
+                            Delete User
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseDanger3">
+                        <div class="card card-body">
+                            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">5</th>
+                <td>Junyan</td>
+                <td>Yang</td>
+                <td>junyanyang</td>
+                <td>
+                    <p>
+                        <a class="btn btn-info" data-toggle="collapse" href="#collapseInfo4" role="button" aria-expanded="false" aria-controls="collapseInfo">
+                            User Info
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseInfo4">
+                        <div class="card card-body">
+                            User Info here.
+                        </div>
+                    </div>
+                    <p>
+                        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger4" role="button" aria-expanded="false" aria-controls="collapseDanger">
+                            Delete User
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseDanger4">
+                        <div class="card card-body">
+                            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">6</th>
+                <td colspan="2">longusernamespantest</td>
+                <td colspan="4">
+                    <p>
+                        <a class="btn btn-info" data-toggle="collapse" href="#collapseInfo5" role="button" aria-expanded="false" aria-controls="collapseInfo">
+                            User Info
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseInfo5">
+                        <div class="card card-body">
+                            User Info here.
+                        </div>
+                    </div>
+                    <p>
+                        <a class="btn btn-danger" data-toggle="collapse" href="#collapseDanger5" role="button" aria-expanded="false" aria-controls="collapseDanger">
+                            Delete User
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseDanger5">
+                        <div class="card card-body">
+                            Are you sure you want to delete this user? Deleted users cannot be recovered and all of their personal information will be lost.
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</body>
