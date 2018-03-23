@@ -8,7 +8,7 @@ namespace VotingWebsiteTest
     public class AboutControllerTest
     {
         [TestMethod]
-        public void Index()
+        public void AboutControllerIndex()
         {
 
             //Arrange
