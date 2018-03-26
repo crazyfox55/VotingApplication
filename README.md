@@ -35,4 +35,6 @@ https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/introductio
 Google API Key:
 https://console.developers.google.com
 Replace YOUR_KEY with the key from Google to use Google maps
+<code>
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script>
+</code>
