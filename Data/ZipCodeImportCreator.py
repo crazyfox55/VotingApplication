@@ -143,13 +143,13 @@ combined += str.format("\t,{} NUMERIC(8,3) NOT NULL\n", zipCodeColumnNames[6])
 combined += str.format("\t,{} NUMERIC(8,3) NOT NULL\n", zipCodeColumnNames[7])
 combined += str.format("\t,{} VARCHAR(512) NOT NULL\n", zipCodeColumnNames[8])
 combined += ");\n"
-
+combined += "SET IDENTITY_INSERT ZipCode ON\n"
 zipIndex = 0
 maxLen = 0
 for region in regions:
     zipGeometry = "["
     for vertIndex in region:
-        zipGeometry += str.format("[{}, {}],", round(vertices[vertIndex][0],6), round(vertices[vertIndex][1],6))
+        zipGeometry += str.format("[{}, {}],", round(vertices[vertIndex][1],6), round(vertices[vertIndex][0],6))
     zipGeometry = zipGeometry.strip(',')
     zipGeometry += "]"
     if (len(zipGeometry) > maxLen):
@@ -159,6 +159,7 @@ for region in regions:
     zipInfoInsert = zipInfoInsert.replace("^", "''")
     combined += zipInfoInsert
     zipIndex += 1
+combined += "SET IDENTITY_INSERT ZipCode OFF\n"
 print("Max Geometry size took",maxLen,"characters to store.")
 file.write(combined)
 file.close()
