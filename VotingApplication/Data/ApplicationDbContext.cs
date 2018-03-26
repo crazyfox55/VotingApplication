@@ -10,6 +10,7 @@ namespace VotingApplication
     {
         public DbSet<SettingsDataModel> Settings { get; set; }
         public DbSet<VoterRegistrationDataModel> Registration { get; set; }
+        public DbSet<ZipCodeDataModel> ZipCode { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -21,7 +22,7 @@ namespace VotingApplication
             base.OnModelCreating(modelBuilder);
 
             // Fluent API
-            
+
         }
     }
 }

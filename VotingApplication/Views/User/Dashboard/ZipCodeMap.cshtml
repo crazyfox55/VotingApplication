@@ -1,0 +1,220 @@
+﻿<style>
+    /* Set the map height explicitly to use the whole page.
+    * The map is within html element -> body element ->
+    * .container bootstrap class -> #map id which finaly contains the map.
+    */
+    html, body, .container, #map {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    /*
+    * Shows the State Name
+    */
+    #info-box {
+        background-color: white;
+        border: 1px solid black;
+        bottom: 30px;
+        height: 45px;
+        padding: 10px;
+        position: absolute;
+        left: 30px;
+    }
+</style>
+
+<div id="map"></div>
+<div id="info-box">?</div>
+<script>
+    var mapStyle = [{
+        'stylers': [{ 'visibility': 'off' }]
+    }, {
+        'featureType': 'landscape',
+        'elementType': 'geometry',
+        'stylers': [{ 'visibility': 'on' }, { 'color': '#fcfcfc' }]
+    }, {
+        'featureType': 'water',
+        'elementType': 'geometry',
+        'stylers': [{ 'visibility': 'on' }, { 'color': '#bfd4ff' }]
+    }];
+    var map;
+    var drawing;
+    var hiddenStateFeature;
+    var zipCodeFeatures = {};
+    var polygons = [];
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 4,
+            center: { lat: 40, lng: -100 },
+            styles: mapStyle,
+            disableDefaultUI: true,
+            gestureHandling: 'greedy'
+        });
+
+        drawing = new google.maps.drawing.DrawingManager(
+            {
+                drawingMode: null,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: ['polygon']
+                },
+                polygonOptions: {
+                    editable: true,
+                    clickable: true,
+                    zIndex: 3
+                }
+            }
+        );
+
+        drawing.setMap(map);
+        drawing.addListener('polygoncomplete', function (polygon) {
+            polygons.push(polygon)
+            polygon.addListener('rightclick', function (event) {
+                if (event.path != null && event.vertex != null) {
+                    var path = this.getPaths().getAt(event.path);
+                    if (path.getLength() > 3) {
+                        path.removeAt(event.vertex);
+                    }
+                }
+            });
+        });
+
+        // set up the style rules and events for the states
+        var stateFeatures = new google.maps.Data();
+
+        // Load GeoJSON.
+        $.getJSON('https://storage.googleapis.com/mapsdevsite/json/states.js', function (data) {
+            stateFeatures.addGeoJson(data);
+            stateFeatures.setStyle(styleStateFeature);
+            stateFeatures.addListener('mouseover', mouseInToRegion);
+            stateFeatures.addListener('mouseout', mouseOutOfRegion);
+            stateFeatures.addListener('click', loadStateZipCode)
+            stateFeatures.setMap(map);
+            stateFeatures.forEach(function (feature) {
+                //Define position of label
+                var bounds = new google.maps.LatLngBounds();
+                feature.getGeometry().forEachLatLng(function (latlang) {
+                    bounds.extend(latlang);
+                });
+
+                var myLatlng = bounds.getCenter();
+
+                /*
+                 * Create some label for each state
+                var stateLabel = new MapLabel({
+                    label: feature.getProperty("NAME"),
+                    position: myLatlng,
+                    map: map,
+                    icon: null,
+                    fontSize: 26,
+                    align: 'Left'
+                });
+                stateLabel.set('position', myLatlng);
+                */
+            });
+        });
+    }
+
+    /**
+     * This is the callback passed to data.setStyle() and is called for each row in
+     * the data set.  Check out the docs for Data.StylingFunction.
+     *
+     * param {google.maps.Data.Feature} feature
+     */
+    function styleStateFeature(feature) {
+        var outlineWeight = 0.5, zIndex = 1;
+        var hidden = false;
+        if (feature.getProperty('state') === 'hover') {
+            outlineWeight = zIndex = 2;
+        } else if (feature.getProperty('state') === 'hidden') {
+            hidden = true;
+        }
+
+        document.getElementById('info-box').textContent =
+            feature.getProperty('NAME');
+
+        return {
+            strokeWeight: outlineWeight,
+            strokeColor: '#fff',
+            zIndex: zIndex,
+            fillOpacity: 0.75,
+            visible: (hidden == false),
+            clickable: true
+        };
+    }
+
+    /**
+     * Responds to the mouse-in event on a map shape (state).
+     *
+     * param {?google.maps.MouseEvent} e
+     */
+    function mouseInToRegion(e) {
+        // set the hover state so the setStyle function can change the border
+        if (hiddenStateFeature != null && hiddenStateFeature == e.feature) {
+            return;
+        }
+        e.feature.setProperty('state', 'hover');
+    }
+
+    /**
+     * Responds to the mouse-out event on a map shape (state).
+     *
+     * param {?google.maps.MouseEvent} e
+     */
+    function mouseOutOfRegion(e) {
+        // reset the hover state, returning the border to normal
+        if (hiddenStateFeature != null && hiddenStateFeature == e.feature) {
+            return;
+        }
+        e.feature.setProperty('state', 'normal');
+    }
+
+    function loadStateZipCode(e) {
+        var state;
+        if (hiddenStateFeature != null) {
+            hiddenStateFeature.setProperty('state', 'normal');
+            state = hiddenStateFeature.getProperty('NAME')
+            zipCodeFeatures[state].setStyle(styleZipFeatureHidden);
+        }
+        hiddenStateFeature = e.feature;
+        hiddenStateFeature.setProperty('state', 'hidden');
+        state = hiddenStateFeature.getProperty('NAME')
+        if (zipCodeFeatures[state] == null) {
+            $.getJSON('http://localhost:5000/User/RequestZipCodes?state=' + state, function (data) {
+                zipCodeFeatures[state] = new google.maps.Data();
+                zipCodeFeatures[state].addGeoJson(data);
+                zipCodeFeatures[state].setMap(map);
+                zipCodeFeatures[state].setStyle(styleZipFeature);
+            });
+        } else {
+            zipCodeFeatures[state].setStyle(styleZipFeature);
+        }
+        
+    }
+
+    function styleZipFeature(feature) {
+        return {
+            strokeWeight: 0.5,
+            strokeColor: '#fff',
+            zIndex: 1,
+            fillOpacity: 0.75,
+            visible: true
+        };
+    }
+
+    function styleZipFeatureHidden(feature) {
+        return {
+            strokeWeight: 0.5,
+            strokeColor: '#fff',
+            zIndex: 1,
+            fillOpacity: 0.75,
+            visible: false
+        };
+    }
+</script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPnQKa7C4sDyTLalXG4vzy7ndtVFF3LOQ&libraries=drawing&callback=initMap">
+</script>
