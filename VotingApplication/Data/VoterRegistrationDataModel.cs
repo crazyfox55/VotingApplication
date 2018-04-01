@@ -7,12 +7,11 @@ namespace VotingApplication
     public class VoterRegistrationDataModel
     {
         [Key]
-        public string Id { get; set; }
-
-        //FixMe TODO
-        //[Required]
-        //[ForeignKey(nameof(ApplicationUser)+"RefId")]
-        //public ApplicationUser Account { get; set; }
+        [ForeignKey(nameof(ApplicationUser))]
+        public string UserId { get; set; }
+        
+        // virtual is required for EF to override these navigation properties
+        public virtual ApplicationUser User { get; set; }
 
         [Required]
         [MaxLength(64)]
