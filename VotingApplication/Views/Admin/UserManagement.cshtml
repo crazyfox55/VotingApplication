@@ -1,50 +1,49 @@
 ﻿@model IEnumerable<ManageUserViewModel>
 
 <h1>Manage Users</h1>
-<table class="table table-hover">
-    <thead class="thead-light">
-        <tr>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.EmailConfirmed)
-            </th>
-            <th scope="col">
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailConfirmed)
-            </td>
-            <td>
-                <div class="btn-group" role="group" aria-label="Actions">
-                    <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("Edit", "Admin", new { item.Username })'">Edit</button>
-                    <button type="button" class="btn btn-danger delete-button">Delete</button>
-                    <button type="button" class="btn btn-danger delete-confirm" disabled="disabled" onclick="location.href='@Url.Action("Delete", "Admin", new { item.Username })'">Confirm Delete</button>
-                </div>
-            </td>
-        </tr>
-        }
-    </tbody>
-    
-
-</table>
-
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.Username)
+                </th>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.EmailConfirmed)
+                </th>
+                <th scope="col">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmailConfirmed)
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Actions">
+                            <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("Edit", "Admin", new { item.Username })'">Edit</button>
+                            <button type="button" class="btn btn-danger delete-button">Delete</button>
+                            <button type="button" class="btn btn-danger delete-confirm" disabled="disabled" onclick="location.href='@Url.Action("Delete", "Admin", new { item.Username })'">Confirm Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         $(".delete-button").click(function () {
