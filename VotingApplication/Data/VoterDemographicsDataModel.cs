@@ -4,11 +4,48 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using VotingApplication.ViewModels;
 
 namespace VotingApplication
 {
     public class VoterDemographicsDataModel
     {
+        public VoterDemographicsDataModel()
+        {
+
+        }
+
+        public VoterDemographicsDataModel(string userId, DemographicsEntryViewModel model)
+        {
+            UserId = userId;
+            AddressLineOne = model.AddressLineOne;
+            AddressLineTwo = model.AddressLineTwo;
+            City = model.City;
+            ZipCode = model.ZipCode;
+            State = model.State;
+            DOB = model.DOB;
+            Party = model.Party;
+            Ethnicity = model.Ethnicity;
+            Sex = model.Sex;
+            IncomeRange = model.IncomeRange;
+            VoterReadiness = model.VoterReadiness;
+        }
+
+        public void Update(DemographicsEntryViewModel model)
+        {
+            AddressLineOne = model.AddressLineOne;
+            AddressLineTwo = model.AddressLineTwo;
+            City = model.City;
+            ZipCode = model.ZipCode;
+            State = model.State;
+            DOB = model.DOB;
+            Party = model.Party;
+            Ethnicity = model.Ethnicity;
+            Sex = model.Sex;
+            IncomeRange = model.IncomeRange;
+            VoterReadiness = model.VoterReadiness;
+        }
+
         [Key]
         [ForeignKey(nameof(ApplicationUser))]
         public string UserId { get; set; }

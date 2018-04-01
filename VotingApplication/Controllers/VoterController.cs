@@ -23,7 +23,10 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Registration()
         {
-            return View("Registration/Index"); //Index view
+            var data = _Context.Registration.Find(_UserManager.GetUserId(User));
+            var model = new VoterRegistrationViewModel(data);
+
+            return View("Registration/Index", model); //Index view
         }
 
         [HttpPost]
@@ -31,16 +34,19 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var registration = new VoterRegistrationDataModel()
+                var registration = _Context.Registration.Find(_UserManager.GetUserId(User));
+                if (registration == null)
                 {
-                    UserId = _UserManager.GetUserId(User),
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Identification = model.Identification,
-                    SSNumber = model.SSNumber
-                };
+                    registration = new VoterRegistrationDataModel(_UserManager.GetUserId(User), model);
 
-                _Context.Registration.Add(registration);
+                    _Context.Registration.Add(registration);
+                }
+                else
+                {
+                    registration.Update(model);
+
+                    _Context.Registration.Update(registration);
+                }
 
                 _Context.SaveChanges();
 
@@ -53,7 +59,10 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Demographics()
         {
-            return View("Registration/DemographicEntry"); //Index view
+            var data = _Context.Demographics.Find(_UserManager.GetUserId(User));
+            var model = new DemographicsEntryViewModel(data);
+
+            return View("Registration/DemographicEntry", model); //Index view
         }
 
         [HttpPost]
@@ -61,23 +70,19 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var demographics = new VoterDemographicsDataModel()
+                var demographics = _Context.Demographics.Find(_UserManager.GetUserId(User));
+                if (demographics == null)
                 {
-                    UserId = _UserManager.GetUserId(User),
-                    AddressLineOne = model.AddressLineOne,
-                    AddressLineTwo = model.AddressLineTwo,
-                    City = model.City,
-                    ZipCode = model.ZipCode,
-                    State = model.State,
-                    DOB = model.DOB,
-                    Party = model.Party,
-                    Ethnicity = model.Ethnicity,
-                    Sex = model.Sex,
-                    IncomeRange = model.IncomeRange,
-                    VoterReadiness = model.VoterReadiness
-                };
+                    demographics = new VoterDemographicsDataModel(_UserManager.GetUserId(User), model);
 
-                _Context.Demographics.Add(demographics);
+                    _Context.Demographics.Add(demographics);
+                }
+                else
+                {
+                    demographics.Update(model);
+
+                    _Context.Demographics.Update(demographics);
+                }
 
                 _Context.SaveChanges();
 

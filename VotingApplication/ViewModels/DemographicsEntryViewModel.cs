@@ -4,6 +4,26 @@ namespace VotingApplication.ViewModels
 {
     public class DemographicsEntryViewModel
     {
+        public DemographicsEntryViewModel()
+        {
+
+        }
+
+        public DemographicsEntryViewModel(VoterDemographicsDataModel data)
+        {
+            AddressLineOne = data.AddressLineOne;
+            AddressLineTwo = data.AddressLineTwo;
+            City = data.City;
+            ZipCode = data.ZipCode;
+            State = data.State;
+            DOB = data.DOB;
+            Party = data.Party;
+            Ethnicity = data.Ethnicity;
+            Sex = data.Sex;
+            IncomeRange = data.IncomeRange;
+            VoterReadiness = data.VoterReadiness;
+        }
+
         [Required]
         [StringLength(maximumLength: 64, ErrorMessage = "Too long")]
         [Display(Name = "Address Line One")]
