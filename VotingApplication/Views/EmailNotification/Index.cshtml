@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Notifications</h2>
+<div>
+    <form action="/action_page.php">
+        <input type="checkbox" name="notification" value="ballot">When changes are made to my ballot<br>
+        <input type="checkbox" name="notification" value="offices">Information about offices on my ballot<br>
+        <input type="checkbox" name="notification" value="candidates">Information from candidates on my ballot<br>
+        <input type="checkbox" name="notification" value="estart">When an election starts<br>
+        <input type="checkbox" name="notification" value="eend">A warning that an election is about to end<br>
+        <input type="checkbox" name="notification" value="rofe">results of elections on my ballot<br>
+        <input type="checkbox" name="notification" value="rofne">results of national elections<br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
