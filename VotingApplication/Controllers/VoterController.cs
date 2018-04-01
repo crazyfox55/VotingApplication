@@ -19,7 +19,12 @@ namespace VotingApplication.Controllers
         {
             return View("Registration/Index"); //Index view
         }
-        
+        [HttpGet]
+        public IActionResult Demographics()
+        {
+            return View("Registration/DemographicEntry"); //Index view
+        }
+
         [HttpPost]
         public IActionResult Registration(VoterRegistrationViewModel model, string returnUrl = null)
         {
