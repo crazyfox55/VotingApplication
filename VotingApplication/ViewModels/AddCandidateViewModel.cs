@@ -1,9 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace VotingApplication.ViewModels
 {
     public class AddCandidateViewModel
     {
+        //not an input this is just to store possible options for OfficeName
+        public IEnumerable<string> AllOffices { get; set; }
+
+        [Required]
+        [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
+        [Display(Name = "Office Title")]
+        public string OfficeName { get; set; }
+
         [Required]
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
         [Display(Name = "First Name")]

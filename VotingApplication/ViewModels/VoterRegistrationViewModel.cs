@@ -11,6 +11,8 @@ namespace VotingApplication.ViewModels
 
         public VoterRegistrationViewModel(VoterRegistrationDataModel data)
         {
+            if (data == null)
+                return;
             FirstName = data.FirstName;
             LastName = data.LastName;
             Identification = data.Identification;

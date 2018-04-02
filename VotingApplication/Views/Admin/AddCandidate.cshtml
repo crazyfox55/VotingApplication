@@ -2,14 +2,22 @@
 @{
     // move this code into the C# class so it is easier to edit
     ViewData["Purpose"] = "Add Candidate";
-    //ViewData["Submit"] = "Register"; TODO: Change
+    ViewData["Submit"] = "Add";
 }
 
-<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+<form asp-action="AddCandidate" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
-
-    <!-- TODO: Dropdown that populates with offices -->
-
+    <!-- Bloodhound would be a better solution here -->
+    <div class="form-group">
+        <label asp-for="OfficeName"></label>
+        <select asp-for="OfficeName" class="form-control">
+            <option disabled selected>Select a office</option>
+            @foreach (string item in Model.AllOffices)
+            {
+                <option>@item</option>
+            }
+        </select>
+    </div>
     <div class="form-group">
         <label asp-for="FirstName"></label>
         <input asp-for="FirstName" class="form-control" placeholder="First Name" />
