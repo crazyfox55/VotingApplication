@@ -1,18 +1,40 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using VotingApplication.ViewModels;
 
 namespace VotingApplication
 {
     public class VoterRegistrationDataModel
     {
-        [Key]
-        public string Id { get; set; }
+        public VoterRegistrationDataModel()
+        {
 
-        //FixMe TODO
-        //[Required]
-        //[ForeignKey(nameof(ApplicationUser)+"RefId")]
-        //public ApplicationUser Account { get; set; }
+        }
+
+        public VoterRegistrationDataModel(string userId, VoterRegistrationViewModel model)
+        {
+            UserId = userId;
+            FirstName = model.FirstName;
+            LastName = model.LastName;
+            Identification = model.Identification;
+            SSNumber = model.SSNumber;
+        }
+
+        public void Update(VoterRegistrationViewModel model)
+        {
+            FirstName = model.FirstName;
+            LastName = model.LastName;
+            Identification = model.Identification;
+            SSNumber = model.SSNumber;
+        }
+
+        [Key]
+        [ForeignKey(nameof(ApplicationUser))]
+        public string UserId { get; set; }
+        
+        // virtual is required for EF to override these navigation properties
+        public virtual ApplicationUser User { get; set; }
 
         [Required]
         [MaxLength(64)]
