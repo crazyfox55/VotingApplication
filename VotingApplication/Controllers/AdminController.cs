@@ -20,6 +20,18 @@ namespace VotingApplication.Controllers
             _Context = context;
         }
         
+        [HttpGet]
+        public IActionResult AddOffice()
+        {
+            return View(); 
+        }
+
+        [HttpGet]
+        public IActionResult AddCandidate()
+        {
+            return View();
+        }
+        
         public IActionResult Dashboard()
         {
             ViewData["UserName"] = User.Identity.Name;
