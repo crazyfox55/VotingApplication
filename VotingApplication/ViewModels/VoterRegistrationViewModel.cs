@@ -4,6 +4,21 @@ namespace VotingApplication.ViewModels
 {
     public class VoterRegistrationViewModel
     {
+        public VoterRegistrationViewModel()
+        {
+
+        }
+
+        public VoterRegistrationViewModel(VoterRegistrationDataModel data)
+        {
+            if (data == null)
+                return;
+            FirstName = data.FirstName;
+            LastName = data.LastName;
+            Identification = data.Identification;
+            SSNumber = data.SSNumber;
+        }
+
         [Required]
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
         [Display(Name = "First Name")]
