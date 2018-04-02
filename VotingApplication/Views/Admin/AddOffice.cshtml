@@ -2,7 +2,7 @@
 @{
     // move this code into the C# class so it is easier to edit
     ViewData["Purpose"] = "Add Office";
-    //ViewData["Submit"] = "Register"; TODO: Change
+    ViewData["Submit"] = "Add";
 }
 
 <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
@@ -10,7 +10,7 @@
 
     <!-- TODO: Dropdown that populates with level (where office added to) -->
     <!-- TODO: Dropdown that populates with available offices at that level -->
-
+    <!-- https://stackoverflow.com/questions/18072677/create-a-conditional-statement-for-select-html-markup-in-jquery -->
 
     <div class="form-group">
         <label asp-for="OfficeName"></label>

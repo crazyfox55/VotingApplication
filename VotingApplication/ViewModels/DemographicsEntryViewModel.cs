@@ -11,6 +11,8 @@ namespace VotingApplication.ViewModels
 
         public DemographicsEntryViewModel(VoterDemographicsDataModel data)
         {
+            if (data == null)
+                return;
             AddressLineOne = data.AddressLineOne;
             AddressLineTwo = data.AddressLineTwo;
             City = data.City;

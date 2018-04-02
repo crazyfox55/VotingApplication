@@ -12,6 +12,9 @@ namespace VotingApplication
         public DbSet<VoterRegistrationDataModel> Registration { get; set; }
         public DbSet<VoterDemographicsDataModel> Demographics { get; set; }
         public DbSet<ZipCodeDataModel> ZipCode { get; set; }
+        public DbSet<OfficeDataModel> Office { get; set; }
+        public DbSet<CandidateDataModel> Candidate { get; set; }
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
