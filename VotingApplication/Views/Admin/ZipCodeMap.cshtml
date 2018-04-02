@@ -183,7 +183,7 @@
         hiddenStateFeature.setProperty('state', 'hidden');
         state = hiddenStateFeature.getProperty('NAME')
         if (zipCodeFeatures[state] == null) {
-            $.getJSON('http://localhost:5000/User/RequestZipCodes?state=' + state, function (data) {
+            $.getJSON('http://localhost:5000/Admin/RequestZipCodes?state=' + state, function (data) {
                 zipCodeFeatures[state] = new google.maps.Data();
                 zipCodeFeatures[state].addGeoJson(data);
                 zipCodeFeatures[state].setMap(map);
