@@ -56,7 +56,8 @@ namespace VotingApplication.Controllers
         {
             var model = new AddCandidateViewModel()
             {
-                AllOffices = _Context.Office.Select(o => o.OfficeName)
+                FilteredBallots = _Context.Ballot.Take(5),
+                FilteredUsers = _Context.Users.Take(5)
             };
 
             return View(model);
@@ -75,9 +76,23 @@ namespace VotingApplication.Controllers
 
                 return RedirectToAction(nameof(Dashboard));
             }
+            else
+            {
+                model.FilteredBallots = _Context.Ballot
+                    .Where(b => model.ElectionDay == null || b.ElectionDay == model.ElectionDay)
+                    .Where(b => model.BallotName == null || b.Name == model.BallotName)
+                    .Take(5);
+                model.FilteredUsers = _Context.Users
+                    .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration == null || u.Registration.FirstName == model.FirstName)
+                    .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration == null || u.Registration.LastName == model.LastName)
+                    .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics == null || u.Demographics.Party == model.Party)
+                    .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
+                    .Take(5);
+            }
 
             return View(model);
         }
+
         
         // TODO: use the page and usersPerPage fields to make a interactive table.
         [HttpGet]
@@ -115,6 +130,12 @@ namespace VotingApplication.Controllers
         public IActionResult Delete(string Username)
         {
             return RedirectToAction(nameof(UserManagement));
+        }
+
+
+        public IActionResult AddDistrict()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -187,16 +208,20 @@ namespace VotingApplication.Controllers
         public IActionResult RequestZipCodes(string state = null)
         {
             ZipCodeFeatureCollection collection = new ZipCodeFeatureCollection();
-            foreach (ZipCodeDataModel zipCode in _Context.ZipCode.Where(zip => state != null && zip.State == StateAbbreviation(state)))
+            if (state != null)
             {
-                ZipCodeFeature feature = new ZipCodeFeature();
-                feature.properties = new Properties(zipCode);
-                feature.geometry = new Geometry(zipCode);
-                collection.features.Add(feature);
+                foreach (ZipCodeDataModel zipCode in _Context.ZipCode.Where(zip => zip.State == StateAbbreviation(state)))
+                {
+                    ZipCodeFeature feature = new ZipCodeFeature
+                    {
+                        properties = new Properties(zipCode),
+                        geometry = new Geometry(zipCode)
+                    };
+                    collection.features.Add(feature);
+                }
             }
-            ZipCodeFeatureCollectionViewModel jsonData = new ZipCodeFeatureCollectionViewModel();
-            jsonData.ZipCodes = collection;
             return Content(JsonConvert.SerializeObject(collection), "application/json");
         }
+        
     }
 }

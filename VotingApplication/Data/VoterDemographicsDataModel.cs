@@ -18,17 +18,7 @@ namespace VotingApplication
         public VoterDemographicsDataModel(string userId, DemographicsEntryViewModel model)
         {
             UserId = userId;
-            AddressLineOne = model.AddressLineOne;
-            AddressLineTwo = model.AddressLineTwo;
-            City = model.City;
-            ZipCode = model.ZipCode;
-            State = model.State;
-            DOB = model.DOB;
-            Party = model.Party;
-            Ethnicity = model.Ethnicity;
-            Sex = model.Sex;
-            IncomeRange = model.IncomeRange;
-            VoterReadiness = model.VoterReadiness;
+            Update(model);
         }
 
         public void Update(DemographicsEntryViewModel model)
@@ -36,7 +26,7 @@ namespace VotingApplication
             AddressLineOne = model.AddressLineOne;
             AddressLineTwo = model.AddressLineTwo;
             City = model.City;
-            ZipCode = model.ZipCode;
+            ZipCode = int.Parse(model.ZipCode);
             State = model.State;
             DOB = model.DOB;
             Party = model.Party;
@@ -66,16 +56,20 @@ namespace VotingApplication
         public string City { get; set; }
 
         [Required]
-        [MaxLength(5)]
-        public string ZipCode { get; set; }
+        [ForeignKey(nameof(ZipCodeDataModel))]
+        public int ZipCode { get; set; }
+
+        public virtual ZipCodeDataModel Zip { get; set; }
 
         [Required]
         [MaxLength(2)]
         public string State { get; set; }
 
+        /************* BELOW IS DEMOGRAPHICS --- ABOVE IS USER SPECIFIC **************/
+        
         [Required]
-        [MaxLength(10)]
-        public string DOB { get; set; }
+        [Column(TypeName = "Date")]
+        public DateTime DOB { get; set; }
 
         [Required]
         [MaxLength(32)]

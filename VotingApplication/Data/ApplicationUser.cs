@@ -26,7 +26,8 @@ namespace VotingApplication
         // virtual is required for EF to override these navigation properties
         public virtual VoterRegistrationDataModel Registration { get; set; }
 
-        // virtual is required for EF to override these navigation properties
         public virtual VoterDemographicsDataModel Demographics { get; set; }
+
+        public virtual CandidateDataModel Candidate { get; set; }
     }
 }
