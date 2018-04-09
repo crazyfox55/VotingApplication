@@ -21,6 +21,7 @@ namespace VotingApplication
                 return;
         }
 
+        // should use username instead, same thing with the registration and 
         [Key]
         [ForeignKey(nameof(ApplicationUser))]
         public string UserId { get; set; }
