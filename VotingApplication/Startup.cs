@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -98,6 +100,8 @@ namespace VotingApplication
                     const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
                     char[] userName, email;
                     ApplicationUser user;
+                    UserManager<ApplicationUser> userManager =
+                        serviceProvider.GetService<UserManager<ApplicationUser>>();
 
                     user = new ApplicationUser
                     {
@@ -106,9 +110,11 @@ namespace VotingApplication
                         EmailConfirmed = true
                     };
 
-                    serviceProvider.GetService<UserManager<ApplicationUser>>().CreateAsync(user, "hello").Wait();
+                    //create an easy to login user
+                    userManager.CreateAsync(user, "hello").Wait();
 
-                    for (int i = 0; i < 15; i++)
+                    //create 100 users for presenting
+                    for (int i = 0; i < 100; i++)
                     {
                         userName = Enumerable.Repeat(chars, 10)
                             .Select(s => s[random.Next(s.Length)]).ToArray();
@@ -123,7 +129,7 @@ namespace VotingApplication
                             EmailConfirmed = true
                         };
 
-                        serviceProvider.GetService<UserManager<ApplicationUser>>().CreateAsync(user, "hello").Wait();
+                        userManager.CreateAsync(user, "hello").Wait();
                     }
                 }
             }
