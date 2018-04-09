@@ -5,6 +5,12 @@
     ViewData["Submit"] = "Add";
 }
 
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
 <form method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
 

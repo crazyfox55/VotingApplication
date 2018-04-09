@@ -8,11 +8,11 @@ namespace VotingApplication.ViewModels
 {
     public class AddDistrictViewModel
     {
-
-
         [Required]
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
-        [Display(Name = "Office Title")]
+        [Display(Name = "District Name")]
         public string DistrictName { get; set; }
+
+        public ICollection<int> ZipCode;
     }
 }

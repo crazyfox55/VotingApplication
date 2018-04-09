@@ -1,33 +1,39 @@
 ﻿@model AddCandidateViewModel
 @{
     // move this code into the C# class so it is easier to edit
-    ViewData["Purpose"] = "Filter Candidate";
+    ViewData["Purpose1"] = "Filter Candidate";
+    ViewData["Purpose2"] = "Filter Ballot";
     ViewData["Submit"] = "Filter";
 }
 
 <h1>Add Candidate</h1>
 
-<form asp-action="AddCandidate" method="post">
-    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+<form asp-action="AddCandidate" method="post" id="formFilter">
+    <input asp-for="BallotId" id="hiddenBallot" />
+    <input asp-for="UserId" id="hiddenUser" />
+</form>
+@if (string.IsNullOrWhiteSpace(Model.UserId))
+{
+    <h2 class="form-signin-heading">@ViewData["Purpose1"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>
-        <input asp-for="Username" class="form-control" placeholder="Choose Username" />
+        <input form="formFilter" asp-for="Username" class="form-control" placeholder="Username" />
         <span asp-validation-for="Username" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="FirstName"></label>
-        <input asp-for="FirstName" class="form-control" placeholder="Email" />
+        <input form="formFilter" asp-for="FirstName" class="form-control" placeholder="First Name" />
         <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="LastName"></label>
-        <input asp-for="LastName" class="form-control" placeholder="Email" />
+        <input form="formFilter" asp-for="LastName" class="form-control" placeholder="Last Name" />
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Party"></label>
-        <select asp-for="Party" class="form-control">
-            <option disabled selected>Select a party</option>
+        <select form="formFilter" asp-for="Party" class="form-control">
+            <option selected value="">Select a party</option>
             <option>Democrat</option>
             <option>Republican</option>
             <option>Independent</option>
@@ -35,19 +41,12 @@
         </select>
         <span asp-validation-for="Party" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="BallotName"></label>
-        <input asp-for="BallotName" class="form-control" placeholder="Choose Username" />
-        <span asp-validation-for="BallotName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ElectionDay"></label>
-        <input asp-for="ElectionDay" class="form-control" placeholder="MM/DD/YYYY" />
-        <span asp-validation-for="ElectionDay" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
-</form>
-
+    <input form="formFilter" type="submit" class="btn btn-primary" value="@ViewData["Submit"]" />
+}
+else
+{
+    <h2 class="form-signin-heading">User selected</h2>
+}
 <div class="table-responsive">
     @if (Model.FilteredUsers.Count() > 0)
     {
@@ -88,7 +87,14 @@
                             @Html.DisplayFor(modelItem => item.Demographics.Party)
                         </td>
                         <td>
-                            <button type="button" class="btn btn-dark">Select</button>
+                            @if (string.IsNullOrWhiteSpace(Model.UserId))
+                            {
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenUser').val('@item.Id');" value="Select" />
+                            }
+                            else
+                            {
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenUser').val('');" value="Deselect" />
+                            }
                         </td>
                     </tr>
                 }
@@ -97,12 +103,30 @@
     }
     else
     {
-        <div>
+        <h4 class="text-danger">
             There are no users that match those filters.
-        </div>
+        </h4>
     }
 </div>
-
+@if (string.IsNullOrWhiteSpace(Model.BallotId))
+{
+    <h2 class="form-signin-heading">@ViewData["Purpose2"]</h2>
+    <div class="form-group">
+        <label asp-for="BallotName"></label>
+        <input form="formFilter" asp-for="BallotName" class="form-control" placeholder="Ballot Name" />
+        <span asp-validation-for="BallotName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ElectionDay"></label>
+        <input form="formFilter" asp-for="ElectionDay" class="form-control" placeholder="MM/DD/YYYY" />
+        <span asp-validation-for="ElectionDay" class="text-danger"></span>
+    </div>
+    <input form="formFilter" type="submit" class="btn btn-primary" value="@ViewData["Submit"]" />
+}
+else
+{
+    <h2 class="form-signin-heading">Ballot selected</h2>
+}
 <div class="table-responsive">
     @if (Model.FilteredBallots.Count() > 0)
     {
@@ -114,6 +138,9 @@
                     </th>
                     <th scope="col">
                         @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().ElectionDay)
+                    </th>
+                    <th scope="col">
+                        Location
                     </th>
                     <th scope="col">
                         Actions
@@ -128,10 +155,31 @@
                             @Html.DisplayFor(modelItem => item.BallotName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.ElectionDay)
+                            @Html.DisplayFor(modelItem => item.ElectionDay.Date)
                         </td>
                         <td>
-                            <button type="button" class="btn btn-dark">Select</button>
+                            @if (item.DistrictName != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.DistrictName)
+                            }
+                            else if (item.RegionName != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.RegionName)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.ZipCode)
+                            }
+                        </td>
+                        <td>
+                            @if (string.IsNullOrWhiteSpace(Model.BallotId))
+                            {
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenBallot').val('@item.BallotName');" value="Select" />
+                            }
+                            else
+                            {
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenBallot').val('');" value="Deselect" />
+                            }
                         </td>
                     </tr>
                 }
@@ -140,9 +188,9 @@
     }
     else
     {
-        <div>
+        <h4 class="text-danger">
             There are no ballots that match those filters.
-        </div>
+        </h4>
     }
 </div>
 

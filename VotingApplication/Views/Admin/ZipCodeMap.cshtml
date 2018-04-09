@@ -8,7 +8,6 @@
         width: 100%;
         max-width: 100%;
         margin: 0;
-        left: 250px;
         padding: 0;
         overflow: hidden;
     }
@@ -17,7 +16,7 @@
     */
     #info-box {
         background-color: white;
-        border: 1px solid black;
+        border: 2px solid black;
         bottom: 30px;
         height: 45px;
         padding: 10px;
@@ -25,21 +24,29 @@
         left: 30px;
     }
 
-    #control-box{
-        position: fixed;
-        left: 250px;
+    #control-box {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
         width: 250px;
-        height: 100%;
-        margin-left: -250px;
-        overflow-y: auto;
-        background: #202020;
+        height: 200px;
     }
 </style>
-<div id="control-box">
-    
-</div>
 <div id="map"></div>
 <div id="info-box">?</div>
+<!--good color #202020 -->
+<div id="control-box">
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+        <form style="bottom: 0px;">
+            <div class="form-group">
+                <input type="text" placeholder="District Name" id="districtName" required />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary float-right">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
     var mapStyle = [{
         'stylers': [{ 'visibility': 'off' }]
@@ -106,34 +113,12 @@
             stateFeatures.addListener('mouseout', mouseOutOfState);
             stateFeatures.addListener('click', loadStateZipCode)
             stateFeatures.setMap(map);
-            stateFeatures.forEach(function (feature) {
-                //Define position of label
-                var bounds = new google.maps.LatLngBounds();
-                feature.getGeometry().forEachLatLng(function (latlang) {
-                    bounds.extend(latlang);
-                });
-
-                var myLatlng = bounds.getCenter();
-
-                /*
-                 * Create some label for each state
-                var stateLabel = new MapLabel({
-                    label: feature.getProperty("NAME"),
-                    position: myLatlng,
-                    map: map,
-                    icon: null,
-                    fontSize: 26,
-                    align: 'Left'
-                });
-                stateLabel.set('position', myLatlng);
-                */
-            });
         });
     }
 
     var selecting = false,
         deselecting = false,
-        selectedZipcodes;
+        selectedZipcodes = [];
 
     window.onkeydown = function (e) {
         if (selecting || deselecting)
@@ -249,13 +234,40 @@
     }
 
     function addToDistrict(e) {
-        if (selecting)
+        if (selecting) {
             e.feature.setProperty('selected', 'true');
-        if (deselecting)
+            var zipCode = e.feature.getProperty('ZipCode')
+            var index = selectedZipcodes.indexOf(zipCode)
+            if (index == -1) {
+                selectedZipcodes.push(zipCode);
+            }
+        }
+        if (deselecting) {
             e.feature.setProperty('selected', 'false');
-        if (e.keyIdentifier == 'Shift' || e.shiftKey)
-            alert("what");
+            var zipCode = e.feature.getProperty('ZipCode')
+            var index = selectedZipcodes.indexOf(zipCode)
+            if (index != -1) {
+                selectedZipcodes.splice(index, 1);
+            }
+        }
     }
+
+    $("form").submit(function () {
+        var postData = {
+            districtName: $("#districtName").val(),
+            values: selectedZipcodes
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Admin/AddDistrict",
+            data: postData,
+            success: function (data) {
+                alert(data.Result);
+            },
+            dataType: "json",
+            traditional: true
+        });
+    });
 
     function styleZipFeature(feature) {
         var outlineWeight = 0.5, zIndex = 1, fillColor = '#000';
@@ -280,16 +292,27 @@
     }
 
     function styleZipFeatureHidden(feature) {
+        var fillColor = '#000',
+            visable = false,
+            clickable = false;
+
+        if (feature.getProperty('selected') === 'true') {
+            fillColor = '#006400';
+            visable = true;
+            clickable = true;
+        }
+
         return {
             strokeWeight: 0.5,
             strokeColor: '#fff',
-            zIndex: 1,
+            zIndex: 0,
             fillOpacity: 0.75,
-            visible: false,
+            fillColor: fillColor,
+            visible: visable,
             clickable: false
         };
     }
 </script>
-    <script async defer
+<script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPnQKa7C4sDyTLalXG4vzy7ndtVFF3LOQ&libraries=drawing&callback=initMap">
 </script>
