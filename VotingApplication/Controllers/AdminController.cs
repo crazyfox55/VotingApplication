@@ -31,6 +31,18 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
+        public IActionResult UserSearch()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult VerifyVoter()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult AddOffice()
         {
             return View();
