@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -77,7 +78,7 @@ namespace VotingApplication
             // See the following link for more details https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection 
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ISmsService, SmsService>();
-
+            
             services.AddMvc();
         }
 
@@ -85,6 +86,47 @@ namespace VotingApplication
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             IoCContainer.Provider = serviceProvider;
+
+            using (var context = serviceProvider.GetService<ApplicationDbContext>())
+            {
+                //This only runs when the server starts
+                context.Database.EnsureCreated();
+                
+                if (context.Users.Any() == false)
+                {
+                    Random random = new Random();
+                    const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    char[] userName, email;
+                    ApplicationUser user;
+
+                    user = new ApplicationUser
+                    {
+                        UserName = "blah",
+                        Email = "complete@random",
+                        EmailConfirmed = true
+                    };
+
+                    serviceProvider.GetService<UserManager<ApplicationUser>>().CreateAsync(user, "hello").Wait();
+
+                    for (int i = 0; i < 15; i++)
+                    {
+                        userName = Enumerable.Repeat(chars, 10)
+                            .Select(s => s[random.Next(s.Length)]).ToArray();
+                        email = Enumerable.Repeat(chars, 20)
+                            .Select(s => s[random.Next(s.Length)]).ToArray();
+                        email[10] = '@';
+
+                        user = new ApplicationUser
+                        {
+                            UserName = new string(userName),
+                            Email = new string(email),
+                            EmailConfirmed = true
+                        };
+
+                        serviceProvider.GetService<UserManager<ApplicationUser>>().CreateAsync(user, "hello").Wait();
+                    }
+                }
+            }
 
             // setup identity
             app.UseAuthentication();

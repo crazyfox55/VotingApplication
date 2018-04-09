@@ -32,6 +32,7 @@ namespace VotingApplication
             base.OnModelCreating(modelBuilder);
 
             // Fluent API
+            // Sets up the many to many relationship of Zipcodes and districts
             modelBuilder.Entity<ZipCodeFillsDistrict>()
                 .HasKey(zd => new { zd.ZipCode, zd.DistrictId });
 
@@ -45,6 +46,7 @@ namespace VotingApplication
                 .WithMany(d => d.ZipCode)
                 .HasForeignKey(zd => zd.DistrictId);
 
+            // Sets up the many to many relationship of districts and regions
             modelBuilder.Entity<DistrictFillsRegion>()
                 .HasKey(dr => new { dr.DistrictId, dr.RegionId });
 
