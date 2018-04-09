@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -197,9 +199,13 @@ namespace VotingApplication.Controllers
         [HttpPost]
         public IActionResult AddCandidate(AddCandidateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(model.BallotId) == false && string.IsNullOrWhiteSpace(model.UserId) == false)
             {
-                var data = new CandidateDataModel(model);
+                var data = new CandidateDataModel()
+                {
+                    UserId = model.UserId,
+                    BallotName = model.BallotId
+                };
 
                 _Context.Candidate.Add(data);
 
@@ -210,15 +216,19 @@ namespace VotingApplication.Controllers
             else
             {
                 model.FilteredBallots = _Context.Ballot
-                    .Where(b => model.ElectionDay == null || b.ElectionDay == model.ElectionDay)
+                    .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
+                    .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
                     .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
                     .Take(5);
                 model.FilteredUsers = _Context.Users
-                    .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration == null || u.Registration.FirstName == model.FirstName)
-                    .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration == null || u.Registration.LastName == model.LastName)
-                    .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics == null || u.Demographics.Party == model.Party)
+                    .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
+                    .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
+                    .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration.LastName == model.LastName)
+                    .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics.Party == model.Party)
                     .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
-                    .Take(5);
+                    .Take(5)
+                    .Include(u => u.Registration)
+                    .Include(u => u.Demographics);
             }
 
             return View(model);
@@ -265,9 +275,29 @@ namespace VotingApplication.Controllers
         }
 
 
-        public IActionResult AddDistrict()
+        public JsonResult AddDistrict(string districtName, HashSet<string> values)
         {
-            return View();
+            var district = new DistrictDataModel()
+            {
+                DistrictName = districtName,
+                Zip = values.Select(z => new ZipFillsDistrict() { ZipCode = int.Parse(z), DistrictName = districtName }).ToList()
+            };
+
+            /*district.Zip = _Context.Zip
+                .Where(z => values.Contains(z.ZipCode.ToString()))
+                .Select(z => new ZipFillsDistrict() { Zip = z, District = district })
+                .ToList();
+            foreach (string zipCode in values)
+            {
+                district.Zip.Add(new ZipFillsDistrict() { ZipCode = int.Parse(zipCode), DistrictName = districtName });
+            }
+            */
+
+            _Context.District.Add(district);
+
+            _Context.SaveChanges();
+
+            return Json(new { Result = string.Format("First item in list: '{0}'", districtName) });
         }
 
         [HttpGet]

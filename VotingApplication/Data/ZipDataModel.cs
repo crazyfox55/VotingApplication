@@ -64,6 +64,7 @@ namespace VotingApplication
 
     public class Properties
     {
+        public string ZipCode;
         public string PrimaryCity;
         public string State;
         public string County;
@@ -74,6 +75,7 @@ namespace VotingApplication
 
         public Properties(ZipDataModel data)
         {
+            ZipCode = data.ZipCode.ToString();
             PrimaryCity = data.PrimaryCity;
             State = data.State;
             County = data.County;
