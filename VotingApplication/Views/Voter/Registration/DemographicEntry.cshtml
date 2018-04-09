@@ -5,6 +5,12 @@
     ViewData["Submit"] = "Submit";
 }
 
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
 <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">

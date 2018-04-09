@@ -56,10 +56,10 @@ namespace VotingApplication
         public string City { get; set; }
 
         [Required]
-        [ForeignKey(nameof(ZipCodeDataModel))]
-        public int ZipCode { get; set; }
+        [ForeignKey(nameof(ZipDataModel))]
+        public int? ZipCode { get; set; }
 
-        public virtual ZipCodeDataModel Zip { get; set; }
+        public virtual ZipDataModel Zip { get; set; }
 
         [Required]
         [MaxLength(2)]

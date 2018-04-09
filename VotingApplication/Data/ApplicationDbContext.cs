@@ -13,7 +13,7 @@ namespace VotingApplication
         public DbSet<VoterRegistrationDataModel> Registration { get; set; }
         public DbSet<VoterDemographicsDataModel> Demographics { get; set; }
 
-        public DbSet<ZipCodeDataModel> ZipCode { get; set; }
+        public DbSet<ZipDataModel> Zip { get; set; }
         public DbSet<DistrictDataModel> District { get; set; }
         public DbSet<RegionDataModel> Region { get; set; }
         
@@ -33,32 +33,32 @@ namespace VotingApplication
 
             // Fluent API
             // Sets up the many to many relationship of Zipcodes and districts
-            modelBuilder.Entity<ZipCodeFillsDistrict>()
-                .HasKey(zd => new { zd.ZipCode, zd.DistrictId });
+            modelBuilder.Entity<ZipFillsDistrict>()
+                .HasKey(zd => new { zd.ZipCode, zd.DistrictName });
 
-            modelBuilder.Entity<ZipCodeFillsDistrict>()
+            modelBuilder.Entity<ZipFillsDistrict>()
                 .HasOne(zd => zd.Zip)
                 .WithMany(z => z.District)
                 .HasForeignKey(zd => zd.ZipCode);
 
-            modelBuilder.Entity<ZipCodeFillsDistrict>()
+            modelBuilder.Entity<ZipFillsDistrict>()
                 .HasOne(zd => zd.District)
-                .WithMany(d => d.ZipCode)
-                .HasForeignKey(zd => zd.DistrictId);
+                .WithMany(d => d.Zip)
+                .HasForeignKey(zd => zd.DistrictName);
 
             // Sets up the many to many relationship of districts and regions
             modelBuilder.Entity<DistrictFillsRegion>()
-                .HasKey(dr => new { dr.DistrictId, dr.RegionId });
+                .HasKey(dr => new { dr.DistrictName, dr.RegionName });
 
             modelBuilder.Entity<DistrictFillsRegion>()
                 .HasOne(zd => zd.District)
                 .WithMany(z => z.Region)
-                .HasForeignKey(zd => zd.DistrictId);
+                .HasForeignKey(zd => zd.DistrictName);
 
             modelBuilder.Entity<DistrictFillsRegion>()
                 .HasOne(zd => zd.Region)
                 .WithMany(d => d.District)
-                .HasForeignKey(zd => zd.RegionId);
+                .HasForeignKey(zd => zd.RegionName);
         }
     }
 }

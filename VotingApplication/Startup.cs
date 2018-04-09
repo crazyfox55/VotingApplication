@@ -72,7 +72,7 @@ namespace VotingApplication
                 options.AccessDeniedPath = "/User/AccessDenied";
 
                 // cookie expires in 5 minutes
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(100);
 
             });
 
@@ -93,7 +93,8 @@ namespace VotingApplication
             {
                 //This only runs when the server starts
                 context.Database.EnsureCreated();
-                
+
+                #region Add Users
                 if (context.Users.Any() == false)
                 {
                     Random random = new Random();
@@ -132,7 +133,179 @@ namespace VotingApplication
                         userManager.CreateAsync(user, "hello").Wait();
                     }
                 }
+                #endregion
+
+                /**** MOVE ADD OFFICES TO SQL FILE ****/
+                #region Add Offices
+                if (context.Office.Any() == false)
+                {
+                    // from: http://www.politicalcampaigningtips.com/the-big-list-of-local-elected-offices-for-political-candidates/
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "State Senator",
+                        OfficeDescription = "The State Senate consists of representatives who are elected in districts that usually span several cities and counties.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "State Representative",
+                        OfficeDescription = "The State House of Representatives, or State Assembly as it is called in some states, generally consists of members who are elected in from districts for terms of two years.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "Board of County Commissioners",
+                        OfficeDescription = "The position of County Commissioner is usually a full-time position with a term of four years.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Executive",
+                        OfficeDescription = "Some counties have an elected County Executive in addition to, or instead of, County Commissioners.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Auditor",
+                        OfficeDescription = "This position is appointed in some counties, but is a elected office in most with a four-year term.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Engineer",
+                        OfficeDescription = "Many states only allow certified engineers to run for this position, which handles building, construction and road projects in the county.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Treasurer",
+                        OfficeDescription = "The County Treasurer usually caries an elected, four-year term, but isn’t as much of a high-profile county race as Commissioner or Prosecutor.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Prosecuting Attorney",
+                        OfficeDescription = "The County Prosecutor is among the most powerful and influential elected positions you can run for on the county level, but not everyone can qualify for the seat: you need to be an attorney to run. It is usually a full-time, four-year term.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Coroner",
+                        OfficeDescription = "Surprisingly, this is actually an elected position in many counties, and to run for it you usually need to have your medical license or degree.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "County Recorder",
+                        OfficeDescription = "This is another four-year elected county office which, like County Treasurer, is a bit more low-profile. In some counties, this position is appointed, not elected.",
+                        OfficeLevel = "Low-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "Common Pleas Court Judge",
+                        OfficeDescription = "This is another elected office that has requirements to run: in order to be a candidate, you need to have your law degree or license, and most candidates are practicing attorneys.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "Clerk of Court",
+                        OfficeDescription = "You do not generally have to have a law degree to run for Clerk of Courts, but most candidates who run a political campaign for the office are attorneys. Clerk of Courts usually carries a four-year, full-time term.",
+                        OfficeLevel = "Low-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "Mayor",
+                        OfficeDescription = "This is usually a full-time, four-year elected position, although the Mayor can also be part-time in smaller cities, villages, towns and townships. Mayor is generally considered the most powerful local elected position in a city.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "City Manager",
+                        OfficeDescription = "In some cities, a City Manager is elected–or appointed by City Council–instead of a Mayor. Generally, City Managers have experience in urban planning and related fields. If the position is appointed, then City Council usually launches a recruitment campaign and interviews candidates from around the state or country for the job.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "City Treasurer",
+                        OfficeDescription = "The City Treasurer keeps track of municipal bank accounts, income, taxes and other money matters. It is usually a four-year term, but is not considered full-time.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "City Auditor",
+                        OfficeDescription = "The Auditor for a given city is also usually a four-year, part-time elected position. In most cases, successful City Auditor candidates also have similar careers and educational backgrounds.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "City Law Director",
+                        OfficeDescription = "This is another local elected office that usually carries the requirement of having a law degree or license. The four-year, part-time position is in many cases held by a practicing attorney.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "President of City Council",
+                        OfficeDescription = "Council President is usually in charge of setting agendas, committee assignments and chairing city council meetings. Many City Council Presidents hold office for two-year, part-time terms and are elected by the entire city.",
+                        OfficeLevel = "High-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "City Ward Councilman",
+                        OfficeDescription = "City Council is in many cases made up of councilpersons who are elected in individual city wards, as well as at-large council members who are elected by the entire city.",
+                        OfficeLevel = "Low-Profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "At-Large Councilman",
+                        OfficeDescription = "A Councilman/Councilwoman At-Large has the same duties as a ward councilperson, but they are elected by voters across the entire city instead of voters only in a specific ward.",
+                        OfficeLevel = "Low-Profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "Town Council",
+                        OfficeDescription = "The legislative body of smaller villages, towns and townships are usually made up of trustees, which perform duties similar to that of city councilpersons and hold two-year, part-time terms.",
+                        OfficeLevel = "Low-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "School Board Member",
+                        OfficeDescription = "Candidates for School Board run for elected office in the school districts where they reside, and are in charge of voting on school issues. It is usually a two-year, part-time, paid position.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.Office.Add(new OfficeDataModel
+                    {
+                        OfficeName = "Precinct Committeeman",
+                        OfficeDescription = "Each political party in a given county–Democrats and Republicans–is usually made up of elected precinct committee members, and they vote on county party issues like leadership and appointments to vacant offices. Precinct committee members are usually elected during presidential primary elections, and you can only run for precinct committeeman or committeewoman in your own precinct and for the party in which you are registered.",
+                        OfficeLevel = "Medium-profile"
+                    });
+
+                    context.SaveChanges();
+                }
+                #endregion
             }
+
 
             // setup identity
             app.UseAuthentication();

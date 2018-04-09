@@ -10,11 +10,8 @@ namespace VotingApplication
     public class BallotDataModel
     {
         [Key]
-        public int Id { get; set; }
-
-        [Required]
         [MaxLength(64)]
-        public string Name { get; set; }
+        public string BallotName { get; set; }
 
         [Required]
         [Column(TypeName = "Date")]
@@ -36,10 +33,10 @@ namespace VotingApplication
 
         public virtual RegionDataModel Region { get; set; }
 
-        [ForeignKey(nameof(ZipCodeDataModel))]
-        public int ZipCode { get; set; }
+        [ForeignKey(nameof(ZipDataModel))]
+        public int? ZipCode { get; set; }
 
-        public virtual ZipCodeDataModel Zip { get; set; }
+        public virtual ZipDataModel Zip { get; set; }
 
         [ForeignKey(nameof(DistrictDataModel))]
         public string DistrictName { get; set; }

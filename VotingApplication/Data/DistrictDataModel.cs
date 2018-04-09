@@ -9,13 +9,10 @@ namespace VotingApplication
     public class DistrictDataModel
     {
         [Key]
-        public int Id { get; set; }
-
-        [Required]
         [MaxLength(64)]
-        public string Name { get; set; }
+        public string DistrictName { get; set; }
         
-        public ICollection<ZipCodeFillsDistrict> ZipCode { get; set; }
+        public ICollection<ZipFillsDistrict> Zip { get; set; }
 
         public ICollection<DistrictFillsRegion> Region { get; set; }
         

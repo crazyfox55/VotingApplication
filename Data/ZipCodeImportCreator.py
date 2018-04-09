@@ -130,9 +130,9 @@ print("Voronoi Done")
 regions, vertices = voronoi_finite_polygons_2d(vor)
 
 print("Finite Voronoi Done")
-zipCodeColumnNames = ('Zip','PrimaryCity','State','County','Timezone','Country','Latitude','Longitude','Geometry')
+zipCodeColumnNames = ('ZipCode','PrimaryCity','State','County','Timezone','Country','Latitude','Longitude','Geometry')
 file = open("ZipCodeImport.sql", "w")
-combined = "CREATE TABLE ZipCode(\n"
+combined = "CREATE TABLE Zip(\n"
 combined += str.format("\t{} INTEGER NOT NULL PRIMARY KEY\n", zipCodeColumnNames[0])
 combined += str.format("\t,{} VARCHAR(64) NOT NULL\n", zipCodeColumnNames[1])
 combined += str.format("\t,{} VARCHAR(2) NOT NULL\n", zipCodeColumnNames[2])
@@ -143,7 +143,7 @@ combined += str.format("\t,{} NUMERIC(8,3) NOT NULL\n", zipCodeColumnNames[6])
 combined += str.format("\t,{} NUMERIC(8,3) NOT NULL\n", zipCodeColumnNames[7])
 combined += str.format("\t,{} VARCHAR(512) NOT NULL\n", zipCodeColumnNames[8])
 combined += ");\n"
-combined += "SET IDENTITY_INSERT ZipCode ON\n"
+combined += "SET IDENTITY_INSERT Zip ON\n"
 zipIndex = 0
 maxLen = 0
 for region in regions:
@@ -155,11 +155,11 @@ for region in regions:
     if (len(zipGeometry) > maxLen):
         maxLen = len(zipGeometry)
     zipInfo[zipIndex] = zipInfo[zipIndex]+(zipGeometry,)
-    zipInfoInsert = str.format("INSERT INTO ZipCode{} VALUES {};\n", str(zipCodeColumnNames).replace("'",""), zipInfo[zipIndex])
+    zipInfoInsert = str.format("INSERT INTO Zip{} VALUES {};\n", str(zipCodeColumnNames).replace("'",""), zipInfo[zipIndex])
     zipInfoInsert = zipInfoInsert.replace("^", "''")
     combined += zipInfoInsert
     zipIndex += 1
-combined += "SET IDENTITY_INSERT ZipCode OFF\n"
+combined += "SET IDENTITY_INSERT Zip OFF\n"
 print("Max Geometry size took",maxLen,"characters to store.")
 file.write(combined)
 file.close()

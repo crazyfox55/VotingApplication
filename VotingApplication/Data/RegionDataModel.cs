@@ -9,11 +9,8 @@ namespace VotingApplication
     public class RegionDataModel
     {
         [Key]
-        public int Id { get; set; }
-
-        [Required]
         [MaxLength(64)]
-        public string Name { get; set; }
+        public string RegionName { get; set; }
 
         public ICollection<DistrictFillsRegion> District { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace VotingApplication.ViewModels
@@ -45,6 +46,7 @@ namespace VotingApplication.ViewModels
         [StringLength(maximumLength: 5, ErrorMessage = "Maximum length of 5")]
         [Display(Name = "Zip Code")]
         [RegularExpression(@"^\d{5}$",ErrorMessage = "Must be 5 digits")]
+        [Remote(action: "VerifyZip", controller: "Admin")]
         public string ZipCode { get; set; }
 
         [Required]
