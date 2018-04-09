@@ -1,35 +1,29 @@
 ﻿@model AddCandidateViewModel
 @{
     // move this code into the C# class so it is easier to edit
-    ViewData["Purpose"] = "Add Candidate";
-    ViewData["Submit"] = "Add";
+    ViewData["Purpose"] = "Filter Candidate";
+    ViewData["Submit"] = "Filter";
 }
+
+<h1>Add Candidate</h1>
 
 <form asp-action="AddCandidate" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
-    <!-- Bloodhound would be a better solution here -->
     <div class="form-group">
-        <label asp-for="OfficeName"></label>
-        <select asp-for="OfficeName" class="form-control">
-            <option disabled selected>Select a office</option>
-            @foreach (string item in Model.AllOffices)
-            {
-                <option>@item</option>
-            }
-        </select>
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" placeholder="Choose Username" />
+        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="FirstName"></label>
-        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+        <input asp-for="FirstName" class="form-control" placeholder="Email" />
         <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
-
     <div class="form-group">
         <label asp-for="LastName"></label>
-        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+        <input asp-for="LastName" class="form-control" placeholder="Email" />
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
-
     <div class="form-group">
         <label asp-for="Party"></label>
         <select asp-for="Party" class="form-control">
@@ -37,16 +31,151 @@
             <option>Democrat</option>
             <option>Republican</option>
             <option>Independent</option>
-            <option value="Other">Other</option>
+            <option>Other</option>
         </select>
         <span asp-validation-for="Party" class="text-danger"></span>
     </div>
-
     <div class="form-group">
-        <label asp-for="DOB"></label>
-        <input asp-for="DOB" class="form-control" placeholder="MM/DD/YYYY" />
-        <span asp-validation-for="DOB" class="text-danger"></span>
+        <label asp-for="BallotName"></label>
+        <input asp-for="BallotName" class="form-control" placeholder="Choose Username" />
+        <span asp-validation-for="BallotName" class="text-danger"></span>
     </div>
-
+    <div class="form-group">
+        <label asp-for="ElectionDay"></label>
+        <input asp-for="ElectionDay" class="form-control" placeholder="MM/DD/YYYY" />
+        <span asp-validation-for="ElectionDay" class="text-danger"></span>
+    </div>
     <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
+
+<div class="table-responsive">
+    @if (Model.FilteredUsers.Count() > 0)
+    {
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().UserName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Registration.FirstName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Registration.LastName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Demographics.Party)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FilteredUsers)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Registration.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Registration.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Demographics.Party)
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-dark">Select</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div>
+            There are no users that match those filters.
+        </div>
+    }
+</div>
+
+<div class="table-responsive">
+    @if (Model.FilteredBallots.Count() > 0)
+    {
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().BallotName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().ElectionDay)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FilteredBallots)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BallotName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ElectionDay)
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-dark">Select</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div>
+            There are no ballots that match those filters.
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".delete-button").click(function () {
+            var deleteButton = $(this);
+            var confirmButton = deleteButton.siblings(".delete-confirm");
+
+            var escapeKey = function (e) {
+                //Cancel if escape key pressed
+                if (e.which == 27) {
+                    hideConfirm();
+                }
+            }
+
+            showConfirm();
+
+            function showConfirm() {
+                deleteButton.attr("disabled", "disabled");
+                confirmButton.removeAttr("disabled")
+                $(document).on("click", hideConfirm);
+                $(document).on("keydown", escapeKey);
+            };
+
+            function hideConfirm() {
+                deleteButton.removeAttr("disabled")
+                confirmButton.attr("disabled", "disabled");
+                $(document).off("click", hideConfirm);
+                $(document).off("keydown", escapeKey);
+            };
+
+            return false;
+        });
+    });
+</script>

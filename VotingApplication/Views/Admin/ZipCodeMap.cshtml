@@ -8,6 +8,7 @@
         width: 100%;
         max-width: 100%;
         margin: 0;
+        left: 250px;
         padding: 0;
         overflow: hidden;
     }
@@ -23,8 +24,20 @@
         position: absolute;
         left: 30px;
     }
-</style>
 
+    #control-box{
+        position: fixed;
+        left: 250px;
+        width: 250px;
+        height: 100%;
+        margin-left: -250px;
+        overflow-y: auto;
+        background: #202020;
+    }
+</style>
+<div id="control-box">
+    
+</div>
 <div id="map"></div>
 <div id="info-box">?</div>
 <script>
@@ -89,8 +102,8 @@
         $.getJSON('https://storage.googleapis.com/mapsdevsite/json/states.js', function (data) {
             stateFeatures.addGeoJson(data);
             stateFeatures.setStyle(styleStateFeature);
-            stateFeatures.addListener('mouseover', mouseInToRegion);
-            stateFeatures.addListener('mouseout', mouseOutOfRegion);
+            stateFeatures.addListener('mouseover', mouseInToState);
+            stateFeatures.addListener('mouseout', mouseOutOfState);
             stateFeatures.addListener('click', loadStateZipCode)
             stateFeatures.setMap(map);
             stateFeatures.forEach(function (feature) {
@@ -116,6 +129,26 @@
                 */
             });
         });
+    }
+
+    var selecting = false,
+        deselecting = false,
+        selectedZipcodes;
+
+    window.onkeydown = function (e) {
+        if (selecting || deselecting)
+            return;
+        selecting = ((e.keyIdentifier == 'Shift') || (e.shiftKey == true));
+        deselecting = ((e.keyIdentifier == 'Control') || (e.ctrlKey == true));
+    }
+
+    window.onkeyup = function (e) {
+        if (selecting)
+            selecting = (e.keyIdentifier == 'Shift' || e.shiftKey == false) ? false : selecting;
+        else if (deselecting)
+            deselecting = (e.keyIdentifier == 'Control' || e.ctrlKey == false) ? false : deselecting;
+        else
+            return;
     }
 
     /**
@@ -151,7 +184,7 @@
      *
      * param {?google.maps.MouseEvent} e
      */
-    function mouseInToRegion(e) {
+    function mouseInToState(e) {
         // set the hover state so the setStyle function can change the border
         if (hiddenStateFeature != null && hiddenStateFeature == e.feature) {
             return;
@@ -164,7 +197,7 @@
      *
      * param {?google.maps.MouseEvent} e
      */
-    function mouseOutOfRegion(e) {
+    function mouseOutOfState(e) {
         // reset the hover state, returning the border to normal
         if (hiddenStateFeature != null && hiddenStateFeature == e.feature) {
             return;
@@ -188,20 +221,61 @@
                 zipCodeFeatures[state].addGeoJson(data);
                 zipCodeFeatures[state].setMap(map);
                 zipCodeFeatures[state].setStyle(styleZipFeature);
+                zipCodeFeatures[state].addListener('mouseover', mouseInToZip);
+                zipCodeFeatures[state].addListener('mouseout', mouseOutOfZip);
+                zipCodeFeatures[state].addListener('click', addToDistrict)
             });
         } else {
             zipCodeFeatures[state].setStyle(styleZipFeature);
         }
-        
+    }
+
+    /**
+     * Responds to the mouse-in event on a map shape (state).
+     *
+     * param {?google.maps.MouseEvent} e
+     */
+    function mouseInToZip(e) {
+        e.feature.setProperty('state', 'hover');
+    }
+
+    /**
+     * Responds to the mouse-out event on a map shape (state).
+     *
+     * param {?google.maps.MouseEvent} e
+     */
+    function mouseOutOfZip(e) {
+        e.feature.setProperty('state', 'normal');
+    }
+
+    function addToDistrict(e) {
+        if (selecting)
+            e.feature.setProperty('selected', 'true');
+        if (deselecting)
+            e.feature.setProperty('selected', 'false');
+        if (e.keyIdentifier == 'Shift' || e.shiftKey)
+            alert("what");
     }
 
     function styleZipFeature(feature) {
+        var outlineWeight = 0.5, zIndex = 1, fillColor = '#000';
+
+        if (feature.getProperty('state') === 'hover') {
+            outlineWeight = zIndex = 2;
+        }
+
+        if (feature.getProperty('selected') === 'true') {
+            fillColor = '#006400';
+        }
+
         return {
-            strokeWeight: 0.5,
+            strokeWeight: outlineWeight,
             strokeColor: '#fff',
-            zIndex: 1,
+            zIndex: zIndex,
             fillOpacity: 0.75,
-            visible: true
+            fillColor: fillColor,
+            visible: true,
+            clickable: true
         };
     }
 
@@ -211,7 +285,8 @@
             strokeColor: '#fff',
             zIndex: 1,
             fillOpacity: 0.75,
-            visible: false
+            visible: false,
+            clickable: false
         };
     }
 </script>

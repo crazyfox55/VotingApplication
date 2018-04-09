@@ -19,36 +19,20 @@ namespace VotingApplication
         {
             if (model == null)
                 return;
-            OfficeName = model.OfficeName;
-            FirstName = model.FirstName;
-            LastName = model.LastName;
-            Party = model.Party;
-            DOB = model.DOB;
         }
 
         [Key]
-        public string Id { get; set; }
+        [ForeignKey(nameof(ApplicationUser))]
+        public string UserId { get; set; }
+
+        // virtual is required for EF to override these navigation properties
+        public virtual ApplicationUser User { get; set; }
 
         [Required]
-        [ForeignKey(nameof(OfficeDataModel))]
-        public string OfficeName { get; set; }
+        [ForeignKey(nameof(BallotDataModel))]
+        public string BallotName { get; set; }
 
-        public virtual OfficeDataModel Office { get; set; }
+        public virtual BallotDataModel Ballot { get; set; }
 
-        [Required]
-        [MaxLength(64)]
-        public string FirstName { get; set; }
-
-        [Required]
-        [MaxLength(64)]
-        public string LastName { get; set; }
-
-        [Required]
-        [MaxLength(64)]
-        public string Party { get; set; }
-
-        [Required]
-        [MaxLength(10)]
-        public string DOB { get; set; }
     }
 }
