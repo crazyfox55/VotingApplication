@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Threading.Tasks;
 using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
@@ -29,6 +33,18 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
+        public IActionResult UserSearch()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult VerifyVoter()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult AddOffice()
         {
             return View();
@@ -39,7 +55,12 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var data = new OfficeDataModel(model);
+                var data = new OfficeDataModel()
+                {
+                    OfficeName = model.OfficeName,
+                    OfficeDescription = model.OfficeDescription,
+                    OfficeLevel = model.OfficeLevel
+                };
 
                 _Context.Office.Add(data);
 
@@ -52,24 +73,48 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddCandidate()
+        public IActionResult AddBallot()
         {
-            var model = new AddCandidateViewModel()
+            var model = new AddBallotViewModel()
             {
-                AllOffices = _Context.Office.Select(o => o.OfficeName)
+                OfficeNames = _Context.Office.Select(o => o.OfficeName)
             };
 
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult AddCandidate(AddCandidateViewModel model)
+        public IActionResult AddBallot(AddBallotViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var data = new CandidateDataModel(model);
+                var data = new BallotDataModel()
+                {
+                    BallotName = model.BallotName,
+                    ElectionDay = model.ElectionDay,
+                    OfficeName = model.OfficeName
+                };
 
-                _Context.Candidate.Add(data);
+                switch (model.Zone)
+                {
+                    case "ZipCode":
+                        data.RegionName = null;
+                        data.ZipCode = int.Parse(model.ZipCode);
+                        data.DistrictName = null;
+                        break;
+                    case "District":
+                        data.RegionName = null;
+                        data.ZipCode = null;
+                        data.DistrictName = model.DistrictName;
+                        break;
+                    case "Region":
+                        data.RegionName = model.RegionName;
+                        data.ZipCode = null;
+                        data.DistrictName = null;
+                        break;
+                }
+
+                _Context.Ballot.Add(data);
 
                 _Context.SaveChanges();
 
@@ -78,6 +123,118 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyZip(string zipcode)
+        {
+            if (_Context != null)
+            {
+                if (int.TryParse(zipcode, out int key))
+                {
+                    var result = await _Context.Zip.FindAsync(key);
+
+                    string errors = "";
+
+                    if (result == null)
+                    {
+                        errors = "ZipCode does not exist, enter a valid one.";
+                        return Json($"{errors}");
+                    }
+                }
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyDistrict(string districtName)
+        {
+            if (_Context != null)
+            {
+                var result = await _Context.District.FindAsync(districtName);
+
+                string errors = "";
+
+                if (result == null)
+                {
+                    errors = "District does not exist, enter a valid one.";
+                    return Json($"{errors}");
+                }
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyRegion(string regionName)
+        {
+            if (_Context != null)
+            {
+                var result = await _Context.Region.FindAsync(regionName);
+
+                string errors = "";
+
+                if (result == null)
+                {
+                    errors = "Region does not exist, enter a valid one.";
+                    return Json($"{errors}");
+                }
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public IActionResult AddCandidate()
+        {
+            var model = new AddCandidateViewModel()
+            {
+                FilteredBallots = _Context.Ballot.Take(5),
+                FilteredUsers = _Context.Users.Take(5)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult AddCandidate(AddCandidateViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.BallotId) == false && string.IsNullOrWhiteSpace(model.UserId) == false)
+            {
+                var data = new CandidateDataModel()
+                {
+                    UserId = model.UserId,
+                    BallotName = model.BallotId
+                };
+
+                _Context.Candidate.Add(data);
+
+                _Context.SaveChanges();
+
+                return RedirectToAction(nameof(Dashboard));
+            }
+            else
+            {
+                model.FilteredBallots = _Context.Ballot
+                    .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
+                    .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
+                    .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
+                    .Take(5);
+                model.FilteredUsers = _Context.Users
+                    .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
+                    .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
+                    .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration.LastName == model.LastName)
+                    .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics.Party == model.Party)
+                    .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
+                    .Take(5)
+                    .Include(u => u.Registration)
+                    .Include(u => u.Demographics);
+            }
+
+            return View(model);
+        }
+
+
         
         // TODO: use the page and usersPerPage fields to make a interactive table.
         [HttpGet]
@@ -115,6 +272,32 @@ namespace VotingApplication.Controllers
         public IActionResult Delete(string Username)
         {
             return RedirectToAction(nameof(UserManagement));
+        }
+
+
+        public JsonResult AddDistrict(string districtName, HashSet<string> values)
+        {
+            var district = new DistrictDataModel()
+            {
+                DistrictName = districtName,
+                Zip = values.Select(z => new ZipFillsDistrict() { ZipCode = int.Parse(z), DistrictName = districtName }).ToList()
+            };
+
+            /*district.Zip = _Context.Zip
+                .Where(z => values.Contains(z.ZipCode.ToString()))
+                .Select(z => new ZipFillsDistrict() { Zip = z, District = district })
+                .ToList();
+            foreach (string zipCode in values)
+            {
+                district.Zip.Add(new ZipFillsDistrict() { ZipCode = int.Parse(zipCode), DistrictName = districtName });
+            }
+            */
+
+            _Context.District.Add(district);
+
+            _Context.SaveChanges();
+
+            return Json(new { Result = string.Format("First item in list: '{0}'", districtName) });
         }
 
         [HttpGet]
@@ -187,16 +370,20 @@ namespace VotingApplication.Controllers
         public IActionResult RequestZipCodes(string state = null)
         {
             ZipCodeFeatureCollection collection = new ZipCodeFeatureCollection();
-            foreach (ZipCodeDataModel zipCode in _Context.ZipCode.Where(zip => state != null && zip.State == StateAbbreviation(state)))
+            if (state != null)
             {
-                ZipCodeFeature feature = new ZipCodeFeature();
-                feature.properties = new Properties(zipCode);
-                feature.geometry = new Geometry(zipCode);
-                collection.features.Add(feature);
+                foreach (ZipDataModel zipCode in _Context.Zip.Where(zip => zip.State == StateAbbreviation(state)))
+                {
+                    ZipCodeFeature feature = new ZipCodeFeature
+                    {
+                        properties = new Properties(zipCode),
+                        geometry = new Geometry(zipCode)
+                    };
+                    collection.features.Add(feature);
+                }
             }
-            ZipCodeFeatureCollectionViewModel jsonData = new ZipCodeFeatureCollectionViewModel();
-            jsonData.ZipCodes = collection;
             return Content(JsonConvert.SerializeObject(collection), "application/json");
         }
+        
     }
 }

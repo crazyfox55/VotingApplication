@@ -19,9 +19,6 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            //remove, each user does not need to ensure the database is created when they navigate to the homepage
-            _Context.Database.EnsureCreated();
-
             return View();
         }
         

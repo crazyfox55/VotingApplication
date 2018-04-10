@@ -16,17 +16,37 @@
     */
     #info-box {
         background-color: white;
-        border: 1px solid black;
+        border: 2px solid black;
         bottom: 30px;
         height: 45px;
         padding: 10px;
         position: absolute;
         left: 30px;
     }
-</style>
 
+    #control-box {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        width: 250px;
+        height: 200px;
+    }
+</style>
 <div id="map"></div>
 <div id="info-box">?</div>
+<!--good color #202020 -->
+<div id="control-box">
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+        <form style="bottom: 0px;">
+            <div class="form-group">
+                <input type="text" placeholder="District Name" id="districtName" required />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary float-right">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
     var mapStyle = [{
         'stylers': [{ 'visibility': 'off' }]
@@ -89,33 +109,31 @@
         $.getJSON('https://storage.googleapis.com/mapsdevsite/json/states.js', function (data) {
             stateFeatures.addGeoJson(data);
             stateFeatures.setStyle(styleStateFeature);
-            stateFeatures.addListener('mouseover', mouseInToRegion);
-            stateFeatures.addListener('mouseout', mouseOutOfRegion);
+            stateFeatures.addListener('mouseover', mouseInToState);
+            stateFeatures.addListener('mouseout', mouseOutOfState);
             stateFeatures.addListener('click', loadStateZipCode)
             stateFeatures.setMap(map);
-            stateFeatures.forEach(function (feature) {
-                //Define position of label
-                var bounds = new google.maps.LatLngBounds();
-                feature.getGeometry().forEachLatLng(function (latlang) {
-                    bounds.extend(latlang);
-                });
-
-                var myLatlng = bounds.getCenter();
-
-                /*
-                 * Create some label for each state
-                var stateLabel = new MapLabel({
-                    label: feature.getProperty("NAME"),
-                    position: myLatlng,
-                    map: map,
-                    icon: null,
-                    fontSize: 26,
-                    align: 'Left'
-                });
-                stateLabel.set('position', myLatlng);
-                */
-            });
         });
+    }
+
+    var selecting = false,
+        deselecting = false,
+        selectedZipcodes = [];
+
+    window.onkeydown = function (e) {
+        if (selecting || deselecting)
+            return;
+        selecting = ((e.keyIdentifier == 'Shift') || (e.shiftKey == true));
+        deselecting = ((e.keyIdentifier == 'Control') || (e.ctrlKey == true));
+    }
+
+    window.onkeyup = function (e) {
+        if (selecting)
+            selecting = (e.keyIdentifier == 'Shift' || e.shiftKey == false) ? false : selecting;
+        else if (deselecting)
+            deselecting = (e.keyIdentifier == 'Control' || e.ctrlKey == false) ? false : deselecting;
+        else
+            return;
     }
 
     /**
@@ -151,7 +169,7 @@
      *
      * param {?google.maps.MouseEvent} e
      */
-    function mouseInToRegion(e) {
+    function mouseInToState(e) {
         // set the hover state so the setStyle function can change the border
         if (hiddenStateFeature != null && hiddenStateFeature == e.feature) {
             return;
@@ -164,7 +182,7 @@
      *
      * param {?google.maps.MouseEvent} e
      */
-    function mouseOutOfRegion(e) {
+    function mouseOutOfState(e) {
         // reset the hover state, returning the border to normal
         if (hiddenStateFeature != null && hiddenStateFeature == e.feature) {
             return;
@@ -183,38 +201,118 @@
         hiddenStateFeature.setProperty('state', 'hidden');
         state = hiddenStateFeature.getProperty('NAME')
         if (zipCodeFeatures[state] == null) {
-            $.getJSON('http://localhost:5000/User/RequestZipCodes?state=' + state, function (data) {
+            $.getJSON('http://localhost:5000/Admin/RequestZipCodes?state=' + state, function (data) {
                 zipCodeFeatures[state] = new google.maps.Data();
                 zipCodeFeatures[state].addGeoJson(data);
                 zipCodeFeatures[state].setMap(map);
                 zipCodeFeatures[state].setStyle(styleZipFeature);
+                zipCodeFeatures[state].addListener('mouseover', mouseInToZip);
+                zipCodeFeatures[state].addListener('mouseout', mouseOutOfZip);
+                zipCodeFeatures[state].addListener('click', addToDistrict)
             });
         } else {
             zipCodeFeatures[state].setStyle(styleZipFeature);
         }
-        
     }
 
+    /**
+     * Responds to the mouse-in event on a map shape (state).
+     *
+     * param {?google.maps.MouseEvent} e
+     */
+    function mouseInToZip(e) {
+        e.feature.setProperty('state', 'hover');
+    }
+
+    /**
+     * Responds to the mouse-out event on a map shape (state).
+     *
+     * param {?google.maps.MouseEvent} e
+     */
+    function mouseOutOfZip(e) {
+        e.feature.setProperty('state', 'normal');
+    }
+
+    function addToDistrict(e) {
+        if (selecting) {
+            e.feature.setProperty('selected', 'true');
+            var zipCode = e.feature.getProperty('ZipCode')
+            var index = selectedZipcodes.indexOf(zipCode)
+            if (index == -1) {
+                selectedZipcodes.push(zipCode);
+            }
+        }
+        if (deselecting) {
+            e.feature.setProperty('selected', 'false');
+            var zipCode = e.feature.getProperty('ZipCode')
+            var index = selectedZipcodes.indexOf(zipCode)
+            if (index != -1) {
+                selectedZipcodes.splice(index, 1);
+            }
+        }
+    }
+
+    $("form").submit(function () {
+        var postData = {
+            districtName: $("#districtName").val(),
+            values: selectedZipcodes
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Admin/AddDistrict",
+            data: postData,
+            success: function (data) {
+                alert(data.Result);
+            },
+            dataType: "json",
+            traditional: true
+        });
+    });
+
     function styleZipFeature(feature) {
+        var outlineWeight = 0.5, zIndex = 1, fillColor = '#000';
+
+        if (feature.getProperty('state') === 'hover') {
+            outlineWeight = zIndex = 2;
+        }
+
+        if (feature.getProperty('selected') === 'true') {
+            fillColor = '#006400';
+        }
+
         return {
-            strokeWeight: 0.5,
+            strokeWeight: outlineWeight,
             strokeColor: '#fff',
-            zIndex: 1,
+            zIndex: zIndex,
             fillOpacity: 0.75,
-            visible: true
+            fillColor: fillColor,
+            visible: true,
+            clickable: true
         };
     }
 
     function styleZipFeatureHidden(feature) {
+        var fillColor = '#000',
+            visable = false,
+            clickable = false;
+
+        if (feature.getProperty('selected') === 'true') {
+            fillColor = '#006400';
+            visable = true;
+            clickable = true;
+        }
+
         return {
             strokeWeight: 0.5,
             strokeColor: '#fff',
-            zIndex: 1,
+            zIndex: 0,
             fillOpacity: 0.75,
-            visible: false
+            fillColor: fillColor,
+            visible: visable,
+            clickable: false
         };
     }
 </script>
-    <script async defer
+<script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPnQKa7C4sDyTLalXG4vzy7ndtVFF3LOQ&libraries=drawing&callback=initMap">
 </script>

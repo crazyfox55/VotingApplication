@@ -5,6 +5,12 @@
     ViewData["Submit"] = "Submit";
 }
 
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
 <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
@@ -24,7 +30,7 @@
     </div>
     <div class="form-group">
         <label asp-for="State"></label>
-        <input asp-for="State" class="form-control" placeholder="State" />
+        <input asp-for="State" onkeydown="upperCaseF(this)" class="form-control" placeholder="State" />
         <span asp-validation-for="State" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -34,7 +40,7 @@
     </div>
     <div class="form-group">
         <label asp-for="DOB"></label>
-        <input asp-for="DOB" class="form-control" placeholder="MM/DD/YYYY" />
+        <input asp-for="DOB" class="form-control" placeholder="Date of Birth" />
         <span asp-validation-for="DOB" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -93,7 +99,7 @@
             <option>Not at all prepared</option>
             <option>Started doing research</option>
             <option>I have researched most of the canidates</option>
-            <option>I have researched every canidates</option>
+            <option>I have researched every canidate</option>
             <option>My friends consider me an expert</option>
         </select>
         <span asp-validation-for="VoterReadiness" class="text-danger"></span>
@@ -101,3 +107,11 @@
 
     <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
+
+<script>
+    function upperCaseF(a) {
+        setTimeout(function () {
+            a.value = a.value.toUpperCase();
+        }, 1);
+    }
+</script>
