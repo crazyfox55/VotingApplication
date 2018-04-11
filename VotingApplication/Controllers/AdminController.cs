@@ -197,9 +197,30 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
+        public IActionResult FilterCandidateAndBallot(AddCandidateViewModel model)
+        {
+            model.FilteredBallots = _Context.Ballot
+                .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
+                .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
+                .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
+                .Take(5);
+            model.FilteredUsers = _Context.Users
+                .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
+                .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
+                .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration.LastName == model.LastName)
+                .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics.Party == model.Party)
+                .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
+                .Take(5)
+                .Include(u => u.Registration)
+                .Include(u => u.Demographics);
+            
+            return View("AddCandidate", model);
+        }
+
+        [HttpPost]
         public IActionResult AddCandidate(AddCandidateViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.BallotId) == false && string.IsNullOrWhiteSpace(model.UserId) == false)
+            if (ModelState.IsValid)
             {
                 var data = new CandidateDataModel()
                 {
@@ -215,20 +236,8 @@ namespace VotingApplication.Controllers
             }
             else
             {
-                model.FilteredBallots = _Context.Ballot
-                    .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
-                    .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
-                    .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
-                    .Take(5);
-                model.FilteredUsers = _Context.Users
-                    .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
-                    .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
-                    .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration.LastName == model.LastName)
-                    .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics.Party == model.Party)
-                    .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
-                    .Take(5)
-                    .Include(u => u.Registration)
-                    .Include(u => u.Demographics);
+                model.FilteredBallots = _Context.Ballot.Take(5);
+                model.FilteredUsers = _Context.Users.Take(5);
             }
 
             return View(model);

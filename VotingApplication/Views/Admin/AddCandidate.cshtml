@@ -7,10 +7,13 @@
 }
 
 <h1>Add Candidate</h1>
-
-<form asp-action="AddCandidate" method="post" id="formFilter">
-    <input asp-for="BallotId" id="hiddenBallot" />
-    <input asp-for="UserId" id="hiddenUser" />
+<form asp-action="AddCandidate" method="post" id="formAdd">
+    <input asp-for="BallotId" class="hiddenBallot" />
+    <input asp-for="UserId" class="hiddenUser" />
+</form>
+<form asp-action="FilterCandidateAndBallot" method="post" id="formFilter">
+    <input asp-for="BallotId" class="hiddenBallot" />
+    <input asp-for="UserId" class="hiddenUser" />
 </form>
 @if (string.IsNullOrWhiteSpace(Model.UserId))
 {
@@ -89,11 +92,11 @@ else
                         <td>
                             @if (string.IsNullOrWhiteSpace(Model.UserId))
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenUser').val('@item.Id');" value="Select" />
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('@item.Id');" value="Select" />
                             }
                             else
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenUser').val('');" value="Deselect" />
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('');" value="Deselect" />
                             }
                         </td>
                     </tr>
@@ -174,11 +177,11 @@ else
                         <td>
                             @if (string.IsNullOrWhiteSpace(Model.BallotId))
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenBallot').val('@item.BallotName');" value="Select" />
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenBallot').val('@item.BallotName');" value="Select" />
                             }
                             else
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenBallot').val('');" value="Deselect" />
+                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenBallot').val('');" value="Deselect" />
                             }
                         </td>
                     </tr>
@@ -193,6 +196,11 @@ else
         </h4>
     }
 </div>
+@if(string.IsNullOrWhiteSpace(Model.BallotId) == false && string.IsNullOrWhiteSpace(Model.BallotId) == false)
+{
+    <input form="formAdd" type="submit" class="btn btn-primary" value="Add Candidate" />
+}
+
 
 <script type="text/javascript">
     $(document).ready(function () {

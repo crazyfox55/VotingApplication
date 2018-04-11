@@ -15,8 +15,10 @@ namespace VotingApplication.ViewModels
 
         public IEnumerable<ApplicationUser> FilteredUsers { get; set; }
 
+        [Required]
         [HiddenInput]
         public string BallotId { get; set; }
+        [Required]
         [HiddenInput]
         public string UserId { get; set; }
 
