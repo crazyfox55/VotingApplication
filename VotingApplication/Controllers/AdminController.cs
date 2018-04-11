@@ -189,8 +189,27 @@ namespace VotingApplication.Controllers
         {
             var model = new AddCandidateViewModel()
             {
-                FilteredBallots = _Context.Ballot.Take(5),
-                FilteredUsers = _Context.Users.Take(5)
+                FilteredBallots = _Context.Ballot
+                    .Take(5)
+                    .Select(b => new AddCandidateViewModel.BallotViewModel() {
+                        BallotName = b.BallotName,
+                        ElectionDay = b.ElectionDay,
+                        OfficeName = b.OfficeName,
+                        // use region, if null use district, if null use zipcode; one of them should be not null
+                        Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                    }),
+                FilteredUsers = _Context.Users
+                    .Take(5)
+                    .Include(u => u.Registration)
+                    .Include(u => u.Demographics)
+                    .Select(u => new AddCandidateViewModel.UserViewModel()
+                    {
+                        UserId = u.Id,
+                        UserName = u.UserName,
+                        FirstName = u.Registration == null ? "" : u.Registration.FirstName,
+                        LastName = u.Registration == null ? "" : u.Registration.LastName,
+                        Party = u.Demographics == null ? "" : u.Demographics.Party
+                    })
             };
 
             return View(model);
@@ -203,7 +222,15 @@ namespace VotingApplication.Controllers
                 .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
                 .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
                 .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
-                .Take(5);
+                .Take(5)
+                .Select(b => new AddCandidateViewModel.BallotViewModel()
+                {
+                    BallotName = b.BallotName,
+                    ElectionDay = b.ElectionDay,
+                    OfficeName = b.OfficeName,
+                    // use region, if null use district, if null use zipcode; one of them should be not null
+                    Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                });
             model.FilteredUsers = _Context.Users
                 .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
                 .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
@@ -212,7 +239,15 @@ namespace VotingApplication.Controllers
                 .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
                 .Take(5)
                 .Include(u => u.Registration)
-                .Include(u => u.Demographics);
+                .Include(u => u.Demographics)
+                .Select(u => new AddCandidateViewModel.UserViewModel()
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    FirstName = u.Registration == null ? "" : u.Registration.FirstName,
+                    LastName = u.Registration == null ? "" : u.Registration.LastName,
+                    Party = u.Demographics == null ? "" : u.Demographics.Party
+                });
             
             return View("AddCandidate", model);
         }
@@ -236,8 +271,28 @@ namespace VotingApplication.Controllers
             }
             else
             {
-                model.FilteredBallots = _Context.Ballot.Take(5);
-                model.FilteredUsers = _Context.Users.Take(5);
+                model.FilteredBallots = _Context.Ballot
+                    .Take(5)
+                    .Select(b => new AddCandidateViewModel.BallotViewModel()
+                    {
+                        BallotName = b.BallotName,
+                        ElectionDay = b.ElectionDay,
+                        OfficeName = b.OfficeName,
+                        // use region, if null use district, if null use zipcode; one of them should be not null
+                        Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                    });
+                model.FilteredUsers = _Context.Users
+                    .Take(5)
+                    .Include(u => u.Registration)
+                    .Include(u => u.Demographics)
+                    .Select(u => new AddCandidateViewModel.UserViewModel()
+                    {
+                        UserId = u.Id,
+                        UserName = u.UserName,
+                        FirstName = u.Registration == null ? "" : u.Registration.FirstName,
+                        LastName = u.Registration == null ? "" : u.Registration.LastName,
+                        Party = u.Demographics == null ? "" : u.Demographics.Party
+                    });
             }
 
             return View(model);
