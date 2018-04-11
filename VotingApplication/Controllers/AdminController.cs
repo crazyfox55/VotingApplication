@@ -189,17 +189,77 @@ namespace VotingApplication.Controllers
         {
             var model = new AddCandidateViewModel()
             {
-                FilteredBallots = _Context.Ballot.Take(5),
-                FilteredUsers = _Context.Users.Take(5)
+                FilteredBallots = _Context.Ballot
+                    .Take(5)
+                    .Select(b => new AddCandidateViewModel.BallotViewModel() {
+                        BallotName = b.BallotName,
+                        ElectionDay = b.ElectionDay,
+                        OfficeName = b.OfficeName,
+                        // use region, if null use district, if null use zipcode; one of them should be not null
+                        Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                    }),
+                FilteredUsers = _Context.Users
+                    .Take(5)
+                    .Include(u => u.Registration)
+                    .Include(u => u.Demographics)
+                    .Include(u => u.Candidate)
+                    .Select(u => new AddCandidateViewModel.UserViewModel()
+                    {
+                        UserId = u.Id,
+                        UserName = u.UserName,
+                        FirstName = u.Registration == null ? "" : u.Registration.FirstName,
+                        LastName = u.Registration == null ? "" : u.Registration.LastName,
+                        Party = u.Demographics == null ? "" : u.Demographics.Party,
+                        BallotName = u.Candidate == null ? "" : u.Candidate.BallotName
+                    })
             };
 
             return View(model);
         }
 
         [HttpPost]
+        public IActionResult FilterCandidateAndBallot(AddCandidateViewModel model)
+        {
+            model.FilteredBallots = _Context.Ballot
+                .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
+                .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
+                .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
+                .Take(5)
+                .Select(b => new AddCandidateViewModel.BallotViewModel()
+                {
+                    BallotName = b.BallotName,
+                    ElectionDay = b.ElectionDay,
+                    OfficeName = b.OfficeName,
+                    // use region, if null use district, if null use zipcode; one of them should be not null
+                    Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                });
+            model.FilteredUsers = _Context.Users
+                .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
+                .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
+                .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration.LastName == model.LastName)
+                .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics.Party == model.Party)
+                .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
+                .Take(5)
+                .Include(u => u.Registration)
+                .Include(u => u.Demographics)
+                .Include(u => u.Candidate)
+                .Select(u => new AddCandidateViewModel.UserViewModel()
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    FirstName = u.Registration == null ? "" : u.Registration.FirstName,
+                    LastName = u.Registration == null ? "" : u.Registration.LastName,
+                    Party = u.Demographics == null ? "" : u.Demographics.Party,
+                    BallotName = u.Candidate == null ? "" : u.Candidate.BallotName
+                });
+            
+            return View("AddCandidate", model);
+        }
+
+        [HttpPost]
         public IActionResult AddCandidate(AddCandidateViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.BallotId) == false && string.IsNullOrWhiteSpace(model.UserId) == false)
+            if (ModelState.IsValid)
             {
                 var data = new CandidateDataModel()
                 {
@@ -216,19 +276,29 @@ namespace VotingApplication.Controllers
             else
             {
                 model.FilteredBallots = _Context.Ballot
-                    .Where(b => string.IsNullOrWhiteSpace(model.BallotId) || b.BallotName == model.BallotId)
-                    .Where(b => model.ElectionDay == null || b.ElectionDay.Date == model.ElectionDay.Value.Date)
-                    .Where(b => model.BallotName == null || b.BallotName == model.BallotName)
-                    .Take(5);
+                    .Take(5)
+                    .Select(b => new AddCandidateViewModel.BallotViewModel()
+                    {
+                        BallotName = b.BallotName,
+                        ElectionDay = b.ElectionDay,
+                        OfficeName = b.OfficeName,
+                        // use region, if null use district, if null use zipcode; one of them should be not null
+                        Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                    });
                 model.FilteredUsers = _Context.Users
-                    .Where(u => string.IsNullOrWhiteSpace(model.UserId) || u.Id == model.UserId)
-                    .Where(u => string.IsNullOrWhiteSpace(model.FirstName) || u.Registration.FirstName == model.FirstName)
-                    .Where(u => string.IsNullOrWhiteSpace(model.LastName) || u.Registration.LastName == model.LastName)
-                    .Where(u => string.IsNullOrWhiteSpace(model.Party) || u.Demographics.Party == model.Party)
-                    .Where(u => string.IsNullOrWhiteSpace(model.Username) || u.UserName == model.Username)
                     .Take(5)
                     .Include(u => u.Registration)
-                    .Include(u => u.Demographics);
+                    .Include(u => u.Demographics)
+                    .Include(u => u.Candidate)
+                    .Select(u => new AddCandidateViewModel.UserViewModel()
+                    {
+                        UserId = u.Id,
+                        UserName = u.UserName,
+                        FirstName = u.Registration == null ? "" : u.Registration.FirstName,
+                        LastName = u.Registration == null ? "" : u.Registration.LastName,
+                        Party = u.Demographics == null ? "" : u.Demographics.Party,
+                        BallotName = u.Candidate == null ? "" : u.Candidate.BallotName
+                    });
             }
 
             return View(model);

@@ -7,10 +7,13 @@
 }
 
 <h1>Add Candidate</h1>
-
-<form asp-action="AddCandidate" method="post" id="formFilter">
-    <input asp-for="BallotId" id="hiddenBallot" />
-    <input asp-for="UserId" id="hiddenUser" />
+<form asp-action="AddCandidate" method="post" id="formAdd">
+    <input asp-for="BallotId" class="hiddenBallot" />
+    <input asp-for="UserId" class="hiddenUser" />
+</form>
+<form asp-action="FilterCandidateAndBallot" method="post" id="formFilter">
+    <input asp-for="BallotId" class="hiddenBallot" />
+    <input asp-for="UserId" class="hiddenUser" />
 </form>
 @if (string.IsNullOrWhiteSpace(Model.UserId))
 {
@@ -57,13 +60,13 @@ else
                         @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().UserName)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Registration.FirstName)
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().FirstName)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Registration.LastName)
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().LastName)
                     </th>
                     <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Demographics.Party)
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Party)
                     </th>
                     <th scope="col">
                         Actions
@@ -78,22 +81,31 @@ else
                             @Html.DisplayFor(modelItem => item.UserName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Registration.FirstName)
+                            @Html.DisplayFor(modelItem => item.FirstName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Registration.LastName)
+                            @Html.DisplayFor(modelItem => item.LastName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Demographics.Party)
+                            @Html.DisplayFor(modelItem => item.Party)
                         </td>
                         <td>
-                            @if (string.IsNullOrWhiteSpace(Model.UserId))
+                            @if (string.IsNullOrWhiteSpace(item.BallotName))
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenUser').val('@item.Id');" value="Select" />
+                                @if (string.IsNullOrWhiteSpace(Model.UserId))
+                                {
+                                    <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('@item.UserId');" value="Select" />
+                                }
+                                else
+                                {
+                                    <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('');" value="Deselect" />
+                                }
                             }
                             else
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenUser').val('');" value="Deselect" />
+                                <div>
+                                    Already Candidate for "@item.BallotName"
+                                </div>
                             }
                         </td>
                     </tr>
@@ -140,7 +152,10 @@ else
                         @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().ElectionDay)
                     </th>
                     <th scope="col">
-                        Location
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().OfficeName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().Zone)
                     </th>
                     <th scope="col">
                         Actions
@@ -150,38 +165,30 @@ else
             <tbody>
                 @foreach (var item in Model.FilteredBallots)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.BallotName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ElectionDay.Date)
-                        </td>
-                        <td>
-                            @if (item.DistrictName != null)
-                            {
-                                @Html.DisplayFor(modelItem => item.DistrictName)
-                            }
-                            else if (item.RegionName != null)
-                            {
-                                @Html.DisplayFor(modelItem => item.RegionName)
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.ZipCode)
-                            }
-                        </td>
-                        <td>
-                            @if (string.IsNullOrWhiteSpace(Model.BallotId))
-                            {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenBallot').val('@item.BallotName');" value="Select" />
-                            }
-                            else
-                            {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#hiddenBallot').val('');" value="Deselect" />
-                            }
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BallotName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ElectionDay)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OfficeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Zone)
+                    </td>
+                    <td>
+                        @if (string.IsNullOrWhiteSpace(Model.BallotId))
+                        {
+                            <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenBallot').val('@item.BallotName');" value="Select" />
+                        }
+                        else
+                        {
+                            <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenBallot').val('');" value="Deselect" />
+                        }
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -193,6 +200,11 @@ else
         </h4>
     }
 </div>
+@if(string.IsNullOrWhiteSpace(Model.BallotId) == false && string.IsNullOrWhiteSpace(Model.BallotId) == false)
+{
+    <input form="formAdd" type="submit" class="btn btn-primary" value="Add Candidate" />
+}
+
 
 <script type="text/javascript">
     $(document).ready(function () {
