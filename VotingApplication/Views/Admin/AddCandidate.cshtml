@@ -90,13 +90,22 @@ else
                             @Html.DisplayFor(modelItem => item.Party)
                         </td>
                         <td>
-                            @if (string.IsNullOrWhiteSpace(Model.UserId))
+                            @if (string.IsNullOrWhiteSpace(item.BallotName))
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('@item.UserId');" value="Select" />
+                                @if (string.IsNullOrWhiteSpace(Model.UserId))
+                                {
+                                    <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('@item.UserId');" value="Select" />
+                                }
+                                else
+                                {
+                                    <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('');" value="Deselect" />
+                                }
                             }
                             else
                             {
-                                <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('');" value="Deselect" />
+                                <div>
+                                    Already Candidate for "@item.BallotName"
+                                </div>
                             }
                         </td>
                     </tr>

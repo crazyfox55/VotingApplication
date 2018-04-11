@@ -202,13 +202,15 @@ namespace VotingApplication.Controllers
                     .Take(5)
                     .Include(u => u.Registration)
                     .Include(u => u.Demographics)
+                    .Include(u => u.Candidate)
                     .Select(u => new AddCandidateViewModel.UserViewModel()
                     {
                         UserId = u.Id,
                         UserName = u.UserName,
                         FirstName = u.Registration == null ? "" : u.Registration.FirstName,
                         LastName = u.Registration == null ? "" : u.Registration.LastName,
-                        Party = u.Demographics == null ? "" : u.Demographics.Party
+                        Party = u.Demographics == null ? "" : u.Demographics.Party,
+                        BallotName = u.Candidate == null ? "" : u.Candidate.BallotName
                     })
             };
 
@@ -240,13 +242,15 @@ namespace VotingApplication.Controllers
                 .Take(5)
                 .Include(u => u.Registration)
                 .Include(u => u.Demographics)
+                .Include(u => u.Candidate)
                 .Select(u => new AddCandidateViewModel.UserViewModel()
                 {
                     UserId = u.Id,
                     UserName = u.UserName,
                     FirstName = u.Registration == null ? "" : u.Registration.FirstName,
                     LastName = u.Registration == null ? "" : u.Registration.LastName,
-                    Party = u.Demographics == null ? "" : u.Demographics.Party
+                    Party = u.Demographics == null ? "" : u.Demographics.Party,
+                    BallotName = u.Candidate == null ? "" : u.Candidate.BallotName
                 });
             
             return View("AddCandidate", model);
@@ -285,13 +289,15 @@ namespace VotingApplication.Controllers
                     .Take(5)
                     .Include(u => u.Registration)
                     .Include(u => u.Demographics)
+                    .Include(u => u.Candidate)
                     .Select(u => new AddCandidateViewModel.UserViewModel()
                     {
                         UserId = u.Id,
                         UserName = u.UserName,
                         FirstName = u.Registration == null ? "" : u.Registration.FirstName,
                         LastName = u.Registration == null ? "" : u.Registration.LastName,
-                        Party = u.Demographics == null ? "" : u.Demographics.Party
+                        Party = u.Demographics == null ? "" : u.Demographics.Party,
+                        BallotName = u.Candidate == null ? "" : u.Candidate.BallotName
                     });
             }
 

@@ -44,6 +44,9 @@ namespace VotingApplication.ViewModels
 
             [Display(Name = "Party")]
             public string Party { get; set; }
+
+            [Display(Name = "Ballot Name")]
+            public string BallotName { get; set; }
         }
 
         [Required]
