@@ -21,7 +21,7 @@ namespace VotingApplication.ViewModels
 
         [Required]
         [EmailAddress]
-        [Remote(action: "VerifyEmail", controller: "Registration")]
+        [Remote(action: "VerifyEmail", controller: "UserRegistration")]
         [Display(Name = "Email")]
         public string Email { get; set; }
     }

@@ -1,25 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using VotingApplication.Controllers;
 
 namespace VotingApplication.ViewModels
 {
     public class RegistrationViewModel
     {
         [Required]
-        [Remote(action: "VerifyUser", controller: "Registration")]
+        [Remote(action: "VerifyUser", controller: "UserRegistration")]
         [Display(Name = "Username")]
         public string Username { get; set; }
 
         [Required]
         [EmailAddress]
-        [Remote(action: "VerifyUser", controller: "Registration")]
+        [Remote(action: "VerifyUser", controller: "UserRegistration")]
         [Display(Name = "Email")]
         public string Email { get; set; }
         
         [Required]
         // This remote forces the client to get a varification on the password they submit.
         // Check out the VerifyPasswork method in the Registration controller for more details.
-        [Remote(action: "VerifyPassword", controller: "Registration")]
+        [Remote(action: "VerifyPassword", controller: "UserRegistration")]
         [DataType(DataType.Password)]
         // The password is enforced by the database instead of client side code. 
         // Check out the line 48 of the startup.cs class. There are options to change the strength of password.

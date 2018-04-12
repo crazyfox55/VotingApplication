@@ -125,6 +125,25 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> VerifyBallot(string ballotName)
+        {
+            if (_Context != null)
+            {
+                var result = await _Context.Ballot.FindAsync(ballotName);
+
+                string errors = "";
+
+                if (result == null)
+                {
+                    errors = "Ballot name does not exist, enter a valid one.";
+                    return Json($"{errors}");
+                }
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> VerifyZip(string zipcode)
         {
             if (_Context != null)
