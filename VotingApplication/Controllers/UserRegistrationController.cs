@@ -8,13 +8,13 @@ using VotingApplication.ViewModels;
 namespace VotingApplication.Controllers
 {
     [AllowAnonymous]
-    public class RegistrationController : Controller
+    public class UserRegistrationController : Controller
     {
         
         protected UserManager<ApplicationUser> _userManager;
         protected IEmailService _emailService;
 
-        public RegistrationController(
+        public UserRegistrationController(
             UserManager<ApplicationUser> userManager,
             IEmailService emailService)
         {
@@ -56,7 +56,7 @@ namespace VotingApplication.Controllers
                     // message setup.
                     string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     const string action = nameof(EmailConfirmedAsync);
-                    string controller = nameof(RegistrationController);
+                    string controller = nameof(UserRegistrationController);
                     controller = controller.Remove(controller.Length - 10);
                     string confirmationTokenLink = Url.Action(action, controller, new
                     {
@@ -189,7 +189,7 @@ namespace VotingApplication.Controllers
                 // message setup.
                 string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 const string action = nameof(EmailConfirmedAsync);
-                string controller = nameof(RegistrationController);
+                string controller = nameof(UserRegistrationController);
                 controller = controller.Remove(controller.Length - 10);
                 string confirmationTokenLink = Url.Action(action, controller, new
                 {
