@@ -1,0 +1,156 @@
+﻿@model ViewZipViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Filter Zip";
+    ViewData["Submit"] = "Filter";
+}
+
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
+<h1>View Zip Codes</h1>
+<form asp-action="ViewZip" method="post" id="formFilter">
+    <input asp-for="Page" id="Page" />
+    <input asp-for="District" id="District" />
+</form>
+<h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+<div class="form-group">
+    <label asp-for="ZipCode"></label>
+    <input form="formFilter" asp-for="ZipCode" class="form-control" placeholder="Zip Code" />
+    <span asp-validation-for="ZipCode" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="PrimaryCity"></label>
+    <input form="formFilter" asp-for="PrimaryCity" class="form-control" placeholder="Primary City" />
+    <span asp-validation-for="PrimaryCity" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="State"></label>
+    <input form="stateFilter" asp-for="State" onkeydown="upperCaseF(this)" class="form-control" placeholder="State" />
+    <span asp-validation-for="State" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="County"></label>
+    <input form="formFilter" asp-for="County" class="form-control" placeholder="Primary City" />
+    <span asp-validation-for="County" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Timezone"></label>
+    <input form="formFilter" asp-for="Timezone" class="form-control" placeholder="Last Name" />
+    <span asp-validation-for="Timezone" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Latitude"></label>
+    <input form="formFilter" asp-for="Latitude" class="form-control" placeholder="Last Name" />
+    <span asp-validation-for="Latitude" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Longitude"></label>
+    <input form="formFilter" asp-for="Longitude" class="form-control" placeholder="Last Name" />
+    <span asp-validation-for="Longitude" class="text-danger"></span>
+</div>
+<input form="formFilter" type="submit" class="btn btn-primary" value="@ViewData["Submit"]" />
+<div class="table-responsive">
+    @if (Model.FilteredZips.Count() > 0)
+    {
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().ZipCode)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().PrimaryCity)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().State)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().County)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().Timezone)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().Latitude)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredZips.FirstOrDefault().Longitude)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FilteredZips)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ZipCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrimaryCity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.State)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.County)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Timezone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Latitude)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Longitude)
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Actions">
+                            <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#District').val('@item.ZipCode');" value="View Districts" />
+                            <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('#District').val('@item.ZipCode');" value="View Users" />
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h4 class="text-danger">
+            There are no Zip Codes that match those filters.
+        </h4>
+    }
+</div>
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+<script type="text/javascript">
+    function upperCaseF(a) {
+        setTimeout(function () {
+            a.value = a.value.toUpperCase();
+        }, 1);
+    }
+</script>
