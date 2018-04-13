@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit;
 
 namespace VotingApplication.Controllers
 {
@@ -15,6 +14,10 @@ namespace VotingApplication.Controllers
         public HomeController(ApplicationDbContext context)
         {
             _Context = context;
+        }
+        public HomeController()
+        {
+
         }
         
         [HttpGet]

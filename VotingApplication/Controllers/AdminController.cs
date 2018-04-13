@@ -24,9 +24,10 @@ namespace VotingApplication.Controllers
         {
             _Context = context;
         }
+        public AdminController() { }
 
         [HttpGet]
-        public IActionResult Dashboard()  
+        public IActionResult Dashboard()
         {
             ViewData["UserName"] = User.Identity.Name;
             return View();
