@@ -14,6 +14,7 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void HomeControllerIndexGet()
         {
+
             var app = new Mock<DbContextOptions<ApplicationDbContext>>();
             var context = new Mock<ApplicationDbContext>(app);
             HomeController controller = new HomeController(context.Object);
