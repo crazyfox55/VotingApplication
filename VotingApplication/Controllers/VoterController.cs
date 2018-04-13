@@ -19,7 +19,6 @@ namespace VotingApplication.Controllers
             _UserManager = userManager;
             _Context = context;
         }
-        public VoterController() { }
         
         [HttpGet]
         public IActionResult Registration()

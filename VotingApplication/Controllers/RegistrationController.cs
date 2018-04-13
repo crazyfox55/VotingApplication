@@ -21,7 +21,6 @@ namespace VotingApplication.Controllers
             _userManager = userManager;
             _emailService = emailService;
         }
-        public RegistrationController() { }
 
         #region Register User
         [HttpGet]
