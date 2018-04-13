@@ -1,0 +1,34 @@
+﻿@model AddOfficeViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Add Office";
+    ViewData["Submit"] = "Add";
+}
+
+<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+
+    <div class="form-group">
+        <label asp-for="OfficeName"></label>
+        <input asp-for="OfficeName" class="form-control" placeholder="Office" />
+        <span asp-validation-for="OfficeName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="OfficeDescription"></label>
+        <input asp-for="OfficeDescription" class="form-control" placeholder="Description" />
+        <span asp-validation-for="OfficeDescription" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="OfficeLevel"></label>
+        <select asp-for="OfficeLevel" class="form-control">
+            <option disabled selected>Select Office Level</option>
+            <option>High-profile</option>
+            <option>Medium-profile</option>
+            <option>Low-profile</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+</form>

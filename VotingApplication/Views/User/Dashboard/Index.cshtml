@@ -4,5 +4,12 @@
     Hello @(ViewData["UserName"]), welcome to our voting web application. 
     The dashboard will show you important information in the future.
 </p>
-<a asp-area="" asp-controller="Voter" asp-action="Registration" class="nav-link">Register to Vote</a>
+<a asp-area="" asp-controller="VoterRegistration" asp-action="Register" class="nav-link">Register to Vote</a>
+
+<a asp-area="" asp-controller="VoterRegistration" asp-action="AddDemographics" class="nav-link">Enter Demographic info</a>
+<br/>
+<a asp-area="" asp-controller="Admin" asp-action="Dashboard" class="nav-link">Admin Dashboard</a>
+<label>
+    This link will be removed and Admins will automatically be redirected to the dashboard below.
+</label>
 

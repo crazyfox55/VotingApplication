@@ -1,0 +1,81 @@
+﻿@model AddBallotViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Add Ballot";
+    ViewData["Submit"] = "Add";
+}
+
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
+<form method="post">
+    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+
+    <div class="form-group">
+        <label asp-for="BallotName"></label>
+        <input asp-for="BallotName" class="form-control" placeholder="Ballot" />
+        <span asp-validation-for="BallotName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ElectionDay"></label>
+        <input asp-for="ElectionDay" class="form-control" />
+        <span asp-validation-for="ElectionDay" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="OfficeName"></label>
+        <select asp-for="OfficeName" class="form-control">
+            <option disabled selected>Select a office</option>
+            @foreach (string item in Model.OfficeNames)
+            {
+                <option>@item</option>
+            }
+        </select>
+        <span asp-validation-for="OfficeName" class="text-danger"></span>
+    </div>
+
+    <!-- https://stackoverflow.com/questions/18072677/create-a-conditional-statement-for-select-html-markup-in-jquery -->
+    <div class="form-group">
+        <label asp-for="Zone"></label>
+        <select asp-for="Zone" id="Zone" class="form-control">
+            <option selected>ZipCode</option>
+            <option>District</option>
+            <option>Region</option>
+        </select>
+        <span asp-validation-for="Zone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group hidden" id="ZipCode" >
+        <label asp-for="ZipCode"></label>
+        <input asp-for="ZipCode" class="form-control" />
+        <span asp-validation-for="ZipCode" class="text-danger"></span>
+    </div>
+
+    <div class="form-group hidden" id="District">
+        <label asp-for="DistrictName"></label>
+        <input asp-for="DistrictName" class="form-control" />
+        <span asp-validation-for="DistrictName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group hidden" id="Region">
+        <label asp-for="RegionName"></label>
+        <input asp-for="RegionName" class="form-control" />
+        <span asp-validation-for="RegionName" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+</form>
+<script>
+    $('div.hidden').hide();
+    $('#ZipCode').show();
+    $('#Zone').change(function () {
+        $('div.hidden').hide();
+        var value = this.value;
+        $('#' + value).show();
+    });
+</script>

@@ -13,11 +13,14 @@ namespace VotingApplication.Controllers
     public class UserController : Controller
     {
         protected UserManager<ApplicationUser> _UserManager;
+        protected ApplicationDbContext _Context;
 
         public UserController(
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext context)
         {
             _UserManager = userManager;
+            _Context = context;
         }
         
         [HttpGet]
@@ -26,7 +29,7 @@ namespace VotingApplication.Controllers
             ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Dashboard/Index"); //Index view
         }
-
+        
         [HttpGet]
         public IActionResult Profile()
         {
