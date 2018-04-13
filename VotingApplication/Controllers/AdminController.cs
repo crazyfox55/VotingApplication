@@ -24,7 +24,6 @@ namespace VotingApplication.Controllers
         {
             _Context = context;
         }
-        public AdminController() { }
 
         [HttpGet]
         public IActionResult Dashboard()  
