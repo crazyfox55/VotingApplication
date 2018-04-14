@@ -27,20 +27,20 @@ namespace VotingApplication.Controllers
         public IActionResult Dashboard()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;
-            return View("Dashboard/Index"); //Index view
+            return View();
         }
         
         [HttpGet]
         public IActionResult Profile()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;
-            return View("Profile/Index"); //Index view
+            return View();
         }
 
         [HttpGet]
         public IActionResult ChangePassword()
         {
-            return View("Profile/ChangePassword");
+            return View();
         }
 
         [HttpPost]
@@ -49,10 +49,10 @@ namespace VotingApplication.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _UserManager.FindByNameAsync(User.Identity.Name);
-                var authenticate = await _UserManager.CheckPasswordAsync(user, model.Password);
+                var authenticate = await _UserManager.CheckPasswordAsync(user, model.OldPassword);
                 if (authenticate)
                 {
-                    var result = await _UserManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+                    var result = await _UserManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
                     if (result.Succeeded)
                     {
                         return RedirectToAction(nameof(Profile));
@@ -64,45 +64,15 @@ namespace VotingApplication.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                    ModelState.AddModelError(string.Empty, "Invalid password.");
                 }
             }
 
-            return View("Profile/ChangePassword", model);
+            return View("ChangePassword", model);
         }
-
-        #region Verify Change Password View Model
+        
         [HttpGet]
-        // this is not implemented yet
-        //[RequireHttps]
-        public async Task<IActionResult> VerifyNewPassword(string newpassword)
-        {
-            if (_UserManager != null)
-            {
-                string errors = "";
-
-                IdentityResult result;
-
-                foreach (var validator in _UserManager.PasswordValidators)
-                {
-                    result = await validator.ValidateAsync(_UserManager, null, newpassword);
-                    foreach (var error in result.Errors)
-                    {
-                        errors += error.Description + "\n";
-                    }
-                }
-                if (errors != string.Empty)
-                {
-                    return Json($"{errors}");
-                }
-            }
-
-            return Json(true);
-        }
-        #endregion
-
-        [HttpGet]
-        public async Task<IActionResult> AddSecurityQuestionsAsync()
+        public async Task<IActionResult> SecurityQuestionsAsync()
         {
             var user = await _UserManager.FindByNameAsync(User.Identity.Name);
             var model = new SecurityQuestionViewModel
@@ -113,11 +83,11 @@ namespace VotingApplication.Controllers
                 SecurityAnswerTwo = user.SecurityAnswerTwo
             };
 
-            return View("Profile/SecurityQuestions", model);
+            return View("SecurityQuestions", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSecurityQuestionsAsync(SecurityQuestionViewModel model)
+        public async Task<IActionResult> SecurityQuestionsAsync(SecurityQuestionViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -149,43 +119,7 @@ namespace VotingApplication.Controllers
                 }
             }
 
-            return View("Profile/SecurityQuestions", model);
-        }
-        
-        //needs to be finished
-        [HttpPost]
-        public IActionResult SendResetEmail(string emailInput)
-        {
-           
-            var fromAddress = new MailAddress("votingnotification6@gmail.com", "Voting System");
-            var toAddress = new MailAddress("cole-pierce@uiowa.edu", emailInput);
-            if (emailInput != null)
-            {
-                toAddress = new MailAddress(emailInput, emailInput);
-            }
-                
-            const string fromPassword = "Team6Admin";
-                const string subject = "Reset Password";
-                string body = "Reset link";
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                };
-                using (var message = new MailMessage(fromAddress, toAddress)
-                {
-                    Subject = subject,
-                    Body = body
-                })
-                {
-                    smtp.Send(message);
-                }
-            return View("ForgotPassword/CheckEmail");
+            return View("SecurityQuestions", model);
         }
     }
 }

@@ -1,0 +1,15 @@
+﻿@using VotingApplication.Controllers
+<h1>Welcome to your dashboard</h1>
+<!-- replace with better information later-->
+<p>
+    Hello @(ViewData["UserName"]), welcome to our voting web application. 
+    The dashboard will show you important information in the future.
+</p>
+<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Register)" class="nav-link">Register to Vote</a>
+<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.AddDemographics)" class="nav-link">Enter Demographic info</a>
+<br/>
+<a asp-controller="Admin" asp-action="Dashboard" class="nav-link">Admin Dashboard</a>
+<label>
+    This link will be removed and Admins will automatically be redirected to the dashboard above.
+</label>
+
