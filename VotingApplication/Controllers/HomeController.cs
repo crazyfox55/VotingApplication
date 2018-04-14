@@ -15,10 +15,6 @@ namespace VotingApplication.Controllers
         {
             _Context = context;
         }
-        public HomeController()
-        {
-
-        }
         
         [HttpGet]
         public IActionResult Index()

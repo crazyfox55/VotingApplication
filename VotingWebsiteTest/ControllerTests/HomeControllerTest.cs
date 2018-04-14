@@ -14,17 +14,25 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void HomeControllerIndexGet()
         {
-            var app = new Mock<DbContextOptions<ApplicationDbContext>>();
-            var context = new Mock<ApplicationDbContext>(app);
-            HomeController controller = new HomeController(context.Object);
-            ViewResult result = controller.Index() as ViewResult;
+            var mockSet = new Mock<DbSet<SettingsDataModel>>();
+            DbContextOptions<ApplicationDbContext> options = new DbContextOptions<ApplicationDbContext>();
+            var mockContext = new Mock<ApplicationDbContext>(options);
+            
+            mockContext.Setup(m => m.Settings).Returns(mockSet.Object);
+            var service = new HomeController(mockContext.Object);
+            ViewResult result = service.Index() as ViewResult;
             Assert.IsNotNull(result);
         }
         [TestMethod]
         public void HomeControllerErrorGet()
         {
-            HomeController controller = new HomeController();
-            ViewResult result = controller.Error() as ViewResult;
+            var mockSet = new Mock<DbSet<SettingsDataModel>>();
+            DbContextOptions<ApplicationDbContext> options = new DbContextOptions<ApplicationDbContext>();
+            var mockContext = new Mock<ApplicationDbContext>(options);
+
+            mockContext.Setup(m => m.Settings).Returns(mockSet.Object);
+            var service = new HomeController(mockContext.Object);
+            ViewResult result = service.Error() as ViewResult;
             Assert.IsNotNull(result);
         }
     }

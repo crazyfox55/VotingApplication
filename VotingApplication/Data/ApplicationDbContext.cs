@@ -8,18 +8,18 @@ namespace VotingApplication
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<SettingsDataModel> Settings { get; set; }
+        public virtual DbSet<SettingsDataModel> Settings { get; set; }
 
-        public DbSet<VoterRegistrationDataModel> Registration { get; set; }
-        public DbSet<VoterDemographicsDataModel> Demographics { get; set; }
+        public virtual DbSet<VoterRegistrationDataModel> Registration { get; set; }
+        public virtual DbSet<VoterDemographicsDataModel> Demographics { get; set; }
 
-        public DbSet<ZipDataModel> Zip { get; set; }
-        public DbSet<DistrictDataModel> District { get; set; }
-        public DbSet<RegionDataModel> Region { get; set; }
+        public virtual DbSet<ZipDataModel> Zip { get; set; }
+        public virtual DbSet<DistrictDataModel> District { get; set; }
+        public virtual DbSet<RegionDataModel> Region { get; set; }
         
-        public DbSet<CandidateDataModel> Candidate { get; set; }
-        public DbSet<OfficeDataModel> Office { get; set; }
-        public DbSet<BallotDataModel> Ballot { get; set; }
+        public virtual DbSet<CandidateDataModel> Candidate { get; set; }
+        public virtual DbSet<OfficeDataModel> Office { get; set; }
+        public virtual DbSet<BallotDataModel> Ballot { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

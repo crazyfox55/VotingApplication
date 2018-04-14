@@ -22,7 +22,7 @@ namespace VotingApplication.Controllers
             _UserManager = userManager;
             _Context = context;
         }
-        public UserController() { }
+ 
         
         [HttpGet]
         public IActionResult Dashboard()

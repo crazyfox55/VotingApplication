@@ -11,9 +11,6 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void RegistrationControllerRegisterGet()
         {
-            RegistrationController controller = new RegistrationController();
-            ViewResult result = controller.Register() as ViewResult;
-            Assert.IsNotNull(result);
         }
 
     }

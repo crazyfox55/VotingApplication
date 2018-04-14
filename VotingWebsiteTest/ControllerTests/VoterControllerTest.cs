@@ -16,17 +16,13 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void VoterControllerRegistrationGet()
         {
-            VoterController controller = new VoterController();
-            ViewResult result = controller.Registration() as ViewResult;
-            Assert.IsNotNull(result);
+
         }
 
         [TestMethod]
         public void VoterControllerDemographicsGet()
         {
-            VoterController controller = new VoterController();
-            ViewResult result = controller.Demographics() as ViewResult;
-            Assert.IsNotNull(result);
+
         }
 
     }
