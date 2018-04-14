@@ -1,4 +1,5 @@
-﻿@model LoginViewModel
+﻿@using VotingApplication.Controllers;
+@model LoginViewModel
 
 <script>
     $.validator.setDefaults({
@@ -6,7 +7,7 @@
     })
 </script>
 
-<form asp-action="LoginAsync" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+<form asp-action="@nameof(AuthenticationController.LoginAsync)" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>
@@ -23,6 +24,6 @@
         @Html.ValidationSummary()
     </div>
 </form>
-<a asp-area="" asp-controller="UserRegistration" asp-action="Register" class="nav-link">New User?</a>
-<a asp-area="" asp-controller="Authentication" asp-action="RequestResetPasswordEmail" class="nav-link">Forgot Password?</a>
-<a asp-area="" asp-controller="UserRegistration" asp-action="RequestEmailConfirmation" class="nav-link">Resend Email Confirmation?</a>
+<a asp-area="" asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.Register)" class="nav-link">New User?</a>
+<a asp-area="" asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.RequestResetPasswordEmail)" class="nav-link">Forgot Password?</a>
+<a asp-area="" asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link">Resend Email Confirmation?</a>

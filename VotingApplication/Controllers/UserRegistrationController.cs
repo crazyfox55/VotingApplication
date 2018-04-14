@@ -79,75 +79,7 @@ namespace VotingApplication.Controllers
             return View("Register", model);
         }
         #endregion
-
-        #region Verify Registration View Model
-        [HttpGet]
-        // this is not implemented yet
-        //[RequireHttps]
-        public async Task<IActionResult> VerifyPassword(string password)
-        {
-            if (_userManager != null)
-            {
-                string errors = "";
-
-                IdentityResult result;
-
-                foreach (var validator in _userManager.PasswordValidators)
-                {
-                    result = await validator.ValidateAsync(_userManager, null, password);
-                    foreach (var error in result.Errors)
-                    {
-                        errors += error.Description + "\n";
-                    }
-                }
-                if (errors != string.Empty)
-                {
-                    return Json($"{errors}");
-                }
-            }
-
-            return Json(true);
-        }
-
-        [HttpGet]
-        // this is not implemented yet
-        //[RequireHttps]
-        public async Task<IActionResult> VerifyUser(string username, string email)
-        {
-            if (_userManager != null)
-            {
-                string errorTarget = username == null ? "Email" : "UserName";
-
-                var user = new ApplicationUser
-                {
-                    UserName = username,
-                    Email = email
-                };
-
-                string errors = "";
-
-                IdentityResult result;
-
-                foreach (var validator in _userManager.UserValidators)
-                {
-                    result = await validator.ValidateAsync(_userManager, user);
-
-                    foreach (var error in result.Errors)
-                    {
-                        if (error.Code.Contains(errorTarget))
-                            errors += error.Description + "\n";
-                    }
-                }
-                if (errors != string.Empty)
-                {
-                    return Json($"{errors}");
-                }
-            }
-
-            return Json(true);
-        }
-        #endregion
-
+        
         #region Confirmation Email: Affirm, Request, Resend
         [HttpGet]
         public async Task<IActionResult> EmailConfirmedAsync(string username, string token)

@@ -11,8 +11,8 @@ namespace VotingApplication.Controllers
     public class AuthenticationController : Controller
     {
         protected SignInManager<ApplicationUser> _SignInManager;
-        protected UserManager<ApplicationUser> _userManager;
-        protected IEmailService _emailService;
+        protected UserManager<ApplicationUser> _UserManager;
+        protected IEmailService _EmailService;
 
         public AuthenticationController(
             SignInManager<ApplicationUser> signInManager,
@@ -20,8 +20,8 @@ namespace VotingApplication.Controllers
             IEmailService emailService)
         {
             _SignInManager = signInManager;
-            _userManager = userManager;
-            _emailService = emailService;
+            _UserManager = userManager;
+            _EmailService = emailService;
         }
 
         #region Login User
@@ -55,8 +55,7 @@ namespace VotingApplication.Controllers
                     if (string.IsNullOrEmpty(returnUrl))
                     {
                         string action = nameof(UserController.Dashboard);
-                        string controller = nameof(UserController);
-                        controller = controller.Remove(controller.Length - 10);
+                        string controller = nameof(UserController).RemoveController();
                         return RedirectToAction(action, controller);
                     }
 
@@ -111,12 +110,14 @@ namespace VotingApplication.Controllers
         {
             if (username != null && token != null)
             {
-                var user = await _userManager.FindByNameAsync(username);
+                var user = await _UserManager.FindByNameAsync(username);
                 if (user != null)
                 {
-                    var temp = new ResetPasswordViewModel();
-                    temp.Token = token;
-                    temp.Email = user.Email;
+                    var temp = new ResetPasswordViewModel
+                    {
+                        Token = token,
+                        Email = user.Email
+                    };
                     return View("ResetPassword", temp);
                 }
             }
@@ -134,10 +135,10 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _UserManager.FindByEmailAsync(model.Email);
                 if(user != null)
                 {
-                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                    var result = await _UserManager.ResetPasswordAsync(user, model.Token, model.Password);
                     if (result.Succeeded)
                     {
                         return View("ResetPasswordComplete");
@@ -176,14 +177,13 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _UserManager.FindByEmailAsync(model.Email);
                 
                 // message setup.
-                string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string resetToken = await _UserManager.GeneratePasswordResetTokenAsync(user);
 
                 string action = nameof(ResetPasswordAsync);
-                string controller = nameof(AuthenticationController);
-                controller = controller.Remove(controller.Length - 10);
+                string controller = nameof(AuthenticationController).RemoveController();
                 string resetTokenLink = Url.Action(action, controller, new
                 {
                     username = user.UserName,
@@ -194,42 +194,12 @@ namespace VotingApplication.Controllers
                 string body = $"Hello {user.UserName}.\nYou can reset your password by following this <a href=\"{resetTokenLink}\">link</a>.";
 
                 // actual send
-                await _emailService.SendEmailAsync(user, subject, body);
+                await _EmailService.SendEmailAsync(user, subject, body);
                 
                 return View("ResetPasswordEmailSent", model);
             }
 
             return View("ResetPasswordRequest", model);
-        }
-        #endregion
-
-        #region Verify - Reset Password Email View Model
-        /// <summary>
-        /// This verifies that the email is for some user and that the email is confirmed.
-        /// </summary>
-        /// <param name="email">email that will be verified</param>
-        /// <returns>true or error text</returns>
-        [HttpGet]
-        // this is not implemented yet
-        //[RequireHttps]
-        public async Task<IActionResult> VerifyEmail(string email)
-        {
-            if (_userManager != null)
-            {
-                var user = await _userManager.FindByEmailAsync(email);
-
-                if (user == null)
-                {
-                    return Json($"Email: {email} is not valid for any user.");
-                }
-                else if (user.EmailConfirmed == false)
-                {
-                    // TODO: allow the reset password to also confirm their email.
-                    return Json($"Email: {email} is not confirmed yet, please confirm your email first.");
-                }
-            }
-
-            return Json(true);
         }
         #endregion
     }
