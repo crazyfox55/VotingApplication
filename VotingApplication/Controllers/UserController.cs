@@ -27,7 +27,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Dashboard()
         {
-            ViewData["UserName"] = HttpContext.User.Identity.Name;
+            //ViewData["UserName"] = HttpContext.User.Identity.Name;
             return View("Dashboard/Index"); //Index view
         }
         

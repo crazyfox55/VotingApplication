@@ -48,11 +48,26 @@ namespace VotingWebsiteTest
             var mockContext = new Mock<ApplicationDbContext>(options);
             mockContext.Setup(m => m.Settings).Returns(mockSet.Object);
 
+            var mockApp = new Mock<ApplicationUser>();
             
             var store = new Mock<IUserStore<ApplicationUser>>();
+            CancellationToken token = new CancellationToken();
+            store.Setup(s => s.FindByIdAsync("testId",token)).ReturnsAsync(new ApplicationUser
+            {
+                Id = "testId",
+                Email = "test@email.com"
+            });
+            var mockId = new Mock<IdentityOptions>();
             var optionsAccessor = new Mock<IOptions<IdentityOptions>>();
+            optionsAccessor.Setup(m => m.Value).Returns(mockId.Object);
+
             var passwordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
+            passwordHasher.Setup(s => s.HashPassword(mockApp.Object, "")).Returns("");
+
             var userValidators = new Mock<IEnumerable<IUserValidator<ApplicationUser>>>();
+            var mockIen = new Mock<IEnumerator<IUserValidator<ApplicationUser>>>();
+            userValidators.Setup(a => a.GetEnumerator()).Returns(mockIen.Object);
+
             var passwordValidators = new Mock<IEnumerable<IPasswordValidator<ApplicationUser>>>();
             var keyNormalizer = new Mock<ILookupNormalizer>();
             var errors = new Mock<IdentityErrorDescriber>();
@@ -64,7 +79,7 @@ namespace VotingWebsiteTest
                 passwordHasher.Object,userValidators.Object,passwordValidators.Object,
                 keyNormalizer.Object,errors.Object,services.Object,logger.Object);
 
-           // var manager = new TestUserManager();
+            //TestUserManager manager = new TestUserManager();
             var service = new UserController(manager,mockContext.Object);
             ViewResult result = service.Dashboard() as ViewResult;
             Assert.IsNotNull(result);
