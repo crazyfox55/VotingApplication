@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace VotingApplication.ViewModels
 {
@@ -15,6 +16,7 @@ namespace VotingApplication.ViewModels
                 return;
             FirstName = data.FirstName;
             LastName = data.LastName;
+            DOB = data.DOB;
             Identification = data.Identification;
             SSNumber = data.SSNumber;
         }
@@ -28,6 +30,11 @@ namespace VotingApplication.ViewModels
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Date of Birth")]
+        [DataType(DataType.Date)]
+        public DateTime DOB { get; set; }
 
         [Required]
         [StringLength(maximumLength: 256, ErrorMessage = "Maximum length of {0}")]

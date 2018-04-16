@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using VotingApplication.ViewModels;
@@ -17,6 +17,7 @@ namespace VotingApplication
             UserId = userId;
             FirstName = model.FirstName;
             LastName = model.LastName;
+            DOB = model.DOB;
             Identification = model.Identification;
             SSNumber = model.SSNumber;
         }
@@ -25,6 +26,7 @@ namespace VotingApplication
         {
             FirstName = model.FirstName;
             LastName = model.LastName;
+            DOB = model.DOB;
             Identification = model.Identification;
             SSNumber = model.SSNumber;
         }
@@ -45,6 +47,10 @@ namespace VotingApplication
         [MaxLength(64)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+        [Required]
+        [Column(TypeName = "Date")]
+        public DateTime DOB { get; set; }
 
         [Required]
         [MaxLength(256)]

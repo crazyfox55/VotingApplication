@@ -9,10 +9,14 @@ namespace VotingApplication.Controllers
 {
     public class VerifyController : Controller
     {
+        private ApplicationDbContext _Context;
         private UserManager<ApplicationUser> _UserManager;
 
-        public VerifyController(UserManager<ApplicationUser> userManager)
+        public VerifyController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
         {
+            _Context = context;
             _UserManager = userManager;
         }
         
@@ -96,6 +100,25 @@ namespace VotingApplication.Controllers
             {
                 // TODO: allow the reset password to also confirm their email.
                 return Json($"Email \"{email}\" is not confirmed yet, please confirm your email first.");
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyZipExistsAsync(string zipcode)
+        {
+            if (int.TryParse(zipcode, out int key))
+            {
+                var result = await _Context.Zip.FindAsync(key);
+
+                string errors = "";
+
+                if (result == null)
+                {
+                    errors = "ZipCode does not exist, enter a valid one.";
+                    return Json($"{errors}");
+                }
             }
 
             return Json(true);
