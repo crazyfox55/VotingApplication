@@ -40,10 +40,9 @@ https://console.developers.google.com
 
 <code>
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script>
-<\code>
+</code>
+</br>
 Replace YOUR_KEY with the key from Google to use Google maps
-
-
-
+</br>
 Important information about Entity Framework 6 Lazy Execution:
 https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/reading-related-data-with-the-entity-framework-in-an-asp-net-mvc-application
