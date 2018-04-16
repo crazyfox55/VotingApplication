@@ -162,7 +162,7 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult RequestResetPasswordEmail(ResetPasswordEmailViewModel model)
+        public IActionResult RequestResetPasswordEmail(EmailViewModel model)
         {
             return View("ResetPasswordEmailRequest", model);
         }
@@ -173,7 +173,7 @@ namespace VotingApplication.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> SendResetPasswordEmailAsync(ResetPasswordEmailViewModel model)
+        public async Task<IActionResult> SendResetPasswordEmailAsync(EmailViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -190,7 +190,7 @@ namespace VotingApplication.Controllers
                     token = resetToken
                 }, protocol: HttpContext.Request.Scheme);
 
-                const string subject = "Reset Password";
+                string subject = "Reset Password";
                 string body = $"Hello {user.UserName}.\nYou can reset your password by following this <a href=\"{resetTokenLink}\">link</a>.";
 
                 // actual send

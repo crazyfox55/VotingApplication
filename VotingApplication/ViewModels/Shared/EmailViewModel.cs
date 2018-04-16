@@ -4,7 +4,7 @@ using VotingApplication.Controllers;
 
 namespace VotingApplication.ViewModels
 {
-    public class ResetPasswordEmailViewModel
+    public class EmailViewModel
     {
         [Required]
         [EmailAddress]
