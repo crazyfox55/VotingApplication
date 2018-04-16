@@ -1,6 +1,12 @@
-﻿<h2>Email Confirmation Sent</h2>
+﻿@using VotingApplication.Controllers
+@model EmailViewModel
+
+<h2>Email Confirmation Sent</h2>
 <p>
     Check your email for a confirmation letter, once your email is confirmed you will be able to login.
-</p>
 
-@Html.Partial("EmailConfirmationPartial")
+    <a asp-area="" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link" onclick="$('#sameEmailRequest').submit(); return false;">Email missing or lost? Resquest a new link.</a>
+</p>
+<form id="sameEmailRequest" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" method="post">
+    <input asp-for="Email" type="hidden" />
+</form>

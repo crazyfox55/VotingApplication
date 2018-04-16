@@ -138,6 +138,8 @@ namespace VotingApplication
                     //create an easy to login user
                     userManager.CreateAsync(user, "hello").Wait();
 
+                    userManager.AddToRoleAsync(user, "Administrator").Wait();
+
                     //create 100 users for presenting
                     for (int i = 0; i < 100; i++)
                     {

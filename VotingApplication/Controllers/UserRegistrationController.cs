@@ -104,6 +104,12 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
+        public IActionResult RequestEmailConfirmation(EmailViewModel model)
+        {
+            return View("EmailConfirmationRequest", model);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> EmailConfirmationSentAsync(EmailViewModel model)
         {
             if (ModelState.IsValid)
