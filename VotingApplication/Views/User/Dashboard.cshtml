@@ -6,15 +6,9 @@
     The dashboard will show you important information in the future.
 </p>
 
-<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Register)" class="nav-link">Register to Vote</a>
-<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Address)" class="nav-link">Enter Address info</a>
-<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Demographics)" class="nav-link">Enter Demographic info</a>
+<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Register)" class="nav-link">Start Voter Registration</a>
+<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Address)" class="nav-link">Register Address</a>
+<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Demographics)" class="nav-link">Register Demographics</a>
+<a asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.FinalizeRegistration)" class="btn btn-primary">Finalize Registration</a>
 <br />
-@if (User.IsInRole("Administrator"))
-{
-<a asp-controller="Admin" asp-action="Dashboard" class="nav-link">Admin Dashboard</a>
-<label>
-    This link will be removed and Admins will automatically be redirected to the dashboard above.
-</label>
-}
 

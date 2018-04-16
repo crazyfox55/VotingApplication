@@ -55,7 +55,7 @@ namespace VotingApplication.Controllers
                 return RedirectToAction("Dashboard", "User");
             }
 
-            return View(model);
+            return View("Register", model);
         }
 
         [HttpGet]
@@ -92,7 +92,7 @@ namespace VotingApplication.Controllers
                 return RedirectToAction("Dashboard", "User");
             }
 
-            return View(model);
+            return View("Address",  model);
         }
 
         [HttpGet]
@@ -129,7 +129,38 @@ namespace VotingApplication.Controllers
                 return RedirectToAction("Dashboard", "User");
             }
 
-            return View(model); //Index view
+            return View("Demographics", model); //Index view
+        }
+
+        [HttpGet]
+        public IActionResult FinalizeRegistration()
+        {
+            string userId = _UserManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _Context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
+
+            VoterFinalizeRegistrationViewModel model = new VoterFinalizeRegistrationViewModel(registrationData, addressData, demographicsData);
+
+            if (registrationData == null || addressData == null || demographicsData == null)
+                // TODO change to some error page -- not done with other registration
+                return View(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FinalizeRegistrationAsync(VoterFinalizeRegistrationViewModel model)
+        {
+            // if this isn't true there is a problem with the code.
+            if (ModelState.IsValid)
+            {
+                ApplicationUser user = await _UserManager.GetUserAsync(User);
+                _UserManager.AddToRoleAsync(user, "Administrator").Wait();
+
+            }
+
+            // TODO change to some error page -- server error, should not have served page.
+            return View("FinalizeRegistration", model);
         }
     }
 }
