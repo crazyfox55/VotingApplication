@@ -157,6 +157,7 @@ namespace VotingApplication
                         };
 
                         userManager.CreateAsync(user, "hello").Wait();
+                        userManager.AddToRoleAsync(user, "GenericUser").Wait();
                     }
                 }
                 #endregion

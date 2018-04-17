@@ -24,13 +24,6 @@ namespace VotingApplication.Controllers
         }
         
         [HttpGet]
-        public IActionResult Dashboard()
-        {
-            ViewData["UserName"] = HttpContext.User.Identity.Name;
-            return View();
-        }
-        
-        [HttpGet]
         public IActionResult Profile()
         {
             ViewData["UserName"] = HttpContext.User.Identity.Name;

@@ -54,8 +54,24 @@ namespace VotingApplication.Controllers
                 {
                     if (string.IsNullOrEmpty(returnUrl))
                     {
-                        string action = nameof(UserController.Dashboard);
-                        string controller = nameof(UserController).RemoveController();
+                        string action = "";
+                        string controller = "";
+                        var user = await _UserManager.FindByNameAsync(model.Username);
+                        if (await _UserManager.IsInRoleAsync(user, "Administrator"))
+                        {
+                            action = nameof(AdminController.Dashboard);
+                            controller = nameof(AdminController).RemoveController();
+                        }
+                        else if(await _UserManager.IsInRoleAsync(user, "GenericUser"))
+                        {
+                            action = nameof(VoterRegistrationController.Dashboard);
+                            controller = nameof(VoterRegistrationController).RemoveController();
+                        }
+                        else
+                        {
+                            action = nameof(UserController.Profile);
+                            controller = nameof(UserController).RemoveController();
+                        }
                         return RedirectToAction(action, controller);
                     }
 

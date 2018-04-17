@@ -50,22 +50,33 @@
                         {
                             @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
                             {
-                            <a asp-area="" asp-controller="@nameof(AdminController).RemoveController()" asp-action="@nameof(AdminController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                                <a asp-area="" asp-controller="@nameof(AdminController).RemoveController()" asp-action="@nameof(AdminController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
                             }
                             else
                             {
-                            <a asp-area="" asp-controller="@nameof(AdminController).RemoveController()" asp-action="@nameof(AdminController.Dashboard)" class="nav-link">Dashboard</a>
+                                <a asp-area="" asp-controller="@nameof(AdminController).RemoveController()" asp-action="@nameof(AdminController.Dashboard)" class="nav-link">Dashboard</a>
+                            }
+                        }
+                        else if (User.IsInRole("GenericUser"))
+                        {
+                            @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
+                            {
+                                <a asp-area="" asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                            }
+                            else
+                            {
+                                <a asp-area="" asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Dashboard)" class="nav-link">Dashboard</a>
                             }
                         }
                         else
                         {
                             @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
                             {
-                            <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                                <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Profile)" class="nav-link active" style="background-color: #111;">Dashboard</a>
                             }
                             else
                             {
-                            <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Dashboard)" class="nav-link">Dashboard</a>
+                                <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Profile)" class="nav-link">Dashboard</a>
                             }
                         }
                     </li>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VotingApplication.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "GenericUser")]
     public class VoterRegistrationController : Controller
     {
         protected UserManager<ApplicationUser> _UserManager;
@@ -20,7 +20,57 @@ namespace VotingApplication.Controllers
             _UserManager = userManager;
             _Context = context;
         }
-        
+
+        [HttpGet]
+        public IActionResult Dashboard()
+        {
+            string userId = _UserManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _Context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
+            VoterDashboardViewModel model = new VoterDashboardViewModel(
+                registrationData != null, 
+                addressData != null,
+                demographicsData != null);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult FinalizeRegistration()
+        {
+            string userId = _UserManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _Context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
+
+            VoterFinalizeRegistrationViewModel model = new VoterFinalizeRegistrationViewModel(registrationData, addressData, demographicsData);
+
+            if (registrationData == null || addressData == null || demographicsData == null)
+                // TODO change to some error page -- not done with other registration
+                return View(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FinalizeRegistrationAsync(VoterFinalizeRegistrationViewModel model)
+        {
+            string userId = _UserManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _Context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
+
+            if (registrationData == null || addressData == null || demographicsData == null)
+                // TODO change to some error page -- not done with other registration
+                return RedirectToAction(nameof(Dashboard));
+
+            ApplicationUser user = await _UserManager.GetUserAsync(User);
+            _UserManager.AddToRoleAsync(user, "RegisteredVoter").Wait();
+            _UserManager.RemoveFromRoleAsync(user, "GenericUser").Wait();
+
+            return RedirectToAction("Profile", "User");
+        }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -52,7 +102,7 @@ namespace VotingApplication.Controllers
 
                 await _Context.SaveChangesAsync();
 
-                return RedirectToAction("Dashboard", "User");
+                return RedirectToAction(nameof(Dashboard));
             }
 
             return View("Register", model);
@@ -89,7 +139,7 @@ namespace VotingApplication.Controllers
 
                 await _Context.SaveChangesAsync();
 
-                return RedirectToAction("Dashboard", "User");
+                return RedirectToAction(nameof(Dashboard));
             }
 
             return View("Address",  model);
@@ -126,41 +176,12 @@ namespace VotingApplication.Controllers
 
                 await _Context.SaveChangesAsync();
 
-                return RedirectToAction("Dashboard", "User");
+                return RedirectToAction(nameof(Dashboard));
             }
 
             return View("Demographics", model); //Index view
         }
 
-        [HttpGet]
-        public IActionResult FinalizeRegistration()
-        {
-            string userId = _UserManager.GetUserId(User);
-            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
-            VoterAddressDataModel addressData = _Context.Address.Find(userId);
-            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
-
-            VoterFinalizeRegistrationViewModel model = new VoterFinalizeRegistrationViewModel(registrationData, addressData, demographicsData);
-
-            if (registrationData == null || addressData == null || demographicsData == null)
-                // TODO change to some error page -- not done with other registration
-                return View(model);
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FinalizeRegistrationAsync(VoterFinalizeRegistrationViewModel model)
-        {
-            // if this isn't true there is a problem with the code.
-            if (ModelState.IsValid)
-            {
-                ApplicationUser user = await _UserManager.GetUserAsync(User);
-                _UserManager.AddToRoleAsync(user, "Administrator").Wait();
-
-            }
-
-            // TODO change to some error page -- server error, should not have served page.
-            return View("FinalizeRegistration", model);
-        }
+        
     }
 }
