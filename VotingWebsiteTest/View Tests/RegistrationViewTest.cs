@@ -5,6 +5,12 @@ using OpenQA.Selenium;
 using System.Linq;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Chrome;
+using System.Diagnostics;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.TestHost;
+using System.Net.Http;
 
 namespace VotingWebsiteTest
 {
@@ -13,13 +19,31 @@ namespace VotingWebsiteTest
     {
         ChromeDriver _chrome = new ChromeDriver(@"C:\Users\colemtg\source\repos");
 
+        
+
+        private TestServer _server;
+        private HttpClient _client;
+
         [TestMethod]
         public void Register()
         {
-            var username = string.Join("", System.Guid.NewGuid().ToString().Take(5));
-            var password = string.Join("", System.Guid.NewGuid().ToString().Take(6));
-            var email = "brian-schweer@uiowa.edu";
-            CreateUser(username, email, password);
+
+            var builder = new WebHostBuilder()
+            .UseContentRoot(@"C:\Users\colemtg\source\repos\VotingApplication\VotingApplication")
+            .UseEnvironment("Development")
+            .UseStartup<Startup>()
+            .UseApplicationInsights();
+
+            _server = new TestServer(builder);
+            _client = _server.CreateClient();
+            var response = _client.GetAsync("/");
+            Assert.IsNotNull(response);
+
+
+            // var username = string.Join("", System.Guid.NewGuid().ToString().Take(5));
+            //var password = string.Join("", System.Guid.NewGuid().ToString().Take(6));
+            //var email = "cole-pierce@uiowa.edu";
+            //CreateUser(username, email, password);
 
         }
 
