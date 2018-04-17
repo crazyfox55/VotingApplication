@@ -51,6 +51,8 @@ namespace VotingWebsiteTest
             var mockApp = new Mock<ApplicationUser>();
             
             var store = new Mock<IUserStore<ApplicationUser>>();
+
+
             CancellationToken token = new CancellationToken();
             store.Setup(s => s.FindByIdAsync("testId",token)).ReturnsAsync(new ApplicationUser
             {

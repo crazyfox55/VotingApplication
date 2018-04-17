@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.TestHost;
 using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace VotingWebsiteTest
 {
@@ -27,7 +28,7 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void Register()
         {
-
+           
             var builder = new WebHostBuilder()
             .UseContentRoot(@"C:\Users\colemtg\source\repos\VotingApplication\VotingApplication")
             .UseEnvironment("Development")
