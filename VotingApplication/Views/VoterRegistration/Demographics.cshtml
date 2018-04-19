@@ -1,7 +1,8 @@
-﻿@model DemographicsEntryViewModel
+﻿@using VotingApplication.Controllers
+@model VoterDemographicsViewModel
 @{
     // move this code into the C# class so it is easier to edit
-    ViewData["Purpose"] = "Additional Voter Information";
+    ViewData["Purpose"] = "Voter Demographics";
     ViewData["Submit"] = "Submit";
 }
 
@@ -11,38 +12,8 @@
     })
 </script>
 
-<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+<form asp-action="@nameof(VoterRegistrationController.DemographicsAsync)" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
-    <div class="form-group">
-        <label asp-for="AddressLineOne"></label>
-        <input asp-for="AddressLineOne" class="form-control" placeholder="Address Line One" />
-        <span asp-validation-for="AddressLineOne" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="AddressLineTwo"></label>
-        <input asp-for="AddressLineTwo" class="form-control" placeholder="Address Line Two" />
-        <span asp-validation-for="AddressLineTwo" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="City"></label>
-        <input asp-for="City" class="form-control" placeholder="City" />
-        <span asp-validation-for="City" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="State"></label>
-        <input asp-for="State" onkeydown="upperCaseF(this)" class="form-control" placeholder="State" />
-        <span asp-validation-for="State" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ZipCode"></label>
-        <input asp-for="ZipCode" class="form-control" placeholder="Zip Code" />
-        <span asp-validation-for="ZipCode" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="DOB"></label>
-        <input asp-for="DOB" class="form-control" placeholder="Date of Birth" />
-        <span asp-validation-for="DOB" class="text-danger"></span>
-    </div>
     <div class="form-group">
         <label asp-for="Party"></label>
         <select asp-for="Party" class="form-control">
@@ -107,11 +78,3 @@
 
     <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
-
-<script>
-    function upperCaseF(a) {
-        setTimeout(function () {
-            a.value = a.value.toUpperCase();
-        }, 1);
-    }
-</script>

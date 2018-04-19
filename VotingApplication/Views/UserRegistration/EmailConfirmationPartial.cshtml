@@ -1,13 +1,14 @@
 ﻿@using VotingApplication.Controllers
 @model EmailViewModel
+
 <script>
     $.validator.setDefaults({
         onkeyup: false
     })
 </script>
 
-<form asp-action="@nameof(AuthenticationController.SendResetPasswordEmailAsync)" method="post">
-    <h4 class="form-signin-heading">Resend Reset Password Email</h4>
+<form asp-action="@nameof(UserRegistrationController.EmailConfirmationSentAsync)" method="post">
+    <h4 class="form-signin-heading">Resend Email Confirmation.</h4>
     <div class="form-group">
         <label asp-for="Email"></label>
         <input asp-for="Email" class="form-control" placeholder="Email" />

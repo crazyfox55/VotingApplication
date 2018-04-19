@@ -32,15 +32,17 @@ https://github.com/aspnet/Identity/tree/85f8a49aef68bf9763cd9854ce1dd4a26a7c5d3c
 Editing data Tutorial:
 https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/introduction/examining-the-edit-methods-and-edit-view
 
+Getting Started with Entity Framework 6 Code First using MVC 5
+https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/creating-an-entity-framework-data-model-for-an-asp-net-mvc-application
+
 Google API Key:
 https://console.developers.google.com
 
 <code>
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script>
 </code>
+</br>
 Replace YOUR_KEY with the key from Google to use Google maps
-
-
-
+</br>
 Important information about Entity Framework 6 Lazy Execution:
 https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/reading-related-data-with-the-entity-framework-in-an-asp-net-mvc-application

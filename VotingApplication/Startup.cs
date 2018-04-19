@@ -94,6 +94,30 @@ namespace VotingApplication
                 //This only runs when the server starts
                 context.Database.EnsureCreated();
 
+                /**** MOVE ADD ROLES TO SQL FILE? ****/
+                #region Add Roles
+                if (context.Roles.Any() == false)
+                {
+                    RoleManager<IdentityRole> roleManager =
+                        serviceProvider.GetService<RoleManager<IdentityRole>>();
+
+                    roleManager.CreateAsync(new IdentityRole()
+                    {
+                        Name = "Administrator"
+                    }).Wait();
+
+                    roleManager.CreateAsync(new IdentityRole()
+                    {
+                        Name = "GenericUser"
+                    }).Wait();
+
+                    roleManager.CreateAsync(new IdentityRole()
+                    {
+                        Name = "RegisteredVoter"
+                    }).Wait();
+                }
+                #endregion
+
                 #region Add Users
                 if (context.Users.Any() == false)
                 {
@@ -114,6 +138,8 @@ namespace VotingApplication
                     //create an easy to login user
                     userManager.CreateAsync(user, "hello").Wait();
 
+                    userManager.AddToRoleAsync(user, "Administrator").Wait();
+
                     //create 100 users for presenting
                     for (int i = 0; i < 100; i++)
                     {
@@ -131,11 +157,12 @@ namespace VotingApplication
                         };
 
                         userManager.CreateAsync(user, "hello").Wait();
+                        userManager.AddToRoleAsync(user, "GenericUser").Wait();
                     }
                 }
                 #endregion
 
-                /**** MOVE ADD OFFICES TO SQL FILE ****/
+                /**** MOVE ADD OFFICES TO SQL FILE? ****/
                 #region Add Offices
                 if (context.Office.Any() == false)
                 {

@@ -13,7 +13,7 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class AdminController : Controller
     {
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using VotingApplication.Controllers;
 
 namespace VotingApplication.ViewModels
 {
@@ -12,13 +13,13 @@ namespace VotingApplication.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [Remote(action: "VerifyPassword", controller: "UserRegistration")]
+        [Remote(action: nameof(VerifyController.VerifyStrongPasswordAsync), controller: "Verify")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
         [Required]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Compare(nameof(Password), ErrorMessage = "The password and confirmation password do not match.")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirmation")]
         public string ConfirmPassword { get; set; }
