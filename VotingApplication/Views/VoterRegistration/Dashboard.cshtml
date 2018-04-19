@@ -1,0 +1,57 @@
+﻿@using VotingApplication.Controllers
+@model VoterDashboardViewModel
+
+<h1>Welcome to your dashboard</h1>
+<!-- replace with better information later-->
+<p>
+    Hello @User.Identity.Name, welcome to our voting web application.
+    The dashboard will show you important information in the future.
+</p>
+@if (Model.RegistrationDone)
+{
+    <p>
+        Thank you for starting the registration process.
+    </p>
+}
+    <div class="btn-group-vertical col-md-8 mb-3">
+        @if (Model.RegistrationDone)
+        {
+            <a asp-action="@nameof(VoterRegistrationController.Register)" class="btn btn-secondary">Edit Registration</a>
+        }
+        else
+        {
+            <a asp-action="@nameof(VoterRegistrationController.Register)" class="btn btn-dark">Basic Registration</a>
+        }
+
+        @if (Model.AddressDone)
+        {
+            <a asp-action="@nameof(VoterRegistrationController.Address)" class="btn btn-secondary">Edit Address</a>
+        }
+        else
+        {
+            <a asp-action="@nameof(VoterRegistrationController.Address)" class="btn btn-dark">Register Address</a>
+        }
+        @if (Model.DemographicsDone)
+        {
+            <a asp-action="@nameof(VoterRegistrationController.Demographics)" class="btn btn-secondary">Edit Demographics</a>
+        }
+        else
+        {
+            <a asp-action="@nameof(VoterRegistrationController.Demographics)" class="btn btn-dark">Register Demographics</a>
+        }
+
+    </div>
+@if (Model.RegistrationDone && Model.AddressDone && Model.DemographicsDone)
+{
+    <p>
+        Thank you for finishing the registration process. Click the button below view and confirm registration.
+    </p>
+    <a asp-action="@nameof(VoterRegistrationController.FinalizeRegistration)" class="btn btn-primary">Finalize Registration</a>
+}
+else
+{
+    <p>
+        Once you complete the three registration steps above then you will be able to vote.
+    </p>
+    <button disabled class="btn btn-primary" style="margin-left: 15px;">Finalize Registration</button>
+}

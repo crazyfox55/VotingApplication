@@ -11,8 +11,9 @@ namespace VotingApplication
         public DbSet<SettingsDataModel> Settings { get; set; }
 
         public DbSet<VoterRegistrationDataModel> Registration { get; set; }
+        public DbSet<VoterAddressDataModel> Address { get; set; }
         public DbSet<VoterDemographicsDataModel> Demographics { get; set; }
-
+        
         public DbSet<ZipDataModel> Zip { get; set; }
         public DbSet<DistrictDataModel> District { get; set; }
         public DbSet<RegionDataModel> Region { get; set; }

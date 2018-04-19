@@ -1,0 +1,10 @@
+﻿@using VotingApplication.Controllers
+<h1>User Profile</h1>
+
+<p>
+    Username:   @(ViewData["UserName"])
+    <!-- get other info as well later-->
+</p>
+<a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.ChangePassword)" class="nav-link">Change Password</a>
+<a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.SecurityQuestionsAsync)" class="nav-link">Add Security Questions</a>
+

@@ -1,37 +1,12 @@
-﻿@model ConfirmEmailViewModel
-<script>
-    $.validator.setDefaults({
-        onkeyup: false
-    })
-</script>
+﻿@using VotingApplication.Controllers
+@model EmailViewModel
 
-@if (Model.State == ConfirmEmailViewModel.Status.Sent)
-{
-    <h1>Email Confirmation Sent</h1>
-    <p>
-        Check your email for a confirmation letter, once your email is confirmed you will be able to login.
-    </p>
-}
-else if (Model.State == ConfirmEmailViewModel.Status.Error)
-{
-    <h1>Email Confirmation Error</h1>
-    <p>
-        Unable to confirm your email, try resending the confirmation email.
-    </p>
-}
-else if (Model.State == ConfirmEmailViewModel.Status.Request)
-{
-    <h1>Email Confirmation Request</h1>
-    <p>
-        If you have not received an email confirmation link or lost it, request one below.
-    </p>
-}
-<form asp-action="EmailConfirmationSentAsync" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" autocomplete="off">
-    <h4 class="form-signin-heading">Resend Email Confirmation.</h4>
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" placeholder="Email" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Resend Confirmation Email</button>
+<h2>Email Confirmation Sent</h2>
+<p>
+    Check your email for a confirmation letter, once your email is confirmed you will be able to login.
+
+    <a asp-area="" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link" onclick="$('#sameEmailRequest').submit(); return false;">Email missing or lost? Resquest a new link.</a>
+</p>
+<form id="sameEmailRequest" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" method="post">
+    <input asp-for="Email" type="hidden" />
 </form>
