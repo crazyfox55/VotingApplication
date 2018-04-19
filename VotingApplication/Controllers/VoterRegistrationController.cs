@@ -10,14 +10,17 @@ namespace VotingApplication.Controllers
     public class VoterRegistrationController : Controller
     {
         protected UserManager<ApplicationUser> _UserManager;
+        protected SignInManager<ApplicationUser> _SignInManager;
         protected ApplicationDbContext _Context;
 
         public VoterRegistrationController(
             UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             ApplicationDbContext context
             )
         {
             _UserManager = userManager;
+            _SignInManager = signInManager;
             _Context = context;
         }
 
@@ -67,6 +70,10 @@ namespace VotingApplication.Controllers
             ApplicationUser user = await _UserManager.GetUserAsync(User);
             _UserManager.AddToRoleAsync(user, "RegisteredVoter").Wait();
             _UserManager.RemoveFromRoleAsync(user, "GenericUser").Wait();
+
+            // this is needed to update the cookie so it has the correct roles
+            // otherwise the user will sill have access as a genericUser.
+            _SignInManager.RefreshSignInAsync(user).Wait();
 
             return RedirectToAction("Profile", "User");
         }
