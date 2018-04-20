@@ -123,86 +123,7 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> VerifyBallot(string ballotName)
-        {
-            if (_Context != null)
-            {
-                var result = await _Context.Ballot.FindAsync(ballotName);
-
-                string errors = "";
-
-                if (result == null)
-                {
-                    errors = "Ballot name does not exist, enter a valid one.";
-                    return Json($"{errors}");
-                }
-            }
-
-            return Json(true);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> VerifyZip(string zipcode)
-        {
-            if (_Context != null)
-            {
-                if (int.TryParse(zipcode, out int key))
-                {
-                    var result = await _Context.Zip.FindAsync(key);
-
-                    string errors = "";
-
-                    if (result == null)
-                    {
-                        errors = "ZipCode does not exist, enter a valid one.";
-                        return Json($"{errors}");
-                    }
-                }
-            }
-
-            return Json(true);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> VerifyDistrict(string districtName)
-        {
-            if (_Context != null)
-            {
-                var result = await _Context.District.FindAsync(districtName);
-
-                string errors = "";
-
-                if (result == null)
-                {
-                    errors = "District does not exist, enter a valid one.";
-                    return Json($"{errors}");
-                }
-            }
-
-            return Json(true);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> VerifyRegion(string regionName)
-        {
-            if (_Context != null)
-            {
-                var result = await _Context.Region.FindAsync(regionName);
-
-                string errors = "";
-
-                if (result == null)
-                {
-                    errors = "Region does not exist, enter a valid one.";
-                    return Json($"{errors}");
-                }
-            }
-
-            return Json(true);
-        }
-
+        
         [HttpGet]
         public IActionResult AddCandidate()
         {
@@ -322,8 +243,6 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
-
-
         
         // TODO: use the page and usersPerPage fields to make a interactive table.
         [HttpGet]
@@ -362,8 +281,7 @@ namespace VotingApplication.Controllers
         {
             return RedirectToAction(nameof(UserManagement));
         }
-
-
+        
         public JsonResult AddDistrict(string districtName, HashSet<string> values)
         {
             var district = new DistrictDataModel()
@@ -371,17 +289,7 @@ namespace VotingApplication.Controllers
                 DistrictName = districtName,
                 Zip = values.Select(z => new ZipFillsDistrict() { ZipCode = int.Parse(z), DistrictName = districtName }).ToList()
             };
-
-            /*district.Zip = _Context.Zip
-                .Where(z => values.Contains(z.ZipCode.ToString()))
-                .Select(z => new ZipFillsDistrict() { Zip = z, District = district })
-                .ToList();
-            foreach (string zipCode in values)
-            {
-                district.Zip.Add(new ZipFillsDistrict() { ZipCode = int.Parse(zipCode), DistrictName = districtName });
-            }
-            */
-
+            
             _Context.District.Add(district);
 
             _Context.SaveChanges();

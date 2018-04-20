@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using VotingApplication.Controllers;
 
 namespace VotingApplication.ViewModels
 {
@@ -56,7 +57,7 @@ namespace VotingApplication.ViewModels
         [HiddenInput]
         public string UserId { get; set; }
 
-        [Remote(action: "VerifyBallot", controller: "Admin")]
+        [Remote(action: nameof(VerifyController.VerifyBallotExistsAsync), controller: "Verify")]
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
         [Display(Name = "Ballot Name")]
         public string BallotName { get; set; }
