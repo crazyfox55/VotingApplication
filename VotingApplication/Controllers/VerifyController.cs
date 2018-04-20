@@ -90,7 +90,7 @@ namespace VotingApplication.Controllers
         //[RequireHttps]
         public async Task<IActionResult> VerifyEmailExistsAsync(string email)
         {
-            var user = await _UserManager.FindByEmailAsync(email);
+            ApplicationUser user = await _UserManager.FindByEmailAsync(email);
 
             if (user == null)
             {
@@ -108,17 +108,55 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> VerifyZipExistsAsync(string zipcode)
         {
+            ZipDataModel result = null;
+
             if (int.TryParse(zipcode, out int key))
             {
-                var result = await _Context.Zip.FindAsync(key);
+                result = await _Context.Zip.FindAsync(key);
+            }
 
-                string errors = "";
+            if (result == null)
+            {
+                return Json($"ZipCode \"{zipcode}\" does not exist, enter a valid one.");
+            }
 
-                if (result == null)
-                {
-                    errors = "ZipCode does not exist, enter a valid one.";
-                    return Json($"{errors}");
-                }
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyDistrictExistsAsync(string districtName)
+        {
+            DistrictDataModel result = await _Context.District.FindAsync(districtName);
+
+            if (result == null)
+            {
+                return Json($"District \"{districtName}\" does not exist, enter a valid one.");
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyRegionExistsAsync(string regionName)
+        {
+            RegionDataModel result = await _Context.Region.FindAsync(regionName);
+
+            if (result == null)
+            {
+                return Json($"Region \"{regionName}\" does not exist, enter a valid one.");
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyBallotExistsAsync(string ballotName)
+        {
+            BallotDataModel result = await _Context.Ballot.FindAsync(ballotName);
+            
+            if (result == null)
+            {
+                return Json($"Ballot \"{ballotName}\"does not exist, enter a valid one.");
             }
 
             return Json(true);
