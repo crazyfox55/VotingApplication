@@ -2,10 +2,10 @@
 @{
     // move this code into the C# class so it is easier to edit
     ViewData["Purpose"] = "Search Users";
-    ViewData["Submit"] = "Search";
-}
+    ViewData["Submit"] = "Filter";
 
-<form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+}
+<form method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="FirstName"></label>
