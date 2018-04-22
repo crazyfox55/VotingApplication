@@ -106,6 +106,21 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
+        // this is not implemented yet
+        //[RequireHttps]
+        public async Task<IActionResult> VerifyUserExistsAsync(string username)
+        {
+            ApplicationUser user = await _UserManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return Json($"User \"{username}\" is not valid for any user.");
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> VerifyZipExistsAsync(string zipcode)
         {
             ZipDataModel result = null;

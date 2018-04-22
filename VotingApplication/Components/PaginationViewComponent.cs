@@ -7,11 +7,11 @@ using VotingApplication.ViewModels;
 
 namespace VotingApplication.Components
 {
-    public class ViewPageNavigation:ViewComponent
+    public class PaginationViewComponent : ViewComponent
     {
         public ApplicationDbContext _Context;
 
-        public ViewPageNavigation(ApplicationDbContext context)
+        public PaginationViewComponent(ApplicationDbContext context)
         {
             _Context = context;
         }

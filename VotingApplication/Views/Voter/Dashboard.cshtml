@@ -1,0 +1,71 @@
+﻿@using VotingApplication.Controllers
+@model VoterBallotSearchViewModel
+
+<h1>Welcome to your dashboard</h1>
+<!-- replace with better information later-->
+<p>
+    Hello @User.Identity.Name, welcome to our voting web application.
+    The dashboard will show you all avaliable ballots that you can vote on.
+</p>
+<div class="table-responsive">
+    @if (Model.Ballots.Count() > 0)
+    {
+        <table id="tableBallotData" class="display table" role="grid" style="width:100%">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Ballots.FirstOrDefault().BallotName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Ballots.FirstOrDefault().ElectionDay)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Ballots.FirstOrDefault().OfficeName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Ballots.FirstOrDefault().Zone)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Ballots)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BallotName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ElectionDay)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OfficeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Zone)
+                        </td>
+                        <td>
+                            <!--await Component.InvokeAsync(Model.ActionViewComponent, item)-->
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Ballots.Count() > 1)
+        {
+            <script>
+                $(function () {
+                    $('#tableBallotData').DataTable();
+                });
+            </script>
+        }
+    }
+    else
+    {
+        <h4 class="text-danger">
+            There are no ballots for you to vote on.
+        </h4>
+    }
+</div>
