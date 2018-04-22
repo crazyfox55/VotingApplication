@@ -35,7 +35,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult UserSearch()
         {
-            return View();
+            return View(new UserSearchViewModel());
         }
 
         [HttpGet]
@@ -327,18 +327,14 @@ namespace VotingApplication.Controllers
         
         // TODO: use the page and usersPerPage fields to make a interactive table.
         [HttpGet]
-        public IActionResult UserManagement(int page = 0, int usersPerPage = 5)
+        public IActionResult UserManagement()
         {
-            // max 50 users
-            usersPerPage = Math.Min(usersPerPage, 50);
-            // min 5 users
-            usersPerPage = Math.Max(usersPerPage, 5);
-
+           
             // TODO: create an actual model so we can send additional information. (i.e total number of pages and number of users)
             List<ManageUserViewModel> model = new List<ManageUserViewModel>();
             ApplicationUser[] users = _Context.Users
-                .Skip(page * usersPerPage)
-                .Take(usersPerPage)
+                
+                .Take(1000)
                 .ToArray();
             for (int i = 0; i < users.Length; i++)
             {
