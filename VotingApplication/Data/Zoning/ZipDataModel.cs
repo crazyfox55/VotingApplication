@@ -46,6 +46,8 @@ namespace VotingApplication
         public ICollection<ZipFillsDistrict> District { get; set; }
 
         public ICollection<VoterDemographicsDataModel> Residents { get; set; }
+
+        public ICollection<BallotDataModel> Ballots { get; set; }
     }
 
     #region Used to seralize the datamodel to Json

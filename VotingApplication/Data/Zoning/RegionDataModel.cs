@@ -14,5 +14,6 @@ namespace VotingApplication
 
         public ICollection<DistrictFillsRegion> District { get; set; }
 
+        public ICollection<BallotDataModel> Ballots { get; set; }
     }
 }

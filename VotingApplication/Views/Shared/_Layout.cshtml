@@ -72,11 +72,11 @@
                         {
                             @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
                             {
-                                <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Profile)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                                <a asp-area="" asp-controller="@nameof(VoterController).RemoveController()" asp-action="@nameof(VoterController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
                             }
                             else
                             {
-                                <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Profile)" class="nav-link">Dashboard</a>
+                                <a asp-area="" asp-controller="@nameof(VoterController).RemoveController()" asp-action="@nameof(VoterController.Dashboard)" class="nav-link">Dashboard</a>
                             }
                         }
                     </li>

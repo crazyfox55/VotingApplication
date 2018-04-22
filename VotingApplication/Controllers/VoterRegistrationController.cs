@@ -75,7 +75,7 @@ namespace VotingApplication.Controllers
             // otherwise the user will sill have access as a genericUser.
             _SignInManager.RefreshSignInAsync(user).Wait();
 
-            return RedirectToAction("Profile", "User");
+            return RedirectToAction(nameof(VoterController.Dashboard), nameof(VoterController).RemoveController());
         }
 
         [HttpGet]

@@ -44,7 +44,7 @@
 @if (Model.RegistrationDone && Model.AddressDone && Model.DemographicsDone)
 {
     <p>
-        Thank you for finishing the registration process. Click the button below view and confirm registration.
+        Thank you for finishing the registration process. Click the button below to view and confirm registration.
     </p>
     <a asp-action="@nameof(VoterRegistrationController.FinalizeRegistration)" class="btn btn-primary">Finalize Registration</a>
 }
