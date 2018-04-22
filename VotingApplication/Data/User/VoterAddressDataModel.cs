@@ -36,8 +36,7 @@ namespace VotingApplication
         [Required]
         [MaxLength(64)]
         public string AddressLineOne { get; set; }
-
-        [Required]
+        
         [MaxLength(64)]
         public string AddressLineTwo { get; set; }
 

@@ -1,0 +1,66 @@
+﻿@model FilteredUsersViewModel
+
+<div class="table-responsive">
+    @if (Model.FilteredUsers.Count() > 0)
+    {
+        <table id="tableUserData" class="display table" role="grid" style="width:100%">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().UserName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().FirstName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().LastName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Party)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FilteredUsers)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Party)
+                        </td>
+                        <td>
+                            @await Component.InvokeAsync(Model.ActionViewComponent, item)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (Model.FilteredUsers.Count() > 1)
+        {
+            <script>
+                $(function () {
+                    $('#tableUserData').DataTable();
+                });
+            </script>
+        }
+    }
+    else
+    {
+        <h4 class="text-danger">
+            There are no users that match those filters.
+        </h4>
+    }
+</div>
+

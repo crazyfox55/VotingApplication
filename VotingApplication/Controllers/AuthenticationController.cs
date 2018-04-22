@@ -69,8 +69,8 @@ namespace VotingApplication.Controllers
                         }
                         else
                         {
-                            action = nameof(UserController.Profile);
-                            controller = nameof(UserController).RemoveController();
+                            action = nameof(VoterController.Dashboard);
+                            controller = nameof(VoterController).RemoveController();
                         }
                         return RedirectToAction(action, controller);
                     }
