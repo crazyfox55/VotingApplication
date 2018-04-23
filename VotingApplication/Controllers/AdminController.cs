@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VotingApplication.ViewModels;
 using VotingApplication.Components;
+using VotingApplication.Services;
 
 namespace VotingApplication.Controllers
 {
@@ -19,6 +20,7 @@ namespace VotingApplication.Controllers
     {
 
         protected ApplicationDbContext _Context;
+        protected IEmailService _EmailService;
 
         public AdminController(
             ApplicationDbContext context)
@@ -102,6 +104,11 @@ namespace VotingApplication.Controllers
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
+                        String subject = "Ballot added, WoW";
+                        String body = "lol";
+                        var user = _Context.Users.Where((u => u.EmailConfirmed) && (u.Address.Zip.ZipCode == data.ZipCode));
+                        _EmailService.SendEmailAsync(user, subject, body);
+
                         break;
                     case "District":
                         data.RegionName = null;
