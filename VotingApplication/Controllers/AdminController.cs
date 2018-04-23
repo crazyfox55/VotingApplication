@@ -21,11 +21,14 @@ namespace VotingApplication.Controllers
 
         protected ApplicationDbContext _Context;
         protected IEmailService _EmailService;
+        protected IList<ApplicationUser> userList;
 
         public AdminController(
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IEmailService emailService)
         {
             _Context = context;
+            _EmailService = emailService;
         }
 
         [HttpGet]
@@ -106,8 +109,12 @@ namespace VotingApplication.Controllers
                         data.DistrictName = null;
                         String subject = "Ballot added, WoW";
                         String body = "lol";
-                        var user = _Context.Users.Where((u => u.EmailConfirmed) && (u.Address.Zip.ZipCode == data.ZipCode));
-                        _EmailService.SendEmailAsync(user, subject, body);
+                        userList = _Context.Users.Where(u => (u.Address.Zip.ZipCode == data.ZipCode) && (u.EmailConfirmed)).ToList();
+                        foreach (ApplicationUser u in userList)
+                        {
+                            _EmailService.SendEmailAsync(u, subject, body);
+                        }
+
 
                         break;
                     case "District":
