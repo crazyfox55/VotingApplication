@@ -42,6 +42,8 @@ namespace VotingApplication
         public string DistrictName { get; set; }
 
         public virtual DistrictDataModel District { get; set; }
+
+        public virtual ICollection<ApplicationUser> User { get; set; }
         #endregion
     }
 }

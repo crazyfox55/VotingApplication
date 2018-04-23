@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using VotingApplication.Data.Voting;
 
 namespace VotingApplication
 {
@@ -31,5 +32,7 @@ namespace VotingApplication
         public virtual VoterDemographicsDataModel Demographics { get; set; }
 
         public virtual CandidateDataModel Candidate { get; set; }
+
+        public virtual ICollection<VoterVotesBallot> Ballot { get; set; }
     }
 }
