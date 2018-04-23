@@ -1,0 +1,64 @@
+﻿@using VotingApplication.Controllers
+@model BallotVoteViewModel
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+
+<h1>Submit Vote</h1>
+<p>
+    Click select on one of the candidates below. Then confirm your vote by clicking submit vote.
+</p>
+<form asp-action="BallotVote" method="post" id="formVote">
+    <input asp-for="BallotId" class="hiddenBallot" />
+    <input asp-for="CandidateSearch.BallotId" class="hiddenBallot" />
+    <input asp-for="UserId" class="hiddenUser" />
+    <input asp-for="CandidateSearch.UserId" class="hiddenUser" />
+</form>
+<div id="filterUserOptions">
+    <h2 class="form-signin-heading">Select a candidate</h2>
+</div>
+<div id="filterUserSelect">
+    <h2 class="form-signin-heading">Candidate selected</h2>
+</div>
+<div id="candidateTable"></div>
+
+<input id="voteButton" form="formVote" type="submit" class="btn btn-primary" value="Submit Vote" />
+
+<script type="text/javascript">
+
+    var filterUsers = function () {
+        $.ajax({
+            url: "@Url.Action(nameof(VoterController.FilterCandidates), nameof(VoterController).RemoveController())",
+            method: "post",
+            cache: false,
+            data: $("#formVote").serialize(),
+            success: function (data, statusText, xhdr) {
+                $("#candidateTable").html(data);
+            },
+            error: function (data, statusText, xhdr) {
+                $("#candidateTable").html(JSON.stringify(xhdr));
+            }
+        });
+    }
+
+    var selectUser = function (userId) {
+        $('.hiddenUser').val(userId);
+        $('.hiddenBallot').val(@Model.BallotId)
+        $('#filterUserOptions').hide();
+        $('#filterUserSelect').show();
+        $('#voteButton').show();
+        filterUsers();
+    }
+
+    var deselectUser = function () {
+        $('.hiddenUser').val('');
+        $('.hiddenBallot').val(@Model.BallotId)
+        $('#filterUserOptions').show();
+        $('#filterUserSelect').hide();
+        $('#voteButton').hide();
+        filterUsers();
+    }
+
+    deselectUser();
+</script>

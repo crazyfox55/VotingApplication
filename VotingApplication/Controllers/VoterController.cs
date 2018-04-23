@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VotingApplication.Components;
 using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
@@ -35,10 +36,7 @@ namespace VotingApplication.Controllers
             ZipDataModel zip = address.Zip;
             _Context.Entry(zip).Collection(z => z.Ballots).Load();
             _Context.Entry(zip).Collection(z => z.District).Load();
-
-            //_Context.Entry(zip).Reference(z => z.Ballots).Load();
-            //_Context.Entry(zip).Reference(z => z.District).Load();
-
+            
             // for every district the zip is in
             foreach (ZipFillsDistrict zfd in zip.District)
             {
@@ -52,10 +50,7 @@ namespace VotingApplication.Controllers
                 // load district collections
                 _Context.Entry(district).Collection(d => d.Ballots).Load();
                 _Context.Entry(district).Collection(d => d.Region).Load();
-
-                //_Context.Entry(district).Reference(d => d.Ballots).Load();
-                //_Context.Entry(district).Reference(d => d.Region).Load();
-
+                
                 // for every region that every district where the zip is in
                 foreach (DistrictFillsRegion dfr in district.Region)
                 {
@@ -68,10 +63,6 @@ namespace VotingApplication.Controllers
 
                     //load region collections
                     _Context.Entry(region).Collection(r => r.Ballots).Load();
-
-                    //_Context.Entry(region).Reference(r => r.Ballots).Load();
-
-
                 }
             }
 
@@ -181,6 +172,47 @@ namespace VotingApplication.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult BallotVote(string ballotName)
+        {
+            return View(new BallotVoteViewModel()
+            {
+                BallotId = ballotName
+            });
+        }
 
+        [HttpPost]
+        public IActionResult FilterCandidates(BallotVoteViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.UserId))
+                model.CandidateSearch.CandidateSelected = false;
+            else
+                model.CandidateSearch.CandidateSelected = true;
+            return ViewComponent(typeof(CandidateViewComponent), model.CandidateSearch);
+        }
+
+        [HttpPost]
+        public IActionResult BallotVote(BallotVoteViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                /* Waiting on Vote Data Model
+                var data = new VoteDataModel()
+                {
+                    UserId = User.Identity.ID,
+                    BallotName = model.BallotId,
+                    CandidateID = model.UserId
+                };
+
+                _Context.Vote.Add(data);
+
+                _Context.SaveChanges();
+                */
+
+                return RedirectToAction(nameof(Dashboard));
+            }
+
+            return View(model);
+        }
     }
 }

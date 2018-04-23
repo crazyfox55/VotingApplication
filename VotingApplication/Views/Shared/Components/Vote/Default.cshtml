@@ -1,0 +1,4 @@
+﻿@using VotingApplication.Controllers
+@model FilteredBallotViewModel.BallotViewModel
+
+<button class="btn btn-dark" onclick="location.href = '@Url.Action(nameof(VoterController.BallotVote), nameof(VoterController).RemoveController())'" >Vote</button>
