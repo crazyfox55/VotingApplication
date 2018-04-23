@@ -21,7 +21,6 @@ namespace VotingApplication.Controllers
 
         protected ApplicationDbContext _Context;
         protected IEmailService _EmailService;
-        protected IList<ApplicationUser> userList;
 
         public AdminController(
             ApplicationDbContext context,
@@ -100,7 +99,8 @@ namespace VotingApplication.Controllers
                     ElectionDay = model.ElectionDay,
                     OfficeName = model.OfficeName
                 };
-
+                List<ApplicationUser> userList = new List<ApplicationUser>();
+                List<DistrictDataModel> districtList = new List<DistrictDataModel>();
                 switch (model.Zone)
                 {
                     case "ZipCode":
@@ -114,18 +114,50 @@ namespace VotingApplication.Controllers
                         {
                             _EmailService.SendEmailAsync(u, subject, body);
                         }
-
-
                         break;
+
+
                     case "District":
                         data.RegionName = null;
                         data.ZipCode = null;
                         data.DistrictName = model.DistrictName;
+                        DistrictDataModel district = _Context.District.Where(d => d.DistrictName == data.DistrictName).FirstOrDefault();
+                        _Context.Entry(district).Collection(d => d.Zip);
+                        foreach (ZipFillsDistrict zfd in district.Zip)
+                        {
+                            userList.AddRange(_Context.Users.Where(u => (u.Address.Zip.ZipCode == zfd.ZipCode) && (u.EmailConfirmed)));
+                        }
+                        foreach (ApplicationUser u in userList)
+                        {
+                            _EmailService.SendEmailAsync(u, "ballot added1", "wow1");
+                        }
                         break;
+
                     case "Region":
                         data.RegionName = model.RegionName;
                         data.ZipCode = null;
                         data.DistrictName = null;
+                        RegionDataModel region = _Context.Region.Where(r => r.RegionName == data.RegionName).FirstOrDefault();
+                        _Context.Entry(region).Collection(r => r.District);
+                        foreach (DistrictFillsRegion dfr in region.District)
+                        {
+                            districtList.AddRange(_Context.District.Where(d => (d.Region == dfr.Region)));
+                            foreach (DistrictDataModel ddm in districtList)
+                            {
+                                DistrictDataModel district1 = _Context.District.Where(d => d.DistrictName == ddm.DistrictName).FirstOrDefault();
+                                _Context.Entry(district1).Collection(d => d.Zip);
+                                foreach (ZipFillsDistrict zfd in district1.Zip)
+                                {
+                                    userList.AddRange(_Context.Users.Where(u => (u.Address.Zip.ZipCode == zfd.ZipCode) && (u.EmailConfirmed)));
+                                }
+                                foreach (ApplicationUser u in userList)
+                                {
+                                    _EmailService.SendEmailAsync(u, "ballot added2", "wow2");
+                                }
+                            }
+                        }
+                        
+
                         break;
                 }
 
