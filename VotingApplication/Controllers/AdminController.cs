@@ -19,11 +19,13 @@ namespace VotingApplication.Controllers
     {
 
         protected ApplicationDbContext _Context;
+        protected UserManager<ApplicationUser> _UserManager;
 
         public AdminController(
-            ApplicationDbContext context)
+            ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _Context = context;
+            _UserManager = userManager;
         }
 
         [HttpGet]
@@ -198,11 +200,19 @@ namespace VotingApplication.Controllers
             return RedirectToAction(nameof(UserManagement));
         }
 
+        [HttpPost]
+        public IActionResult Edit(ManageUserViewModel model)
+        {
+            return RedirectToAction(nameof(UserManagement));
+        }
+
         // TODO: needs to use the user manager to delete a user.
         /******IMPORTANT****** TODO: need to change in CSHTML so that the button performs a POST instead of a GET ***********/
         [HttpGet] // change to [HttpPost]
-        public IActionResult Delete(string Username)
+        public async Task<IActionResult> Delete(string Username)
         {
+            ApplicationUser user = await _UserManager.FindByNameAsync(Username);
+            await _UserManager.DeleteAsync(user);
             return RedirectToAction(nameof(UserManagement));
         }
         
