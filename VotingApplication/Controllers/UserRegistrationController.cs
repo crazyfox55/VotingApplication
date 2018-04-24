@@ -46,8 +46,9 @@ namespace VotingApplication.Controllers
                     UserName = model.Username,
                     Email = model.Email
                 };
-
+                
                 var result = await _UserManager.CreateAsync(user, model.Password);
+                await _UserManager.AddToRoleAsync(user, "GenericUser");
 
                 if (result.Succeeded)
                 {
@@ -87,7 +88,6 @@ namespace VotingApplication.Controllers
                 if (user != null)
                 {
                     var confirm = await _UserManager.ConfirmEmailAsync(user, token);
-                    await _UserManager.AddToRoleAsync(user, "GenericUser");
                     if (confirm.Succeeded)
                     {
                         return View("EmailConfirmed");

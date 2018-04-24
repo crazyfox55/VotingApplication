@@ -157,7 +157,6 @@ namespace VotingApplication.Controllers
                     var result = await _UserManager.ResetPasswordAsync(user, model.Token, model.Password);
                     string emailToken = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
                     await _UserManager.ConfirmEmailAsync(user, emailToken);
-                    await _UserManager.AddToRoleAsync(user, "GenericUser");
                     if (result.Succeeded)
                     {
                         return View("ResetPasswordComplete");
