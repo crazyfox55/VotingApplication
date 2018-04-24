@@ -35,5 +35,7 @@ namespace VotingApplication
 
         public virtual BallotDataModel Ballot { get; set; }
 
+        public ICollection<VoterVotesBallot> VoteReceived { get; set; }
+
     }
 }
