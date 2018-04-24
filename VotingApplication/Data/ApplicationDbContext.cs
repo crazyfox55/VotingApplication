@@ -53,17 +53,23 @@ namespace VotingApplication
 
             //sets up the many to many relationship of ballots and Voters
             modelBuilder.Entity<VoterVotesBallot>()
-                .HasKey(vb => new { vb.UserName, vb.CandidateName, vb.BallotName });
+                .HasKey(vb => new { vb.VoterName, vb.CandidateName, vb.BallotName });
 
             modelBuilder.Entity<VoterVotesBallot>()
-                .HasOne(vb => vb.User)
+                .HasOne(vb => vb.Voter)
                 .WithMany(u => u.Ballot)
                 .HasForeignKey(vb => vb.BallotName);
 
-            
+            modelBuilder.Entity<VoterVotesBallot>()
+                .HasOne(vb => vb.Ballot)
+                .WithMany(b => b.Voter)
+                .HasForeignKey(vb => vb.VoterName);
 
-            
-
+            //sets up the one to many relationship of candidates and Voters
+            modelBuilder.Entity<VoterVotesBallot>()
+                .HasOne(vb => vb.Candidate)
+                .WithMany(c => c.Voter)
+                .HasForeignKey(vb => vb.VoterName);
 
             // Sets up the many to many relationship of districts and regions
             modelBuilder.Entity<DistrictFillsRegion>()

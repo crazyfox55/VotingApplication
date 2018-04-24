@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using VotingApplication.Data.Voting;
 
 namespace VotingApplication
 {
@@ -43,7 +44,7 @@ namespace VotingApplication
 
         public virtual DistrictDataModel District { get; set; }
 
-        public virtual ICollection<ApplicationUser> User { get; set; }
+        public ICollection<VoterVotesBallot> Voter { get; set; }
         #endregion
     }
 }
