@@ -34,6 +34,7 @@ public class TestUserManager : UserManager<ApplicationUser>
     new Mock<ILogger<UserManager<ApplicationUser>>>().Object)
     { }
 }
+/*
 namespace VotingWebsiteTest
 {
     
@@ -100,3 +101,4 @@ namespace VotingWebsiteTest
 
     }
 }
+*/

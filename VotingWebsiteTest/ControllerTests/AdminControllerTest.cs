@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 
-
+                                    /*
 namespace VotingWebsiteTest
 {
     [TestClass]
@@ -96,3 +96,4 @@ namespace VotingWebsiteTest
         }
     }
 }
+                  */
