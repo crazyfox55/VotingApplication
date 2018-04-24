@@ -106,43 +106,74 @@ namespace VotingApplication.Controllers
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
-                        userList.Concat(_Context.Users.Where(u => u.Address != null && u.Address.ZipCode == data.ZipCode && u.EmailConfirmed));
+                        userList = _Context.Zip
+                            // get the one zip
+                            .Where(z => z.ZipCode == data.ZipCode)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed);
                         break;
                     case "District":
                         data.RegionName = null;
                         data.ZipCode = null;
                         data.DistrictName = model.DistrictName;
-                        // find the district
-                        DistrictDataModel district = _Context.District.Where(d => d.DistrictName == data.DistrictName).FirstOrDefault();
-                        // load the collection of zips for this district
-                        _Context.Entry(district).Collection(d => d.Zip).Load();
-                        foreach (ZipFillsDistrict zfd in district.Zip)
-                        {
-                            userList.Concat(_Context.Users.Where(u => u.Address != null && u.Address.ZipCode == zfd.ZipCode && u.EmailConfirmed));
-                        }
+                        userList = _Context.District
+                            // get the one district
+                            .Where(d => d.DistrictName == data.DistrictName)
+                            // load its bridge table
+                            .Include(d => d.Zip)
+                            // convert bridge table to one list
+                            .SelectMany(d => d.Zip)
+                            // convert bridge table to zip
+                            .Select(zfd => zfd.Zip)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed);
                         break;
                     case "Region":
                         data.RegionName = model.RegionName;
                         data.ZipCode = null;
                         data.DistrictName = null;
-                        // find the region
-                        RegionDataModel region = _Context.Region.Where(r => r.RegionName == data.RegionName).FirstOrDefault();
-                        // load the collection of districts for this region
-                        _Context.Entry(region).Collection(r => r.District);
-                        foreach (DistrictFillsRegion dfr in region.District)
-                        {
-                            // load a specific district
-                            _Context.Entry(dfr).Reference(d => d.District).Load();
-                            // load the collection of zips for this specific district
-                            _Context.Entry(dfr.District).Collection(d => d.Zip).Load();
-                            foreach (ZipFillsDistrict zfd in dfr.District.Zip)
-                            {
-                                // regions can consist of two districts that overlap which 
-                                // would cause the same users to be added twice
-                                // below removes duplicate users based on their default equality comparitor
-                                userList.Union(_Context.Users.Where(u => u.Address != null && u.Address.ZipCode == zfd.ZipCode && u.EmailConfirmed));
-                            }
-                        }
+                        userList = _Context.Region
+                            // get the one region
+                            .Where(r => r.RegionName == data.RegionName)
+                            // load its bridge table
+                            .Include(r => r.District)
+                            // convert the bridge table to one list
+                            .SelectMany(r => r.District)
+                            // convert the bridge to district
+                            .Select(dfr => dfr.District)
+                            // load its bridge table
+                            .Include(d => d.Zip)
+                            // convert bridge table to one list
+                            .SelectMany(d => d.Zip)
+                            // convert bridge table to zip
+                            .Select(zfd => zfd.Zip)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed)
+                            .Distinct();
                         break;
                 }
                 string subject = "New Ballot Avaliable";
