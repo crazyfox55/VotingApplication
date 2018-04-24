@@ -2,10 +2,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using VotingApplication.ViewModels;
 
-namespace VotingWebsiteTest.ViewModels.Voting
+namespace VotingWebsiteTest.ViewModels.User.Registration
 {
     [TestClass]
-    public class AddCandidateViewModelTests
+    public class RegistrationViewModelTests
     {
         private MockRepository mockRepository;
 
@@ -26,22 +26,23 @@ namespace VotingWebsiteTest.ViewModels.Voting
         }
 
         [TestMethod]
-        public void CreateAddCandidateViewModel()
+        public void RegistrationViewModelLoad()
         {
             // Arrange
 
 
             // Act
-            AddCandidateViewModel viewModel = this.CreateViewModel();
+            RegistrationViewModel viewModel = this.CreateViewModel();
 
 
             // Assert
+            Assert.IsNotNull(viewModel);
 
         }
 
-        private AddCandidateViewModel CreateViewModel()
+        private RegistrationViewModel CreateViewModel()
         {
-            return new AddCandidateViewModel();
+            return new RegistrationViewModel();
         }
     }
 }

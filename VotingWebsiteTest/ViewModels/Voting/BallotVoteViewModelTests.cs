@@ -5,7 +5,7 @@ using VotingApplication.ViewModels;
 namespace VotingWebsiteTest.ViewModels.Voting
 {
     [TestClass]
-    public class VerifyVoterViewModelTests
+    public class BallotVoteViewModelTests
     {
         private MockRepository mockRepository;
 
@@ -26,22 +26,23 @@ namespace VotingWebsiteTest.ViewModels.Voting
         }
 
         [TestMethod]
-        public void CreateVerifyVoterViewModel()
+        public void BallotViewModelLoad()
         {
             // Arrange
 
 
             // Act
-            VerifyVoterViewModel viewModel = this.CreateViewModel();
+            BallotVoteViewModel viewModel = this.CreateViewModel();
 
 
             // Assert
+            Assert.IsNotNull(viewModel);
 
         }
 
-        private VerifyVoterViewModel CreateViewModel()
+        private BallotVoteViewModel CreateViewModel()
         {
-            return new VerifyVoterViewModel();
+            return new BallotVoteViewModel();
         }
     }
 }

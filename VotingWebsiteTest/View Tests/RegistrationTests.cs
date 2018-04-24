@@ -1,31 +1,21 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.AspNetCore.Mvc;
-using VotingApplication;
 using OpenQA.Selenium;
-using System.Linq;
-using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Chrome;
-using System.Diagnostics;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.TestHost;
-using System.Net.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace VotingWebsiteTest
 {
     [TestClass]
-    public class RegistrationViewTest
+    public class RegistrationTests
     {
+        //change to where selenium driver is located
         ChromeDriver _chrome = new ChromeDriver(@"C:\Users\colemtg\source\repos");
 
         [TestMethod]
         public void RegisterUser()
         {
-            var username = "testUser10";
+            var username = "testUser1";
             var password = "123123";
-            var email = "testingUser10@gmail.com";
+            var email = "testingUser1@gmail.com";
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Email").SendKeys(email);
@@ -41,9 +31,9 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void DetectTakenUsername()
         {
-            var username = "testUser20";
+            var username = "testUser2";
             var password = "123123";
-            var email = "testingUser20@gmail.com";
+            var email = "testingUser2@gmail.com";
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
@@ -70,9 +60,9 @@ namespace VotingWebsiteTest
         [TestMethod]
         public void DetectTakenEmail()
         {
-            var username = "testUser30";
+            var username = "testUser3";
             var password = "123123";
-            var email = "testingUser30@gmail.com";
+            var email = "testingUser3@gmail.com";
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");

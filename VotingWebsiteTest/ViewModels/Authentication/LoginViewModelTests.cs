@@ -1,23 +1,22 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using VotingApplication;
 using VotingApplication.ViewModels;
 
-namespace VotingWebsiteTest.ViewModels.FilteringAndViewing
+namespace VotingWebsiteTest.ViewModels.Authentication
 {
     [TestClass]
-    public class ManageUserViewModelTests
+    public class LoginViewModelTests
     {
         private MockRepository mockRepository;
 
-        private Mock<ApplicationUser> mockApplicationUser;
+
 
         [TestInitialize]
         public void TestInitialize()
         {
             this.mockRepository = new MockRepository(MockBehavior.Strict);
 
-            this.mockApplicationUser = this.mockRepository.Create<ApplicationUser>();
+
         }
 
         [TestCleanup]
@@ -27,23 +26,23 @@ namespace VotingWebsiteTest.ViewModels.FilteringAndViewing
         }
 
         [TestMethod]
-        public void CreateManageUserViewModel()
+        public void LoginViewModelLoad()
         {
             // Arrange
 
 
             // Act
-            ManageUserViewModel viewModel = this.CreateViewModel();
+            LoginViewModel viewModel = this.CreateViewModel();
 
 
             // Assert
+            Assert.IsNotNull(viewModel);
 
         }
 
-        private ManageUserViewModel CreateViewModel()
+        private LoginViewModel CreateViewModel()
         {
-            return new ManageUserViewModel(
-                this.mockApplicationUser.Object);
+            return new LoginViewModel();
         }
     }
 }

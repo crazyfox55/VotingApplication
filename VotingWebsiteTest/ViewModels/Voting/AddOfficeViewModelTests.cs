@@ -26,7 +26,7 @@ namespace VotingWebsiteTest.ViewModels.Voting
         }
 
         [TestMethod]
-        public void CreateAddOfficeViewModel()
+        public void AddOfficeViewModelLoad()
         {
             // Arrange
 
@@ -36,6 +36,7 @@ namespace VotingWebsiteTest.ViewModels.Voting
 
 
             // Assert
+            Assert.IsNotNull(viewModel);
 
         }
 
