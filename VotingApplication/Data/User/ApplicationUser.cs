@@ -33,6 +33,6 @@ namespace VotingApplication
 
         public virtual CandidateDataModel Candidate { get; set; }
 
-        public virtual ICollection<VoterVotesBallot> Ballot { get; set; }
+        public virtual ICollection<VoterVotesBallot> VoteGiven { get; set; }
     }
 }
