@@ -87,6 +87,7 @@ namespace VotingApplication.Controllers
                 if (user != null)
                 {
                     var confirm = await _UserManager.ConfirmEmailAsync(user, token);
+                    await _UserManager.AddToRoleAsync(user, "GenericUser");
                     if (confirm.Succeeded)
                     {
                         return View("EmailConfirmed");
