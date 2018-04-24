@@ -46,8 +46,9 @@ namespace VotingApplication.Controllers
                     UserName = model.Username,
                     Email = model.Email
                 };
-
+                
                 var result = await _UserManager.CreateAsync(user, model.Password);
+                await _UserManager.AddToRoleAsync(user, "GenericUser");
 
                 if (result.Succeeded)
                 {
