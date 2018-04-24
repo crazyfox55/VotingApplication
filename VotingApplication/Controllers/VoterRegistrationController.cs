@@ -6,12 +6,12 @@ using VotingApplication.ViewModels;
 namespace VotingApplication.Controllers
 {
     [Authorize]
-    public class VoterController : Controller
+    public class VoterRegistrationController : Controller
     {
         protected UserManager<ApplicationUser> _UserManager;
         protected ApplicationDbContext _Context;
 
-        public VoterController(
+        public VoterRegistrationController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context
             )
@@ -21,16 +21,16 @@ namespace VotingApplication.Controllers
         }
         
         [HttpGet]
-        public IActionResult Registration()
+        public IActionResult Register()
         {
             var data = _Context.Registration.Find(_UserManager.GetUserId(User));
             var model = new VoterRegistrationViewModel(data);
 
-            return View("Registration/Index", model); //Index view
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult Registration(VoterRegistrationViewModel model)
+        public IActionResult Register(VoterRegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -53,20 +53,20 @@ namespace VotingApplication.Controllers
                 return RedirectToAction("Dashboard", "User");
             }
 
-            return View("Registration/Index", model);
+            return View(model);
         }
 
         [HttpGet]
-        public IActionResult Demographics()
+        public IActionResult AddDemographics()
         {
             var data = _Context.Demographics.Find(_UserManager.GetUserId(User));
             var model = new DemographicsEntryViewModel(data);
 
-            return View("Registration/DemographicEntry", model); //Index view
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult Demographics(DemographicsEntryViewModel model)
+        public IActionResult AddDemographics(DemographicsEntryViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -89,7 +89,7 @@ namespace VotingApplication.Controllers
                 return RedirectToAction("Dashboard", "User");
             }
 
-            return View("Registration/DemographicEntry", model); //Index view
+            return View(model); //Index view
         }
     }
 }

@@ -81,13 +81,13 @@
                         }
                     </li>
                     <li class="nav-item">
-                        @if (ViewContext.RouteData.Values["controller"].ToString() == "Registration")
+                        @if (ViewContext.RouteData.Values["controller"].ToString() == "UserRegistration")
                         {
-                        <a asp-area="" asp-controller="Registration" asp-action="Register" class="nav-link active" style="background-color: #111;">Create Account</a>
+                        <a asp-area="" asp-controller="UserRegistration" asp-action="Register" class="nav-link active" style="background-color: #111;">Create Account</a>
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="Registration" asp-action="Register" class="nav-link">Create Account</a>
+                        <a asp-area="" asp-controller="UserRegistration" asp-action="Register" class="nav-link">Create Account</a>
                         }
                         
                     </li>
