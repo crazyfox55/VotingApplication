@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using VotingApplication.Data.Voting;
 
 namespace VotingApplication
 {
@@ -18,7 +17,6 @@ namespace VotingApplication
         [Column(TypeName = "Date")]
         public DateTime ElectionDay { get; set; }
         
-
         [Required]
         [ForeignKey(nameof(OfficeDataModel))]
         public string OfficeName { get; set; }
@@ -27,6 +25,7 @@ namespace VotingApplication
 
         public ICollection<CandidateDataModel> Cadidates { get; set; }
         
+        public ICollection<VoterVotesBallot> Voter { get; set; }
 
         #region One of the three is required
         [ForeignKey(nameof(RegionDataModel))]
@@ -43,8 +42,6 @@ namespace VotingApplication
         public string DistrictName { get; set; }
 
         public virtual DistrictDataModel District { get; set; }
-
-        public ICollection<VoterVotesBallot> Voter { get; set; }
         #endregion
     }
 }

@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using VotingApplication.Data.Voting;
 
 namespace VotingApplication
 {
@@ -31,8 +30,15 @@ namespace VotingApplication
 
         public virtual VoterDemographicsDataModel Demographics { get; set; }
 
+        /*
+         * This should be a collection such that a user can be a Candidate for multiple ballot.
+         * We only want them to be a Candidate for each ballot one at a time.
+         * Currently with this as a one candidate the user can only run for one race one time.
+         * Once the user is part of a ballot they cannot be changed to a new one. This is
+         * a desirable feature until the ballot has expired... then this becomes a bad feature...
+         */
         public virtual CandidateDataModel Candidate { get; set; }
 
-        public virtual ICollection<VoterVotesBallot> VoteGiven { get; set; }
+        public ICollection<VoterVotesBallot> VoteGiven { get; set; }
     }
 }

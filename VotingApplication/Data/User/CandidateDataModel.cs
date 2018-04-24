@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using VotingApplication.Data.Voting;
 using VotingApplication.ViewModels;
 
 namespace VotingApplication
@@ -36,7 +35,7 @@ namespace VotingApplication
 
         public virtual BallotDataModel Ballot { get; set; }
 
-        public virtual ICollection<VoterVotesBallot> VoteReceived { get; set; }
+        public ICollection<VoterVotesBallot> VoteReceived { get; set; }
 
     }
 }

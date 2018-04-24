@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VotingApplication.Data.Voting
+namespace VotingApplication
 {
     public class VoterVotesBallot
     {
@@ -14,6 +15,7 @@ namespace VotingApplication.Data.Voting
         public ApplicationUser Voter { get; set; }
         public BallotDataModel Ballot { get; set; }
 
+        [Required]
         [ForeignKey(nameof(ApplicationUser))]
         public String CandidateName { get; set; }
 

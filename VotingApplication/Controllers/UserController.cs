@@ -52,7 +52,7 @@ namespace VotingApplication.Controllers
                     var result = await _UserManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
                     if (result.Succeeded)
                     {
-                        await _EmailService.SendEmailAsync(user, "Your Password is reset", "lol");
+                        await _EmailService.SendEmailAsync(user, "Password Change", "Your password has been changed.");
                         return RedirectToAction(nameof(Profile));
                     }
                     foreach (IdentityError error in result.Errors)

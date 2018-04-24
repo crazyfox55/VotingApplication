@@ -99,66 +99,57 @@ namespace VotingApplication.Controllers
                     ElectionDay = model.ElectionDay,
                     OfficeName = model.OfficeName
                 };
-                List<ApplicationUser> userList = new List<ApplicationUser>();
-                List<DistrictDataModel> districtList = new List<DistrictDataModel>();
+                IEnumerable<ApplicationUser> userList = new HashSet<ApplicationUser>();
                 switch (model.Zone)
                 {
                     case "ZipCode":
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
-                        String subject = "Ballot added, WoW";
-                        String body = "lol";
-                        userList = _Context.Users.Where(u => (u.Address.Zip.ZipCode == data.ZipCode) && (u.EmailConfirmed)).ToList();
-                        foreach (ApplicationUser u in userList)
-                        {
-                            _EmailService.SendEmailAsync(u, subject, body);
-                        }
+                        userList.Concat(_Context.Users.Where(u => u.Address != null && u.Address.ZipCode == data.ZipCode && u.EmailConfirmed));
                         break;
-
-
                     case "District":
                         data.RegionName = null;
                         data.ZipCode = null;
                         data.DistrictName = model.DistrictName;
+                        // find the district
                         DistrictDataModel district = _Context.District.Where(d => d.DistrictName == data.DistrictName).FirstOrDefault();
-                        _Context.Entry(district).Collection(d => d.Zip);
+                        // load the collection of zips for this district
+                        _Context.Entry(district).Collection(d => d.Zip).Load();
                         foreach (ZipFillsDistrict zfd in district.Zip)
                         {
-                            userList.AddRange(_Context.Users.Where(u => (u.Address.Zip.ZipCode == zfd.ZipCode) && (u.EmailConfirmed)));
-                        }
-                        foreach (ApplicationUser u in userList)
-                        {
-                            _EmailService.SendEmailAsync(u, "ballot added1", "wow1");
+                            userList.Concat(_Context.Users.Where(u => u.Address != null && u.Address.ZipCode == zfd.ZipCode && u.EmailConfirmed));
                         }
                         break;
-
                     case "Region":
                         data.RegionName = model.RegionName;
                         data.ZipCode = null;
                         data.DistrictName = null;
+                        // find the region
                         RegionDataModel region = _Context.Region.Where(r => r.RegionName == data.RegionName).FirstOrDefault();
+                        // load the collection of districts for this region
                         _Context.Entry(region).Collection(r => r.District);
                         foreach (DistrictFillsRegion dfr in region.District)
                         {
-                            districtList.AddRange(_Context.District.Where(d => (d.Region == dfr.Region)));
-                            foreach (DistrictDataModel ddm in districtList)
+                            // load a specific district
+                            _Context.Entry(dfr).Reference(d => d.District).Load();
+                            // load the collection of zips for this specific district
+                            _Context.Entry(dfr.District).Collection(d => d.Zip).Load();
+                            foreach (ZipFillsDistrict zfd in dfr.District.Zip)
                             {
-                                DistrictDataModel district1 = _Context.District.Where(d => d.DistrictName == ddm.DistrictName).FirstOrDefault();
-                                _Context.Entry(district1).Collection(d => d.Zip);
-                                foreach (ZipFillsDistrict zfd in district1.Zip)
-                                {
-                                    userList.AddRange(_Context.Users.Where(u => (u.Address.Zip.ZipCode == zfd.ZipCode) && (u.EmailConfirmed)));
-                                }
-                                foreach (ApplicationUser u in userList)
-                                {
-                                    _EmailService.SendEmailAsync(u, "ballot added2", "wow2");
-                                }
+                                // regions can consist of two districts that overlap which 
+                                // would cause the same users to be added twice
+                                // below removes duplicate users based on their default equality comparitor
+                                userList.Union(_Context.Users.Where(u => u.Address != null && u.Address.ZipCode == zfd.ZipCode && u.EmailConfirmed));
                             }
                         }
-                        
-
                         break;
+                }
+                string subject = "New Ballot Avaliable";
+                string body = "There is a new ballot that you can vote on.";
+                foreach (ApplicationUser user in userList)
+                {
+                    _EmailService.SendEmailAsync(user, subject, body);
                 }
 
                 _Context.Ballot.Add(data);
