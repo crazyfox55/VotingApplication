@@ -28,101 +28,26 @@ namespace VotingApplication.Controllers
         public IActionResult Dashboard()
         {
             string userId = _UserManager.GetUserId(User);
-            // find and load zip data
-            VoterAddressDataModel address = _Context.Address.Find(userId);
-            _Context.Entry(address).Reference(adr => adr.Zip).Load();
-
-            // load zip collections
-            ZipDataModel zip = address.Zip;
-            _Context.Entry(zip).Collection(z => z.Ballots).Load();
-            _Context.Entry(zip).Collection(z => z.District).Load();
-            
-            // for every district the zip is in
-            foreach (ZipFillsDistrict zfd in zip.District)
-            {
-                _Context.Entry(zfd).Reference(z => z.District).Load();
-
-                if (zfd.District == null)
-                    continue;
-
-                DistrictDataModel district = zfd.District;
-
-                // load district collections
-                _Context.Entry(district).Collection(d => d.Ballots).Load();
-                _Context.Entry(district).Collection(d => d.Region).Load();
-                
-                // for every region that every district where the zip is in
-                foreach (DistrictFillsRegion dfr in district.Region)
-                {
-                    _Context.Entry(dfr).Reference(z => z.Region).Load();
-
-                    if (dfr.Region == null)
-                        continue;
-
-                    RegionDataModel region = dfr.Region;
-
-                    //load region collections
-                    _Context.Entry(region).Collection(r => r.Ballots).Load();
-                }
-            }
-
-            #region for loops instead of linq
-            // collect all the ballots
-            /*
-            List<FilteredBallotViewModel.BallotViewModel> ballots = new List<FilteredBallotViewModel.BallotViewModel>();
-            foreach(BallotDataModel ballot in zip.Ballots)
-            {
-                ballots.Add(new FilteredBallotViewModel.BallotViewModel()
-                {
-                    BallotName = ballot.BallotName,
-                    ElectionDay = ballot.ElectionDay,
-                    OfficeName = ballot.OfficeName,
-                    // use region, if null use district, if null use zipcode; one of them should be not null
-                    Zone = ballot.RegionName ?? ballot.DistrictName ?? ballot.ZipCode.ToString()
-                });
-            }
-            foreach (ZipFillsDistrict zfd in zip.District)
-            {
-                _Context.Entry(zfd.District).Collection(d => d.Ballots).Load();
-                foreach (BallotDataModel ballot in zfd.District.Ballots)
-                {
-                    ballots.Add(new FilteredBallotViewModel.BallotViewModel()
-                    {
-                        BallotName = ballot.BallotName,
-                        ElectionDay = ballot.ElectionDay,
-                        OfficeName = ballot.OfficeName,
-                        // use region, if null use district, if null use zipcode; one of them should be not null
-                        Zone = ballot.RegionName ?? ballot.DistrictName ?? ballot.ZipCode.ToString()
-                    });
-                }
-                _Context.Entry(zfd.District).Collection(d => d.Region).Load();
-                foreach (DistrictFillsRegion dfr in zfd.District.Region)
-                {
-                    _Context.Entry(dfr.Region).Collection(r => r.Ballots).Load();
-                    foreach (BallotDataModel ballot in dfr.Region.Ballots)
-                    {
-                        ballots.Add(new FilteredBallotViewModel.BallotViewModel()
-                        {
-                            BallotName = ballot.BallotName,
-                            ElectionDay = ballot.ElectionDay,
-                            OfficeName = ballot.OfficeName,
-                            // use region, if null use district, if null use zipcode; one of them should be not null
-                            Zone = ballot.RegionName ?? ballot.DistrictName ?? ballot.ZipCode.ToString()
-                        });
-                    }
-                }
-            }
-            */
-            #endregion
 
             VoterBallotSearchViewModel model = new VoterBallotSearchViewModel()
             {
                 ActionViewComponent = "Vote",
-                Ballots = _Context
-                .Address
-                .Where(adr => adr.UserId == userId)
-                .FirstOrDefault().Zip
-                .Ballots
+                Ballots = _Context.Users
+                .Where(u => u.Id == userId)
+                .Include(u => u.Address)
+                .Select(u => u.Address)
+                .Include(a => a.Zip)
+                .Select(a => a.Zip)
+                .Include(z => z.Ballots)
+                .Include(z => z.District)
+                .SelectMany(z => z.District)
+                .Select(zfd => zfd.District)
+                .Include(d => d.Ballots)
+                .Include(d => d.Region)
+                .SelectMany(d => d.Region)
+                .Select(dfr => dfr.Region)
+                .Include(r => r.Ballots)
+                .SelectMany(r => r.Ballots)
                 .Select(b => new FilteredBallotViewModel.BallotViewModel()
                 {
                     BallotName = b.BallotName,
@@ -131,14 +56,14 @@ namespace VotingApplication.Controllers
                     // use region, if null use district, if null use zipcode; one of them should be not null
                     Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
                 })
-                .Concat(
-                    _Context
-                    .Address
-                    .Where(adr => adr.UserId == userId)
-                    .FirstOrDefault().Zip
-                    .District
-                    .Where(zfd => zfd.District != null)
-                    .SelectMany(zfd => zfd.District.Ballots)
+                .Union(
+                    _Context.Users
+                    .Where(u => u.Id == userId)
+                    .Select(u => u.Address)
+                    .Select(a => a.Zip)
+                    .SelectMany(z => z.District)
+                    .Select(zfd => zfd.District)
+                    .SelectMany(d => d.Ballots)
                     .Select(b => new FilteredBallotViewModel.BallotViewModel()
                     {
                         BallotName = b.BallotName,
@@ -148,25 +73,21 @@ namespace VotingApplication.Controllers
                         Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
                     })
                 )
-                .Concat(
-                        _Context
-                        .Address
-                        .Where(adr => adr.UserId == userId)
-                        .FirstOrDefault().Zip
-                        .District
-                        .Where(zfd => zfd.District != null)
-                        .SelectMany(zfd => zfd.District.Region)
-                        .Where(dfr => dfr.Region != null)
-                        .SelectMany(dfr => dfr.Region.Ballots)
-                        .Select(b => new FilteredBallotViewModel.BallotViewModel()
-                        {
-                            BallotName = b.BallotName,
-                            ElectionDay = b.ElectionDay,
-                            OfficeName = b.OfficeName,
-                            // use region, if null use district, if null use zipcode; one of them should be not null
-                            Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
-                        })
-                    )
+                .Union(
+                    _Context.Users
+                    .Where(u => u.Id == userId)
+                    .Select(u => u.Address)
+                    .Select(a => a.Zip)
+                    .SelectMany(z => z.Ballots)
+                    .Select(b => new FilteredBallotViewModel.BallotViewModel()
+                    {
+                        BallotName = b.BallotName,
+                        ElectionDay = b.ElectionDay,
+                        OfficeName = b.OfficeName,
+                        // use region, if null use district, if null use zipcode; one of them should be not null
+                        Zone = b.RegionName ?? b.DistrictName ?? b.ZipCode.ToString()
+                    })
+                )
             };
 
             return View(model);
@@ -196,18 +117,17 @@ namespace VotingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                /* Waiting on Vote Data Model
-                var data = new VoteDataModel()
+                string userId = _UserManager.GetUserId(User);
+                var data = new VoterVotesBallot()
                 {
-                    UserId = User.Identity.ID,
+                    VoterName = userId,
                     BallotName = model.BallotId,
-                    CandidateID = model.UserId
+                    CandidateName = model.UserId
                 };
 
-                _Context.Vote.Add(data);
+                _Context.Votes.Add(data);
 
                 _Context.SaveChanges();
-                */
 
                 return RedirectToAction(nameof(Dashboard));
             }
