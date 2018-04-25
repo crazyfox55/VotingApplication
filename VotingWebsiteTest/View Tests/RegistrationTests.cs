@@ -2,23 +2,33 @@
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace VotingWebsiteTest
 {
-    //[TestClass]
     public class RegistrationTests
     {
         //This should work for relative source, if not change to where the chromedriver is
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
+        private static Random random = new Random();
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+
         [Fact]
         public void RegisterUser()
         {
-            var username = "testUser1";
+            var username = RandomString(6);
             var password = "123123";
-            var email = "testingUser1@gmail.com";
+            var email = username + "@gmail.com";
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Email").SendKeys(email);
@@ -34,9 +44,9 @@ namespace VotingWebsiteTest
         [Fact]
         public void DetectTakenUsername()
         {
-            var username = "testUser2";
+            var username = RandomString(6);
             var password = "123123";
-            var email = "testingUser2@gmail.com";
+            var email = username + "@gmail.com";
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
@@ -62,9 +72,9 @@ namespace VotingWebsiteTest
         [Fact]
         public void DetectTakenEmail()
         {
-            var username = "testUser3";
+            var username = RandomString(6);
             var password = "123123";
-            var email = "testingUser3@gmail.com";
+            var email = username + "@gmail.com";
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
@@ -122,10 +132,10 @@ namespace VotingWebsiteTest
         [Fact]
         public void PasswordsDifferentCheck()
         {
-            var username = "testUser4";
+            var username = RandomString(6);
             var password1 = "123123";
             var password2 = "123124";
-            var email = "testingUser4@gmail.com";
+            var email = username + "@gmail.com";
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");

@@ -10,6 +10,8 @@ namespace VotingWebsiteTest.View_Tests
         //This should work for relative source, if not change to where the chromedriver is
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
+
+
         [Fact]
         public void Login()
         {
