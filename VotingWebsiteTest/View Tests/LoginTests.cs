@@ -1,17 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.IO;
+using Xunit;
 
 namespace VotingWebsiteTest.View_Tests
 {
-    [TestClass]
     public class LoginTests
     {
         //This should work for relative source, if not change to where the chromedriver is
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
-        [TestMethod]
+        [Fact]
         public void Login()
         {
             //login
@@ -21,11 +20,13 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
             _chrome.FindElementById("Login").Click();
-            var loginSuccess = _chrome.FindElementById("DashboardMsg").Text.Contains(username);
-            Assert.IsTrue(loginSuccess);
+            
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+
+            _chrome.Close();
         }
 
-        [TestMethod]
+        [Fact]
         public void Logout()
         {
             //login
@@ -35,18 +36,21 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
             _chrome.FindElementById("Login").Click();
-            var loginSuccess = _chrome.FindElementById("DashboardMsg").Text.Contains(username);
-            Assert.IsTrue(loginSuccess);
+
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            
             //logout
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/LogoutAsync");
             try
             {
-                Assert.IsNotNull(_chrome.FindElementById("Login"));
+                Assert.NotNull(_chrome.FindElementById("Login"));
             }
             catch (NoSuchElementException) { }
+
+            _chrome.Close();
         }
 
-        [TestMethod]
+        [Fact]
         public void InvalidLogin()
         {
             //login
@@ -56,62 +60,70 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
             _chrome.FindElementById("Login").Click();
-            var loginFailed = _chrome.FindElementByClassName("validation-summary-errors").Text.Equals("Invalid username or password.");
-            Assert.IsTrue(loginFailed);
+
+            Assert.Equal("Invalid username or password.", _chrome.FindElementByClassName("validation-summary-errors").Text);
+
+            _chrome.Close();
         }
 
-        [TestMethod]
-        public void LoginRequiredFieldsError()
+        [Theory]
+        [InlineData("Username-error")]
+        [InlineData("Password-error")]
+        public void LoginRequiredFieldsErrorNotShownOnLoad(string id)
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
 
             //Error messages should not be there yet
-            try
-            {
-                _chrome.FindElementById("Username-error");
-                Assert.Fail();
-            }
-            catch (NoSuchElementException) { }
+            Assert.Throws<NoSuchElementException>(() => { _chrome.FindElementById(id); });
 
-            try
-            {
-                _chrome.FindElementById("Password-error");
-                Assert.Fail();
-            }
-            catch (NoSuchElementException) { }
+            _chrome.Close();
+        }
 
+        [Theory]
+        [InlineData("Username-error")]
+        [InlineData("Password-error")]
+        public void LoginRequiredFieldsErrorShownOnSubmit(string id)
+        {
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Login").Click();
 
             //Error messages should now be there
-            Assert.IsTrue(_chrome.FindElementById("Username-error").Text.Contains("required"));
-            Assert.IsTrue(_chrome.FindElementById("Password-error").Text.Contains("required"));
+            Assert.Contains("required", _chrome.FindElementById(id).Text);
 
+            _chrome.Close();
         }
-        [TestMethod]
+
+        [Fact]
         public void LoginNewUserLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementByLinkText("New User?").Click();
-             Assert.IsNotNull(_chrome.FindElementById("RegistrationButton"));
 
+            Assert.NotNull(_chrome.FindElementById("RegistrationButton"));
+
+            _chrome.Close();
         }
 
-        [TestMethod]
+        [Fact]
         public void LoginForgotPasswordLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementByLinkText("Forgot Password?").Click();
-            Assert.IsTrue(_chrome.FindElementByClassName("btn-primary").Text.Contains("Send Email"));
 
+            Assert.Contains("Send Email", _chrome.FindElementByClassName("btn-primary").Text);
+
+            _chrome.Close();
         }
 
-        [TestMethod]
+        [Fact]
         public void LoginResendEmailConfirmationLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementByLinkText("Resend Email Confirmation?").Click();
-            Assert.IsTrue(_chrome.FindElementByClassName("btn-primary").Text.Contains("Send Email"));
 
+            Assert.Contains("Send Email", _chrome.FindElementByClassName("btn-primary").Text);
+
+            _chrome.Close();
         }
     }
  }

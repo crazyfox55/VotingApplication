@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+/*using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using VotingApplication.ViewModels;
 
@@ -45,3 +45,4 @@ namespace VotingWebsiteTest.ViewModels.Voting
         }
     }
 }
+*/

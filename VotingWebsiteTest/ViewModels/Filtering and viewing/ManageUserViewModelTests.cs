@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+/*using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using VotingApplication;
 using VotingApplication.ViewModels;
@@ -47,4 +47,4 @@ public class ManageUserViewModelTests
             this.mockApplicationUser.Object);
     }
 }
-}
+}*/
