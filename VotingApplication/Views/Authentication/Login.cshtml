@@ -19,7 +19,7 @@
         <input asp-for="Password" class="form-control" placeholder="Enter Password" />
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+    <button id ="Login" type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
     <div class="text-danger">
         @Html.ValidationSummary()
     </div>

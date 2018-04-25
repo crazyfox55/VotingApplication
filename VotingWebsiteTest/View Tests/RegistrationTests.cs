@@ -1,14 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System.IO;
 
 namespace VotingWebsiteTest
 {
     [TestClass]
     public class RegistrationTests
     {
-        //change to where selenium driver is located
-        ChromeDriver _chrome = new ChromeDriver(@"C:\Users\colemtg\source\repos");
+        //This should work for relative source, if not change to where the chromedriver is
+        ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
         [TestMethod]
         public void RegisterUser()
@@ -149,6 +150,22 @@ namespace VotingWebsiteTest
                 _chrome.FindElementById("ConfirmPassword-error").
                 Text.Equals("The password and confirmation password do not match.");
             Assert.IsTrue(passwordMissmatch);
+        }
+
+        [TestMethod]
+        public void RegistrationAlreadyHaveAccountLinkWorks()
+        {
+            _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
+            _chrome.FindElementByLinkText("Already have an account?").Click();
+            Assert.IsTrue(_chrome.FindElementById("Login").Text.Contains("Login"));
+        }
+
+        [TestMethod]
+        public void RegistrationResendEmailConfirmationLinkWorks()
+        {
+            _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
+            _chrome.FindElementByLinkText("Resend Email Confirmation?").Click();
+            Assert.IsTrue(_chrome.FindElementByClassName("btn-primary").Text.Contains("Send Email"));
         }
     }
 }
