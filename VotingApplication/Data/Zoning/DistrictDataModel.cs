@@ -15,6 +15,8 @@ namespace VotingApplication
         public ICollection<ZipFillsDistrict> Zip { get; set; }
 
         public ICollection<DistrictFillsRegion> Region { get; set; }
-        
+
+        public ICollection<BallotDataModel> Ballots { get; set; }
+
     }
 }

@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using VotingApplication.Controllers;
 
 namespace VotingApplication.ViewModels
 {
@@ -30,17 +29,17 @@ namespace VotingApplication.ViewModels
         public string Zone { get; set; }
 
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
-        [Remote(action: "VerifyRegion", controller: "Admin")]
+        [Remote(action: nameof(VerifyController.VerifyRegionExistsAsync), controller: "Verify")]
         public string RegionName { get; set; }
 
         [StringLength(maximumLength: 5, ErrorMessage = "Maximum length of 5")]
         [Display(Name = "Zip Code")]
         [RegularExpression(@"^\d{5}$", ErrorMessage = "Must be 5 digits")]
-        [Remote(action: "VerifyZip", controller: "Admin")]
+        [Remote(action: nameof(VerifyController.VerifyZipExistsAsync), controller: "Verify")]
         public string ZipCode { get; set; }
 
         [StringLength(maximumLength: 64, ErrorMessage = "Maximum length of {0}")]
-        [Remote(action: "VerifyDistrict", controller: "Admin")]
+        [Remote(action: nameof(VerifyController.VerifyDistrictExistsAsync), controller: "Verify")]
         public string DistrictName { get; set; }
     }
 }

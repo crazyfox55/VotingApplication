@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+/*using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.AspNetCore.Mvc;
 using VotingApplication;
 using VotingApplication.Controllers;
@@ -36,4 +36,4 @@ namespace VotingWebsiteTest
             Assert.IsNotNull(result);
         }
     }
-}
+}*/

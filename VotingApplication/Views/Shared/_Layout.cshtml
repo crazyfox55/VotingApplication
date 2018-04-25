@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using VotingApplication.Controllers
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -23,21 +24,21 @@
                     <li class="nav-item">
                         @if (ViewContext.RouteData.Values["controller"].ToString() == "Home")
                         {
-                        <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link active" style="background-color: #111;">Home</a>
+                        <a asp-area="" asp-controller="@nameof(HomeController).RemoveController()" asp-action="@nameof(HomeController.Index)" class="nav-link active" style="background-color: #111;">Home</a>
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+                        <a asp-area="" asp-controller="@nameof(HomeController).RemoveController()" asp-action="@nameof(HomeController.Index)" class="nav-link">Home</a>
                         }
                     </li>
                     <li class="nav-item">
                         @if (ViewContext.RouteData.Values["controller"].ToString() == "About")
                         {
-                        <a asp-area="" asp-controller="About" asp-action="Index" class="nav-link active" style="background-color: #111;">About</a>
+                        <a asp-area="" asp-controller="@nameof(AboutController).RemoveController()" asp-action="@nameof(AboutController.Index)" class="nav-link active" style="background-color: #111;">About</a>
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="About" asp-action="Index" class="nav-link">About</a>
+                        <a asp-area="" asp-controller="@nameof(AboutController).RemoveController()" asp-action="@nameof(AboutController.Index)" class="nav-link">About</a>
                         }
                     </li>
                 </ul>
@@ -45,27 +46,52 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                     <li class="nav-item">
-                        @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
+                        @if (User.IsInRole("Administrator"))
                         {
-                        <a asp-area="" asp-controller="User" asp-action="Dashboard" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                            @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
+                            {
+                                <a asp-area="" asp-controller="@nameof(AdminController).RemoveController()" asp-action="@nameof(AdminController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                            }
+                            else
+                            {
+                                <a asp-area="" asp-controller="@nameof(AdminController).RemoveController()" asp-action="@nameof(AdminController.Dashboard)" class="nav-link">Dashboard</a>
+                            }
+                        }
+                        else if (User.IsInRole("GenericUser"))
+                        {
+                            @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
+                            {
+                                <a asp-area="" asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                            }
+                            else
+                            {
+                                <a asp-area="" asp-controller="@nameof(VoterRegistrationController).RemoveController()" asp-action="@nameof(VoterRegistrationController.Dashboard)" class="nav-link">Dashboard</a>
+                            }
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="User" asp-action="Dashboard" class="nav-link">Dashboard</a>
+                            @if (ViewContext.RouteData.Values["action"].ToString() == "Dashboard")
+                            {
+                                <a asp-area="" asp-controller="@nameof(VoterController).RemoveController()" asp-action="@nameof(VoterController.Dashboard)" class="nav-link active" style="background-color: #111;">Dashboard</a>
+                            }
+                            else
+                            {
+                                <a asp-area="" asp-controller="@nameof(VoterController).RemoveController()" asp-action="@nameof(VoterController.Dashboard)" class="nav-link">Dashboard</a>
+                            }
                         }
                     </li>
                     <li class="nav-item">
                         @if (ViewContext.RouteData.Values["action"].ToString() == "Profile")
                         {
-                        <a asp-area="" asp-controller="User" asp-action="Profile" class="nav-link active" style="background-color: #111;">Profile</a>
+                        <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Profile)" class="nav-link active" style="background-color: #111;">Profile</a>
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="User" asp-action="Profile" class="nav-link">Profile</a>
+                        <a asp-area="" asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.Profile)" class="nav-link">Profile</a>
                         }
                     </li>
                     <li class="nav-item">
-                        <a asp-area="" asp-controller="Authentication" asp-action="LogoutAsync" class="nav-link">Logout</a>
+                        <a asp-area="" asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.LogoutAsync)" class="nav-link">Logout</a>
                     </li>
                     }
                     else
@@ -73,23 +99,22 @@
                     <li class="nav-item">
                         @if (ViewContext.RouteData.Values["controller"].ToString() == "Authentication")
                         {
-                        <a asp-area="" asp-controller="Authentication" asp-action="Login" class="nav-link active" style="background-color: #111;">Login</a>
+                        <a asp-area="" asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.Login)" class="nav-link active" style="background-color: #111;">Login</a>
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="Authentication" asp-action="Login" class="nav-link">Login</a>
+                        <a asp-area="" asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.Login)" class="nav-link">Login</a>
                         }
                     </li>
                     <li class="nav-item">
                         @if (ViewContext.RouteData.Values["controller"].ToString() == "UserRegistration")
                         {
-                        <a asp-area="" asp-controller="UserRegistration" asp-action="Register" class="nav-link active" style="background-color: #111;">Create Account</a>
+                        <a asp-area="" asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.Register)" class="nav-link active" style="background-color: #111;">Create Account</a>
                         }
                         else
                         {
-                        <a asp-area="" asp-controller="UserRegistration" asp-action="Register" class="nav-link">Create Account</a>
+                        <a asp-area="" asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.Register)" class="nav-link">Create Account</a>
                         }
-                        
                     </li>
                     }
                 </ul>

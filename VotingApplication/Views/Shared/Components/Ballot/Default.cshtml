@@ -1,0 +1,64 @@
+﻿@model FilteredBallotViewModel
+
+<div class="table-responsive">
+    @if (Model.FilteredBallots.Count() > 0)
+    {
+        <table id="tableBallotData" class="display table" role="grid" style="width:100%">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().BallotName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().ElectionDay)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().OfficeName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().Zone)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FilteredBallots)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BallotName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ElectionDay)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OfficeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Zone)
+                        </td>
+                        <td>
+                            @await Component.InvokeAsync(Model.ActionViewComponent, item)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.FilteredBallots.Count() > 1)
+        {
+            <script>
+                $(function () {
+                    $('#tableBallotData').DataTable();
+                });
+            </script>
+        }
+    }
+    else
+    {
+        <h4 class="text-danger">
+            There are no ballots that match those filters.
+        </h4>
+    }
+</div>

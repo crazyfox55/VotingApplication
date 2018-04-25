@@ -1,0 +1,18 @@
+﻿@using VotingApplication.Controllers
+@model EmailViewModel
+
+<script>
+    $.validator.setDefaults({
+        onkeyup: false
+    })
+</script>
+
+<form asp-action="@nameof(UserRegistrationController.EmailConfirmationSentAsync)" method="post">
+    <h4 class="form-signin-heading">Resend Email Confirmation.</h4>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" placeholder="Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Send Email</button>
+</form>

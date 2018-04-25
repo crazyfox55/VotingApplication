@@ -1,0 +1,78 @@
+﻿@using VotingApplication.Controllers
+@model VoterFinalizeRegistrationViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Verify your registration";
+    ViewData["Submit"] = "Confirm";
+}
+
+<form asp-action="@nameof(VoterRegistrationController.FinalizeRegistrationAsync)" method="post">
+    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+    <div class="form-group">
+        <label asp-for="FirstName"></label>
+        <input disabled asp-for="FirstName" class="form-control" placeholder="First Name" />
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName"></label>
+        <input disabled asp-for="LastName" class="form-control" placeholder="Last Name" />
+    </div>
+    <div class="form-group">
+        <label asp-for="DOB"></label>
+        <input disabled asp-for="DOB" class="form-control" placeholder="Date of Birth" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Identification"></label>
+        <input disabled asp-for="Identification" class="form-control" placeholder="Identification" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SSNumber"></label>
+        <input disabled asp-for="SSNumber" class="form-control" placeholder="Social Security Number" />
+    </div>
+    <a asp-action="@nameof(VoterRegistrationController.Register)" class="btn btn-secondary">Edit Registration Information</a>
+
+    <div class="form-group">
+        <label asp-for="AddressLineOne"></label>
+        <input disabled asp-for="AddressLineOne" class="form-control" placeholder="Address Line One" />
+    </div>
+    <div class="form-group">
+        <label asp-for="AddressLineTwo"></label>
+        <input disabled asp-for="AddressLineTwo" class="form-control" placeholder="Address Line Two" />
+    </div>
+    <div class="form-group">
+        <label asp-for="City"></label>
+        <input disabled asp-for="City" class="form-control" placeholder="City" />
+    </div>
+    <div class="form-group">
+        <label asp-for="State"></label>
+        <input disabled asp-for="State" class="form-control" placeholder="State" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ZipCode"></label>
+        <input disabled asp-for="ZipCode" class="form-control" placeholder="Zip Code" />
+    </div>
+    <a asp-action="@nameof(VoterRegistrationController.Address)" class="btn btn-secondary">Edit Address Information</a>
+
+    <div class="form-group">
+        <label asp-for="Party"></label>
+        <input disabled asp-for="Party" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Ethnicity"></label>
+        <input disabled asp-for="Ethnicity" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Sex"></label>
+        <input disabled asp-for="Sex" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="IncomeRange"></label>
+        <input disabled asp-for="IncomeRange" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="VoterReadiness"></label>
+        <input disabled asp-for="VoterReadiness" class="form-control" />
+    </div>
+    <a asp-action="@nameof(VoterRegistrationController.Register)" class="btn btn-secondary">Edit Demographics Information</a>
+    <br />
+    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+</form>

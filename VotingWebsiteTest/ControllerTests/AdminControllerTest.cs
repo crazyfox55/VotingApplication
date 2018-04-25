@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+/*using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.AspNetCore.Mvc;
 using VotingApplication;
 using VotingApplication.Controllers;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 
-
+                                    /*
 namespace VotingWebsiteTest
 {
     [TestClass]
@@ -96,3 +96,4 @@ namespace VotingWebsiteTest
         }
     }
 }
+                  */

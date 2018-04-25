@@ -32,15 +32,26 @@ https://github.com/aspnet/Identity/tree/85f8a49aef68bf9763cd9854ce1dd4a26a7c5d3c
 Editing data Tutorial:
 https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/introduction/examining-the-edit-methods-and-edit-view
 
+Getting Started with Entity Framework 6 Code First using MVC 5
+https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/creating-an-entity-framework-data-model-for-an-asp-net-mvc-application
+
+Testing is done with Selenium and xUnit.
+To run the Selenium tests, the server must be started from command line. 
+1. Navigate to the projects base directory. 
+2. Go into the VotingApplication folder which has VotingApplication.csproj. 
+3. Then execute "dotnet run -VotingApplication.csproj"
+This will start the server similar to running it from visual studio. Now the web tests can be run in visual studio by going to:
+  Test -> Windows -> Test Explorer
+This will show all of the current tests and their status.
+
 Google API Key:
 https://console.developers.google.com
 
 <code>
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script>
 </code>
+</br>
 Replace YOUR_KEY with the key from Google to use Google maps
-
-
-
+</br>
 Important information about Entity Framework 6 Lazy Execution:
 https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/reading-related-data-with-the-entity-framework-in-an-asp-net-mvc-application

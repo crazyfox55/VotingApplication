@@ -1,4 +1,5 @@
-﻿@model RegistrationViewModel
+﻿@using VotingApplication.Controllers
+@model RegistrationViewModel
 
 <script>
     $.validator.setDefaults({
@@ -6,7 +7,7 @@
     })
 </script>
 
-<form asp-action="RegisterAsync" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" autocomplete="off">
+<form asp-action="@nameof(UserRegistrationController.RegisterAsync)" method="post" autocomplete="off">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>
@@ -33,5 +34,5 @@
     </div>
     <button id ="RegistrationButton" type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
-<a asp-area="" asp-controller="Authentication" asp-action="Login" class="nav-link">Already have an account?</a>
-<a asp-area="" asp-controller="UserRegistration" asp-action="RequestEmailConfirmation" class="nav-link">Resend Email Confirmation?</a>
+<a asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.Login)" class="nav-link">Already have an account?</a>
+<a asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link">Resend Email Confirmation?</a>

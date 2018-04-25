@@ -1,241 +1,166 @@
-﻿@model AddCandidateViewModel
+﻿@using VotingApplication.Controllers
+@model AddCandidateViewModel
 @{
     // move this code into the C# class so it is easier to edit
-    ViewData["Purpose1"] = "Filter Candidate";
+    ViewData["Purpose1"] = "Filter Users";
     ViewData["Purpose2"] = "Filter Ballot";
     ViewData["Submit"] = "Filter";
 }
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
 
 <h1>Add Candidate</h1>
 <form asp-action="AddCandidate" method="post" id="formAdd">
     <input asp-for="BallotId" class="hiddenBallot" />
     <input asp-for="UserId" class="hiddenUser" />
 </form>
-<form asp-action="FilterCandidateAndBallot" method="post" id="formFilter">
+<form method="post" id="formFilter">
     <input asp-for="BallotId" class="hiddenBallot" />
+    <input asp-for="BallotSearch.BallotId" class="hiddenBallot" />
     <input asp-for="UserId" class="hiddenUser" />
+    <input asp-for="UserSearch.UserId" class="hiddenUser" />
 </form>
-@if (string.IsNullOrWhiteSpace(Model.UserId))
-{
+
+<div id="filterUserOptions">
     <h2 class="form-signin-heading">@ViewData["Purpose1"]</h2>
     <div class="form-group">
-        <label asp-for="Username"></label>
-        <input form="formFilter" asp-for="Username" class="form-control" placeholder="Username" />
-        <span asp-validation-for="Username" class="text-danger"></span>
+        <label asp-for="UserSearch.Username"></label>
+        <input form="formFilter" asp-for="UserSearch.Username" class="form-control" placeholder="Username" />
+        <span asp-validation-for="UserSearch.Username" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="FirstName"></label>
-        <input form="formFilter" asp-for="FirstName" class="form-control" placeholder="First Name" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+        <label asp-for="UserSearch.FirstName"></label>
+        <input form="formFilter" asp-for="UserSearch.FirstName" class="form-control" placeholder="First Name" />
+        <span asp-validation-for="UserSearch.FirstName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="LastName"></label>
-        <input form="formFilter" asp-for="LastName" class="form-control" placeholder="Last Name" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
+        <label asp-for="UserSearch.LastName"></label>
+        <input form="formFilter" asp-for="UserSearch.LastName" class="form-control" placeholder="Last Name" />
+        <span asp-validation-for="UserSearch.LastName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Party"></label>
-        <select form="formFilter" asp-for="Party" class="form-control">
+        <label asp-for="UserSearch.Party"></label>
+        <select form="formFilter" asp-for="UserSearch.Party" class="form-control">
             <option selected value="">Select a party</option>
             <option>Democrat</option>
             <option>Republican</option>
             <option>Independent</option>
             <option>Other</option>
         </select>
-        <span asp-validation-for="Party" class="text-danger"></span>
+        <span asp-validation-for="UserSearch.Party" class="text-danger"></span>
     </div>
-    <input form="formFilter" type="submit" class="btn btn-primary" value="@ViewData["Submit"]" />
-}
-else
-{
-    <h2 class="form-signin-heading">User selected</h2>
-}
-<div class="table-responsive">
-    @if (Model.FilteredUsers.Count() > 0)
-    {
-        <table class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().UserName)
-                    </th>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().FirstName)
-                    </th>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().LastName)
-                    </th>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredUsers.FirstOrDefault().Party)
-                    </th>
-                    <th scope="col">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.FilteredUsers)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.UserName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FirstName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.LastName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Party)
-                        </td>
-                        <td>
-                            @if (string.IsNullOrWhiteSpace(item.BallotName))
-                            {
-                                @if (string.IsNullOrWhiteSpace(Model.UserId))
-                                {
-                                    <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('@item.UserId');" value="Select" />
-                                }
-                                else
-                                {
-                                    <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenUser').val('');" value="Deselect" />
-                                }
-                            }
-                            else
-                            {
-                                <div>
-                                    Already Candidate for "@item.BallotName"
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <h4 class="text-danger">
-            There are no users that match those filters.
-        </h4>
-    }
+    <button id="filterUsers" class="btn btn-primary">@ViewData["Submit"] </button>
 </div>
-@if (string.IsNullOrWhiteSpace(Model.BallotId))
-{
+<div id="filterUserSelect">
+    <h2 class="form-signin-heading">User selected</h2>
+</div>
+<div id="userTable"></div>
+
+
+<div id="filterBallotOptions">
     <h2 class="form-signin-heading">@ViewData["Purpose2"]</h2>
     <div class="form-group">
-        <label asp-for="BallotName"></label>
-        <input form="formFilter" asp-for="BallotName" class="form-control" placeholder="Ballot Name" />
-        <span asp-validation-for="BallotName" class="text-danger"></span>
+        <label asp-for="BallotSearch.BallotName"></label>
+        <input form="formFilter" asp-for="BallotSearch.BallotName" class="form-control" placeholder="Ballot Name" />
+        <span asp-validation-for="BallotSearch.BallotName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="ElectionDay"></label>
-        <input form="formFilter" asp-for="ElectionDay" class="form-control" placeholder="MM/DD/YYYY" />
-        <span asp-validation-for="ElectionDay" class="text-danger"></span>
+        <label asp-for="BallotSearch.ElectionDay"></label>
+        <input form="formFilter" asp-for="BallotSearch.ElectionDay" class="form-control" placeholder="MM/DD/YYYY" />
+        <span asp-validation-for="BallotSearch.ElectionDay" class="text-danger"></span>
     </div>
-    <input form="formFilter" type="submit" class="btn btn-primary" value="@ViewData["Submit"]" />
-}
-else
-{
-    <h2 class="form-signin-heading">Ballot selected</h2>
-}
-<div class="table-responsive">
-    @if (Model.FilteredBallots.Count() > 0)
-    {
-        <table class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().BallotName)
-                    </th>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().ElectionDay)
-                    </th>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().OfficeName)
-                    </th>
-                    <th scope="col">
-                        @Html.DisplayNameFor(model => model.FilteredBallots.FirstOrDefault().Zone)
-                    </th>
-                    <th scope="col">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.FilteredBallots)
-                {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BallotName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ElectionDay)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.OfficeName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Zone)
-                    </td>
-                    <td>
-                        @if (string.IsNullOrWhiteSpace(Model.BallotId))
-                        {
-                            <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenBallot').val('@item.BallotName');" value="Select" />
-                        }
-                        else
-                        {
-                            <input form="formFilter" type="submit" class="btn btn-dark" onclick="$('.hiddenBallot').val('');" value="Deselect" />
-                        }
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <h4 class="text-danger">
-            There are no ballots that match those filters.
-        </h4>
-    }
+    <button id="filterBallot" class="btn btn-primary">@ViewData["Submit"]</button>
 </div>
-@if(string.IsNullOrWhiteSpace(Model.BallotId) == false && string.IsNullOrWhiteSpace(Model.BallotId) == false)
-{
-    <input form="formAdd" type="submit" class="btn btn-primary" value="Add Candidate" />
-}
+<div id="filterBallotSelect">
+    <h2 class="form-signin-heading">Ballot selected</h2>
+</div>
+<div id="ballotTable"></div>
 
+<input id="addButton" form="formAdd" type="submit" class="btn btn-primary" value="Add Candidate" />
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $(".delete-button").click(function () {
-            var deleteButton = $(this);
-            var confirmButton = deleteButton.siblings(".delete-confirm");
+    var userSelected = false;
+    var ballotSelected = false;
 
-            var escapeKey = function (e) {
-                //Cancel if escape key pressed
-                if (e.which == 27) {
-                    hideConfirm();
-                }
+    var filterUsers = function () {
+        $.ajax({
+            url: "@Url.Action(nameof(AdminController.FilterUsers), nameof(AdminController).RemoveController())",
+            method: "post",
+            cache: false,
+            data: $("#formFilter").serialize(),
+            success: function (data, statusText, xhdr) {
+                $("#userTable").html(data);
+            },
+            error: function (data, statusText, xhdr) {
+                $("#userTable").html(JSON.stringify(xhdr));
             }
-
-            showConfirm();
-
-            function showConfirm() {
-                deleteButton.attr("disabled", "disabled");
-                confirmButton.removeAttr("disabled")
-                $(document).on("click", hideConfirm);
-                $(document).on("keydown", escapeKey);
-            };
-
-            function hideConfirm() {
-                deleteButton.removeAttr("disabled")
-                confirmButton.attr("disabled", "disabled");
-                $(document).off("click", hideConfirm);
-                $(document).off("keydown", escapeKey);
-            };
-
-            return false;
         });
+    }
+
+    var filterBallot = function () {
+        $.ajax({
+            url: "@Url.Action(nameof(AdminController.FilterBallot), nameof(AdminController).RemoveController())",
+            method: "post",
+            cache: false,
+            data: $("#formFilter").serialize(),
+            success: function (data, statusText, xhdr) {
+                $("#ballotTable").html(data);
+            },
+            error: function (data, statusText, xhdr) {
+                $("#ballotTable").html(JSON.stringify(xhdr));
+            }
+        });
+    }
+
+    //filterUsers();
+    //filterBallot();
+
+    var selectUser = function (userId) {
+        $('.hiddenUser').val(userId);
+        $('#filterUserOptions').hide();
+        $('#filterUserSelect').show();
+        userSelected = true;
+        if (userSelected && ballotSelected)
+            $('#addButton').show();
+        filterUsers();
+    }
+
+    var deselectUser = function () {
+        $('.hiddenUser').val('');
+        $('#filterUserOptions').show();
+        $('#filterUserSelect').hide();
+        $('#addButton').hide();
+        userSelected = false;
+        filterUsers();
+    }
+
+    deselectUser();
+
+    var selectBallot = function (ballotId) {
+        $('.hiddenBallot').val(ballotId);
+        $('#filterBallotOptions').hide();
+        $('#filterBallotSelect').show();
+        ballotSelected = true;
+        if (userSelected && ballotSelected)
+            $('#addButton').show();
+        filterBallot();
+    }
+
+    var deselectBallot = function () {
+        $('.hiddenBallot').val('');
+        $('#filterBallotOptions').show();
+        $('#filterBallotSelect').hide();
+        $('#addButton').hide();
+        ballotSelected = false;
+        filterBallot();
+    }
+
+    deselectBallot();
+
+    $(document).ready(function () {
+        $("#filterUsers").click(filterUsers);
+        $("#filterBallot").click(filterBallot);
     });
 </script>

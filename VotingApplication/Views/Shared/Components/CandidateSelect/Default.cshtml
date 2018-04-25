@@ -1,0 +1,12 @@
+﻿@model FilteredUsersViewModel.UserViewModel
+
+@if (string.IsNullOrWhiteSpace(Model.BallotName))
+{
+    <button class="btn btn-dark" onclick="selectUser('@Model.UserId');">Select</button>
+}
+else
+{
+    <div>
+        Already Candidate for "@Model.BallotName"
+    </div>
+}
