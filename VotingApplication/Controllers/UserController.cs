@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
 using VotingApplication.ViewModels;
+using VotingApplication.Components;
+using VotingApplication.Controllers;
+using VotingApplication.CustomAttributes;
+using VotingApplication.Services;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Linq;
+
 
 namespace VotingApplication.Controllers
 {
@@ -26,7 +38,9 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Profile()
         {
+            List<ApplicationUser> Users = new List<ApplicationUser>();
             ViewData["UserName"] = HttpContext.User.Identity.Name;
+            Users.AddRange(_Context.Users.Where(u => u.UserName == HttpContext.User.Identity.Name));
             return View();
         }
 

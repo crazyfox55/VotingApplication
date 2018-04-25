@@ -4,6 +4,37 @@
 <p>
     Username:   @(ViewData["UserName"])
     <!-- get other info as well later-->
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style> 
+
+        <table>
+            <tr>
+                <th>User Name</th>
+                <th>Email Address</th>
+                <th>Last Name</th>
+            </tr>
+            <tr>
+                <td>@(ViewData["UserName"])</td>
+                <td>@(ViewData["Email"])</td>
+                <td>@(ViewData["LastName"])</td>
+            </tr>
+          
+        </table>
 </p>
 <a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.ChangePassword)" class="nav-link">Change Password</a>
 <a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.SecurityQuestionsAsync)" class="nav-link">Add Security Questions</a>

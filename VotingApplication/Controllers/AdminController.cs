@@ -102,6 +102,7 @@ namespace VotingApplication.Controllers
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
+                        _Context.District.Where
                         break;
                     case "District":
                         data.RegionName = null;
