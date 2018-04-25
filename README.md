@@ -35,6 +35,15 @@ https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/introductio
 Getting Started with Entity Framework 6 Code First using MVC 5
 https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/creating-an-entity-framework-data-model-for-an-asp-net-mvc-application
 
+Testing is done with Selenium and xUnit.
+To run the Selenium tests, the server must be started from command line. 
+1. Navigate to the projects base directory. 
+2. Go into the VotingApplication folder which has VotingApplication.csproj. 
+3. Then execute "dotnet run -VotingApplication.csproj"
+This will start the server similar to running it from visual studio. Now the web tests can be run in visual studio by going to:
+  Test -> Windows -> Test Explorer
+This will show all of the current tests and their status.
+
 Google API Key:
 https://console.developers.google.com
 
