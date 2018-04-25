@@ -38,9 +38,14 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Profile()
         {
-            List<ApplicationUser> Users = new List<ApplicationUser>();
+            List<ApplicationUser> users = new List<ApplicationUser>();
             ViewData["UserName"] = HttpContext.User.Identity.Name;
-            Users.AddRange(_Context.Users.Where(u => u.UserName == HttpContext.User.Identity.Name));
+            users.AddRange(_Context.Users.Where(u => u.UserName == HttpContext.User.Identity.Name));
+            foreach (ApplicationUser user in users)
+            {
+                ViewData["Email"] = user.Email;
+                ViewData["MailAddress"] = user.Address;
+            }
             return View();
         }
 
