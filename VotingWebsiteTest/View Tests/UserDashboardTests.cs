@@ -10,14 +10,15 @@ namespace VotingWebsiteTest.View_Tests
         //This should work for relative source, if not change to where the chromedriver is
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
+        //has to be a new/clean user(nothing filled out yet)
         string user = "UETJTLCKOS"; //set to one of script users
+        string pass = "hello"; //set to password
 
-        //ZLZJTCWVYN, DLVJEJZWCJ, UETJTLCKOS, RPSFWFCDDW
         [Fact]
         public void Login()
         {
             var username = user;
-            var password = "hello";
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
@@ -29,7 +30,7 @@ namespace VotingWebsiteTest.View_Tests
         public void NothingSaysEdit()
         {
             var username = user;
-            var password = "hello";
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
@@ -49,7 +50,7 @@ namespace VotingWebsiteTest.View_Tests
         public void LinksWork()
         {
             var username = user;
-            var password = "hello";
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);

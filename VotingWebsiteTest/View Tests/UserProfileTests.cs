@@ -11,15 +11,13 @@ namespace VotingWebsiteTest.View_Tests
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
         string user = "GCTZSBARUJ"; //set to one of script users
+        string pass = "hello"; //set to password
 
-        //ZLZJTCWVYN, DLVJEJZWCJ, UETJTLCKOS, RPSFWFCDDW
-        //MUZDSQNSND, CCPEWXTIPI, PQZJMBWJXM, NRRONNDZTX, GCTZSBARUJ, ANSEGITLRC, ZZZNXOQZGM, XYYGBDSFVO, NPNUKNEDYP, KRHQHKZYRQ, 
-        //OWHOWZYSSR, YBZIYLUGXG, RQZRJUYTVE, HCOOWWXDBT, FLMVXEPWRH, TQDLHCAFUK, CYIZRHJABE, BXTRSCERPY, BFNNSYVTTV, UKTXIPEOBN, QVBJZVBZQQ
         [Fact]
         public void NavigateToPage()
         {
             var username = user;
-            var password = "hello";
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
@@ -35,7 +33,7 @@ namespace VotingWebsiteTest.View_Tests
         public void ChangePasswordLinkWorks()
         {
             var username = user;
-            var password = "hello";
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
@@ -54,7 +52,7 @@ namespace VotingWebsiteTest.View_Tests
         public void SecurityQuestionsLinkWorks()
         {
             var username = user;
-            var password = "hello";
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);

@@ -10,14 +10,15 @@ namespace VotingWebsiteTest.View_Tests
         //This should work for relative source, if not change to where the chromedriver is
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
-
+        string user = "blah"; //set to any user
+        string pass = "hello"; //set to password
 
         [Fact]
         public void Login()
         {
             //login
-            var username = "blah";
-            var password = "hello";
+            var username = user;
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
@@ -32,8 +33,8 @@ namespace VotingWebsiteTest.View_Tests
         public void Logout()
         {
             //login
-            var username = "blah";
-            var password = "hello";
+            var username = user;
+            var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
