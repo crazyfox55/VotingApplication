@@ -37,9 +37,13 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
             _chrome.FindElementById("Login").Click();
-            _chrome.FindElementById("UserManagement").Click();
+            
 
             Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+
+            _chrome.FindElementByLinkText("Manage Users").Click();
+
+            Assert.Contains("Manage Users", _chrome.FindElementById("h1").Text);
 
             _chrome.Close();
         }
