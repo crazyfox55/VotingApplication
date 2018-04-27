@@ -10,6 +10,8 @@ namespace VotingWebsiteTest.View_Tests
         //This should work for relative source, if not change to where the chromedriver is
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
 
+
+
         [Fact]
         public void Login()
         {
@@ -36,9 +38,7 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
             _chrome.FindElementById("Login").Click();
-
-            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
-            
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);            
             //logout
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/LogoutAsync");
             try
@@ -46,7 +46,6 @@ namespace VotingWebsiteTest.View_Tests
                 Assert.NotNull(_chrome.FindElementById("Login"));
             }
             catch (NoSuchElementException) { }
-
             _chrome.Close();
         }
 
