@@ -28,24 +28,127 @@ namespace VotingWebsiteTest.View_Tests
 
 
         [Fact]
-        public void ManageUser()
+        public void ManageUserClickTest()
         {
-            //login
             var username = "blah";
             var password = "hello";
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
             _chrome.FindElementById("Username").SendKeys(username);
             _chrome.FindElementById("Password").SendKeys(password);
             _chrome.FindElementById("Login").Click();
-            
-
             Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
-
             _chrome.FindElementByLinkText("Manage Users").Click();
-
-            Assert.Contains("Manage Users", _chrome.FindElementById("h1").Text);
-
+            Assert.Contains("Manage Users", _chrome.FindElementById("HeaderMsg").Text);
             _chrome.Close();
         }
+
+
+
+        [Fact]
+        public void SearchUserClickTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Search Users").Click();
+            Assert.Contains("Search Users", _chrome.FindElementById("PageTag").Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void SearchUserErrorTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Search Users").Click();
+            _chrome.FindElementById("submitButton").Click();
+            Assert.Contains("required", _chrome.FindElementById("id").Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void VerifyVotersClickTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Verify Voters").Click();
+            Assert.Contains("Verify Voter", _chrome.FindElementById("PageTag").Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void AddOfficeClickTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Add Office").Click();
+            Assert.Contains("Add Office", _chrome.FindElementById("PageTag").Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void AddBallotClickTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Add Ballot").Click();
+            Assert.Contains("Add Ballot", _chrome.FindElementById("PageTag").Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void AddCandidateClickTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Add Candidate").Click();
+            Assert.Contains("Add Candidate", _chrome.FindElementById("PageTag").Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void ViewZipCodeMapClickTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("View Zip Code Map").Click();
+            Assert.Contains("Create", _chrome.FindElementById("CreateButton").Text);
+            _chrome.Close();
+        }
+
     }
 }

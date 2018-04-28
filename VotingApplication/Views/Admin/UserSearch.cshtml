@@ -6,11 +6,11 @@
 }
 
 <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+    <h2 id="PageTag" class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="FirstName"></label>
         <input asp-for="FirstName" class="form-control" placeholder="Filter by First Name" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+        <span asp-validation-for="FirstName" class="text-danger" id="id"></span>
     </div>
     <div class="form-group">
         <label asp-for="LastName"></label>
@@ -129,7 +129,7 @@
         <span asp-validation-for="VoterReadiness" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+    <button type="submit" class="btn btn-primary" id="submitbutton">@ViewData["Submit"]</button>
 </form>
 
 <script>
