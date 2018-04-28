@@ -60,7 +60,7 @@ namespace VotingWebsiteTest.View_Tests
         }
 
         [Theory]
-        [InlineData("field-validation-error")]
+        [InlineData("DOB-error")]
         public void SearchUserErrorTest(string id)
         {
             var username = "blah";
@@ -91,6 +91,23 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.Close();
         }
 
+        [Theory]
+        [InlineData("FirstName-error")]
+        public void VerifyVotersErrorTest(string id)
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Verify Voters").Click();
+            _chrome.FindElementByClassName("btn").Click();
+            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            _chrome.Close();
+        }
+
         [Fact]
         public void AddOfficeClickTest()
         {
@@ -103,6 +120,26 @@ namespace VotingWebsiteTest.View_Tests
             Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
             _chrome.FindElementByLinkText("Add Office").Click();
             Assert.Contains("Add Office", _chrome.FindElementById("PageTag").Text);
+            _chrome.Close();
+        }
+
+        [Theory]
+        [InlineData("OfficeName-error")]
+        public void AddOfficeErrorTest(string id)
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Add Office").Click();
+
+            _chrome.FindElementByClassName("btn").Click();
+
+            //Error messages now are there
+            Assert.Contains("required", _chrome.FindElementById(id).Text);
             _chrome.Close();
         }
 
@@ -121,6 +158,26 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.Close();
         }
 
+        [Theory]
+        [InlineData("BallotName-error")]
+        public void AddBallotErrorTest(string id)
+        {
+            var username = "blah";
+            var password = "hello";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            _chrome.FindElementByLinkText("Add Ballot").Click();
+
+            _chrome.FindElementByClassName("btn").Click();
+
+            //Error messages now are there
+            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            _chrome.Close();
+        }
+
         [Fact]
         public void AddCandidateClickTest()
         {
@@ -135,6 +192,8 @@ namespace VotingWebsiteTest.View_Tests
             Assert.Contains("Add Candidate", _chrome.FindElementById("PageTag").Text);
             _chrome.Close();
         }
+
+ 
 
         [Fact]
         public void ViewZipCodeMapClickTest()
