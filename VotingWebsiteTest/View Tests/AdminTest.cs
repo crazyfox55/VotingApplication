@@ -59,8 +59,9 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.Close();
         }
 
-        [Fact]
-        public void SearchUserErrorTest()
+        [Theory]
+        [InlineData("field-validation-error")]
+        public void SearchUserErrorTest(string id)
         {
             var username = "blah";
             var password = "hello";
@@ -70,8 +71,8 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.FindElementById("Login").Click();
             Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
             _chrome.FindElementByLinkText("Search Users").Click();
-            _chrome.FindElementById("submitButton").Click();
-            Assert.Contains("required", _chrome.FindElementById("id").Text);
+            _chrome.FindElementById("submitbutton").Click();
+            Assert.Contains("required", _chrome.FindElementById(id).Text);
             _chrome.Close();
         }
 
