@@ -69,7 +69,7 @@ namespace VotingApplication
                 // redirect to login page
                 options.LoginPath = "/Authentication/Login";
                 options.LogoutPath = "/Authentication/Logout";
-                options.AccessDeniedPath = "/User/AccessDenied";
+                options.AccessDeniedPath = "/Authentication/AccessDenied";
 
                 // cookie expires in 5 minutes
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(100);
@@ -101,19 +101,34 @@ namespace VotingApplication
                     RoleManager<IdentityRole> roleManager =
                         serviceProvider.GetService<RoleManager<IdentityRole>>();
 
+                    // admin
                     roleManager.CreateAsync(new IdentityRole()
                     {
                         Name = "Administrator"
                     }).Wait();
 
+                    // manager
+                    roleManager.CreateAsync(new IdentityRole()
+                    {
+                        Name = "Manager"
+                    }).Wait();
+
+                    // user who has created an account
                     roleManager.CreateAsync(new IdentityRole()
                     {
                         Name = "GenericUser"
                     }).Wait();
 
+                    // voter who has completed registration
                     roleManager.CreateAsync(new IdentityRole()
                     {
                         Name = "RegisteredVoter"
+                    }).Wait();
+
+                    // voter who has been varified by an admin or manager
+                    roleManager.CreateAsync(new IdentityRole()
+                    {
+                        Name = "VerifiedVoter"
                     }).Wait();
                 }
                 #endregion
@@ -329,6 +344,97 @@ namespace VotingApplication
                     });
 
                     context.SaveChanges();
+                }
+                #endregion
+
+                #region Add District for each state
+                string StateAbbreviation(string abbreviation)
+                {
+                    switch (abbreviation.ToUpper())
+                    {
+                        case "AL": return "ALABAMA";
+                        case "AK": return "ALASKA";
+                        case "AZ": return "ARIZONA";
+                        case "AR": return "ARKANSAS";
+                        case "CA": return "CALIFORNIA";
+                        case "CO": return "COLORADO";
+                        case "CT": return "CONNECTICUT";
+                        case "DE": return "DELAWARE";
+                        case "FL": return "FLORIDA";
+                        case "GA": return "GEORGIA";
+                        case "HI": return "HAWAII";
+                        case "ID": return "IDAHO";
+                        case "IL": return "ILLINOIS";
+                        case "IN": return "INDIANA";
+                        case "IA": return "IOWA";
+                        case "KS": return "KANSAS";
+                        case "KY": return "KENTUCKY";
+                        case "LA": return "LOUISIANA";
+                        case "ME": return "MAINE";
+                        case "MD": return "MARYLAND";
+                        case "MA": return "MASSACHUSETTS";
+                        case "MI": return "MICHIGAN";
+                        case "MN": return "MINNESOTA";
+                        case "MS": return "MISSISSIPPI";
+                        case "MO": return "MISSOURI";
+                        case "MT": return "MONTANA";
+                        case "NE": return "NEBRASKA";
+                        case "NV": return "NEVADA";
+                        case "NH": return "NEW HAMPSHIRE";
+                        case "NJ": return "NEW JERSEY";
+                        case "NM": return "NEW MEXICO";
+                        case "NY": return "NEW YORK";
+                        case "NC": return "NORTH CAROLINA";
+                        case "ND": return "NORTH DAKOTA";
+                        case "OH": return "OHIO";
+                        case "OK": return "OKLAHOMA";
+                        case "OR": return "OREGON";
+                        case "PA": return "PENNSYLVANIA";
+                        case "RI": return "RHODE ISLAND";
+                        case "SC": return "SOUTH CAROLINA";
+                        case "SD": return "SOUTH DAKOTA";
+                        case "TN": return "TENNESSEE";
+                        case "TX": return "TEXAS";
+                        case "UT": return "UTAH";
+                        case "VT": return "VERMONT";
+                        case "VA": return "VIRGINIA";
+                        case "WA": return "WASHINGTON";
+                        case "WV": return "WEST VIRGINIA";
+                        case "WI": return "WISCONSIN";
+                        case "WY": return "WYOMING";
+                        case "GU": return "GUAM";
+                        case "PR": return "PUERTO RICO";
+                        case "VI": return "VIRGIN ISLANDS";
+                        default: return "Empty";
+                    }
+                }
+                if (context.Zip.Any() == true)
+                {
+                    if(context.District.Any() == false)
+                    {
+                        IEnumerable<string> states = context.Zip.GroupBy(z => z.State).Select(grp => grp.FirstOrDefault().State);
+
+                        foreach (string state in states)
+                        {
+                            if (StateAbbreviation(state) == "Empty")
+                                continue;
+
+                            var district = new DistrictDataModel()
+                            {
+                                DistrictName = "State of " + StateAbbreviation(state)
+                            };
+                            district.Zip = context.Zip.Where(z => z.State == state).Select(z => new ZipFillsDistrict()
+                            {
+                                DistrictName = district.DistrictName,
+                                District = district,
+                                ZipCode = z.ZipCode,
+                                Zip = z
+                            }).ToList();
+                            context.District.Add(district);
+                        }
+
+                        context.SaveChanges();
+                    }
                 }
                 #endregion
             }
