@@ -1,6 +1,8 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace VotingWebsiteTest.View_Tests
@@ -8,6 +10,14 @@ namespace VotingWebsiteTest.View_Tests
     public class AdminTest
     {
         ChromeDriver _chrome = new ChromeDriver((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.FullName);
+
+        private static Random random = new Random();
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
 
         [Fact]
         public void Login()
@@ -140,6 +150,26 @@ namespace VotingWebsiteTest.View_Tests
 
             //Error messages now are there
             Assert.Contains("required", _chrome.FindElementById(id).Text);
+            _chrome.Close();
+        }
+
+        [Fact]
+        public void AddOfficeFunctionalityTest()
+        {
+            var username = "blah";
+            var password = "hello";
+            var officeTitle = RandomString(10);
+            var officeDescription = "This office deals problems of ece students";
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
+            _chrome.FindElementById("Username").SendKeys(username);
+            _chrome.FindElementById("Password").SendKeys(password);
+            _chrome.FindElementById("Login").Click();
+            _chrome.FindElementByLinkText("Add Office").Click();
+            _chrome.FindElementById("OfficeName").SendKeys(officeTitle);
+            _chrome.FindElementById("OfficeDescription").SendKeys(officeDescription);
+            _chrome.FindElementById("OfficeLevel").SendKeys(Keys.ArrowDown);
+            _chrome.FindElementByClassName("btn").Click();
+            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
             _chrome.Close();
         }
 
