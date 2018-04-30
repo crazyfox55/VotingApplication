@@ -1,0 +1,55 @@
+﻿@using VotingApplication.Controllers
+@model BasicBallotSearchViewModel
+@{
+    // move this code into the C# class so it is easier to edit
+    ViewData["Purpose"] = "Filter Ballot";
+    ViewData["Submit"] = "Filter";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+
+<h1 id="PageTag">Search Ballot</h1>
+<form method="post" id="formFilter">
+    <input asp-for="BallotId" class="hiddenBallot" />
+</form>
+
+<div id="filterBallotOptions">
+    <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
+    <div class="form-group">
+        <label asp-for="BallotName"></label>
+        <input form="formFilter" asp-for="BallotName" class="form-control" placeholder="Ballot Name" />
+        <span asp-validation-for="BallotName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ElectionDay"></label>
+        <input form="formFilter" asp-for="ElectionDay" class="form-control" placeholder="MM/DD/YYYY" />
+        <span asp-validation-for="ElectionDay" class="text-danger"></span>
+    </div>
+    <button id="filterBallot" class="btn btn-primary">@ViewData["Submit"]</button>
+</div>
+<div id="ballotTable"></div>
+
+<script type="text/javascript">
+    var filterBallot = function () {
+        $.ajax({
+            url: "@Url.Action(nameof(AdminController.SearchBallot), nameof(AdminController).RemoveController())",
+            method: "post",
+            cache: false,
+            data: $("#formFilter").serialize(),
+            success: function (data, statusText, xhdr) {
+                $("#ballotTable").html(data);
+            },
+            error: function (data, statusText, xhdr) {
+                $("#ballotTable").html(JSON.stringify(xhdr));
+            }
+        });
+    }
+
+    filterBallot();
+
+    $(document).ready(function () {
+        $("#filterBallot").click(filterBallot);
+    });
+</script>

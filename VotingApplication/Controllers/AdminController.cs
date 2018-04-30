@@ -195,7 +195,169 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult ViewBallot(string ballotname)
+        {
+            var ballot = _Context.Ballot.SingleOrDefault(b => b.BallotName == ballotname);
+
+            _Context.Entry(ballot).Collection(b => b.Cadidates).Load();
+            _Context.Entry(ballot).Collection(b => b.Voter).Load();
+            _Context.Entry(ballot).Reference(b => b.Office).Load();
+
+            List<ApplicationUser> completeVoters = _Context
+                .Ballot
+                .Where(b => b.BallotName == ballotname)
+                .Include(b => b.Voter)
+                .SelectMany(b => b.Voter)
+                .Include(vvb => vvb.Voter)
+                .Select(vvb => vvb.Voter)
+                .ToList();
+
+            var location = ballot.ZipCode?.ToString() ?? ballot.DistrictName ?? ballot.RegionName;
+
+            List<ApplicationUser> waitingVoters = null;
+            if (location == ballot.ZipCode.ToString())
+            {
+                waitingVoters = _Context
+                    .Zip
+                    .Where(z => z.ZipCode == ballot.ZipCode)
+                    .Include(z => z.Residents)
+                    .SelectMany(z => z.Residents)
+                    .Include(r => r.User)
+                    .Select(r => r.User)
+                    .ToList();
+            }
+            else if (location == ballot.DistrictName)
+            {
+                waitingVoters = _Context
+                    .District
+                    .Where(d => d.DistrictName == ballot.DistrictName)
+                    .Include(d => d.Zip)
+                    .SelectMany(d => d.Zip)
+                    .Include(zfd => zfd.Zip)
+                    .Select(zfd => zfd.Zip)
+                    .Include(z => z.Residents)
+                    .SelectMany(z => z.Residents)
+                    .Include(r => r.User)
+                    .Select(r => r.User)
+                    .ToList();
+            }
+            else if (location == ballot.RegionName)
+            {
+                waitingVoters = _Context
+                    .Region
+                    .Where(r => r.RegionName == ballot.RegionName)
+                    .Include(r => r.District)
+                    .SelectMany(r => r.District)
+                    .Include(dfr => dfr.District)
+                    .Select(dfr => dfr.District)
+                    .Include(d => d.Zip)
+                    .SelectMany(d => d.Zip)
+                    .Include(zfd => zfd.Zip)
+                    .Select(zfd => zfd.Zip)
+                    .Include(z => z.Residents)
+                    .SelectMany(z => z.Residents)
+                    .Include(r => r.User)
+                    .Select(r => r.User)
+                    .ToList();
+            }
+
+            int totalComplete = completeVoters.Count();
+            int totalUsers = completeVoters.Count() + waitingVoters?.Count() ?? 0;
+            var ethnicityPercent = new Dictionary<string, float>();
+            var perCandidatePercent = new Dictionary<string, float>();
+            var incomePercent = new Dictionary<string, float>();
+            var partyPercent = new Dictionary<string, float>();
+            var readinessPercent = new Dictionary<string, float>();
+            var sexPercent = new Dictionary<string, float>();
+            foreach (ApplicationUser user in completeVoters)
+            {
+                if (ethnicityPercent.ContainsKey(user.Demographics.Ethnicity))
+                    ethnicityPercent[user.Demographics.Ethnicity] += (float)(1.0 / totalUsers);
+                else
+                    ethnicityPercent[user.Demographics.Ethnicity] = (float)(1.0 / totalUsers);
+
+                if (incomePercent.ContainsKey(user.Demographics.IncomeRange))
+                    incomePercent[user.Demographics.IncomeRange] += (float)(1.0 / totalUsers);
+                else
+                    incomePercent[user.Demographics.IncomeRange] = (float)(1.0 / totalUsers);
+
+                if (partyPercent.ContainsKey(user.Demographics.Party))
+                    partyPercent[user.Demographics.Party] += (float)(1.0 / totalUsers);
+                else
+                    partyPercent[user.Demographics.Party] = (float)(1.0 / totalUsers);
+
+                if (readinessPercent.ContainsKey(user.Demographics.VoterReadiness))
+                    readinessPercent[user.Demographics.VoterReadiness] += (float)(1.0 / totalUsers);
+                else
+                    readinessPercent[user.Demographics.VoterReadiness] = (float)(1.0 / totalUsers);
+
+                if (sexPercent.ContainsKey(user.Demographics.Sex))
+                    sexPercent[user.Demographics.Sex] += (float)(1.0 / totalUsers);
+                else
+                    sexPercent[user.Demographics.Sex] = (float)(1.0 / totalUsers);
+            }
+
+            foreach (ApplicationUser user in waitingVoters)
+            {
+                if (ethnicityPercent.ContainsKey(user.Demographics.Ethnicity))
+                    ethnicityPercent[user.Demographics.Ethnicity] += (float)(1.0 / totalUsers);
+                else
+                    ethnicityPercent[user.Demographics.Ethnicity] = (float)(1.0 / totalUsers);
+
+                if (incomePercent.ContainsKey(user.Demographics.IncomeRange))
+                    incomePercent[user.Demographics.IncomeRange] += (float)(1.0 / totalUsers);
+                else
+                    incomePercent[user.Demographics.IncomeRange] = (float)(1.0 / totalUsers);
+
+                if (partyPercent.ContainsKey(user.Demographics.Party))
+                    partyPercent[user.Demographics.Party] += (float)(1.0 / totalUsers);
+                else
+                    partyPercent[user.Demographics.Party] = (float)(1.0 / totalUsers);
+
+                if (readinessPercent.ContainsKey(user.Demographics.VoterReadiness))
+                    readinessPercent[user.Demographics.VoterReadiness] += (float)(1.0 / totalUsers);
+                else
+                    readinessPercent[user.Demographics.VoterReadiness] = (float)(1.0 / totalUsers);
+
+                if (sexPercent.ContainsKey(user.Demographics.Sex))
+                    sexPercent[user.Demographics.Sex] += (float)(1.0 / totalUsers);
+                else
+                    sexPercent[user.Demographics.Sex] = (float)(1.0 / totalUsers);
+            }
+
+            foreach (VoterVotesBallot vvb in ballot.Voter)
+            {
+                if (sexPercent.ContainsKey(vvb.CandidateName))
+                    sexPercent[vvb.CandidateName] += (float)(1.0 / totalUsers);
+                else
+                    sexPercent[vvb.CandidateName] = (float)(1.0 / totalUsers);
+            }
+
+
+            ViewBallotViewModel model = new ViewBallotViewModel()
+            {
+                BallotName = ballotname,
+                ElectionDay = ballot.ElectionDay,
+                CompleteVotePercent = totalComplete / totalUsers,
+                PerCandidatePercent = perCandidatePercent,
+                EthnicityPercent = ethnicityPercent,
+                IncomePercent = incomePercent,
+                PartyPercent = partyPercent,
+                ReadinessPercent = readinessPercent,
+                SexPercent = sexPercent
+            };
+
+            return View(model);
+        }
         
+        [HttpPost]
+        public IActionResult SearchBallot(BasicBallotSearchViewModel model)
+        {
+            return ViewComponent(typeof(UserViewComponent), model);
+        }
+
         [HttpGet]
         public IActionResult AddCandidate()
         {
