@@ -45,11 +45,6 @@ def voronoi_finite_polygons_2d(vor, radius=None):
     for p1, region in enumerate(vor.point_region):
         vertices = vor.regions[region]
 
-        if all(v >= 0 for v in vertices):
-            # finite region
-            new_regions.append(vertices)
-            continue
-
         # reconstruct a non-finite region
         ridges = all_ridges[p1]
         new_region = [v for v in vertices if v >= 0]
@@ -73,6 +68,20 @@ def voronoi_finite_polygons_2d(vor, radius=None):
 
             new_region.append(len(new_vertices))
             new_vertices.append(far_point.tolist())
+
+        limited_region = []
+        for v in new_region:
+            if(v >= 0):
+                start = new_vertices[v]
+                centerRegion = vor.points[p1]
+                diff = start - centerRegion
+                percent = min(1.0, 1/np.sqrt(diff.dot(diff)))
+                new_point = centerRegion + (diff * percent)
+                
+                limited_region.append(len(new_vertices))
+                new_vertices.append(new_point.tolist())
+
+        new_region = limited_region
 
         # sort region counterclockwise
         vs = np.asarray([new_vertices[v] for v in new_region])

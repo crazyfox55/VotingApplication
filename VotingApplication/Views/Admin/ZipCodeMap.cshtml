@@ -1,4 +1,5 @@
-﻿<style>
+﻿
+<style>
     /* Set the map height explicitly to use the whole page.
     * The map is within html element -> body element ->
     * .container bootstrap class -> #map id which finaly contains the map.
@@ -36,15 +37,23 @@
 <div id="info-box">?</div>
 <!--good color #202020 -->
 <div id="control-box">
-    <div style="position: absolute; bottom: 0px; right: 0px;">
-        <form style="bottom: 0px;">
-            <div class="form-group">
-                <input type="text" placeholder="District Name" id="districtName" required />
+    <div class="container">
+        <div class="row">
+            <div class="col-12 form-group">
+                <input class="align-bottom form-control" type="text" placeholder="District Name" id="districtName" required />
             </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary float-right" id="CreateButton">Create</button>
+        </div>
+        <div class="row">
+            <div class="col-12 form-group">
+                <input id="viewDistrict" class="btn btn-block btn-secondary float-right" value="View" />
             </div>
-        </form>
+        </div>
+        <div class="row" style="position: absolute; bottom: 0px; right: 0px;">
+            <div class="col-12 form-group">
+                <input id="createDistrict" class="col-6 btn btn-secondary float-right" value="Create" />
+                <input id="updateDistrict" class="col-6 btn btn-secondary float-right" value="Update" />
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -63,7 +72,6 @@
     var drawing;
     var hiddenStateFeature;
     var zipCodeFeatures = {};
-    var polygons = [];
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 4,
@@ -79,7 +87,7 @@
                 drawingControl: true,
                 drawingControlOptions: {
                     position: google.maps.ControlPosition.TOP_CENTER,
-                    drawingModes: ['polygon']
+                    drawingModes: ['rectangle']
                 },
                 polygonOptions: {
                     editable: true,
@@ -90,16 +98,29 @@
         );
 
         drawing.setMap(map);
-        drawing.addListener('polygoncomplete', function (polygon) {
-            polygons.push(polygon)
-            polygon.addListener('rightclick', function (event) {
-                if (event.path != null && event.vertex != null) {
-                    var path = this.getPaths().getAt(event.path);
-                    if (path.getLength() > 3) {
-                        path.removeAt(event.vertex);
+        drawing.addListener('rectanglecomplete', function (rectangle) {
+            featureSet = new Set();
+            var bounds = rectangle.getBounds();
+            if (hiddenStateFeature != null) {
+                zipCodeFeatures[hiddenStateFeature.getProperty('NAME')].forEach(function (f) {
+                    var latlang = new google.maps.LatLng(f.getProperty("Latitude"), f.getProperty("Longitude"));
+                    if (bounds.contains(latlang)) {
+                        if (selecting) {
+                            f.setProperty('selected', 'true');
+                            var zipCode = f.getProperty('ZipCode')
+                            selectedZipcodes.add(zipCode);
+                            selectedFeatures.add(f);
+                        }
+                        if (deselecting) {
+                            f.setProperty('selected', 'false');
+                            var zipCode = f.getProperty('ZipCode')
+                            selectedZipcodes.delete(zipCode);
+                            selectedFeatures.delete(f);
+                        }
                     }
-                }
-            });
+                });
+            }
+            rectangle.setMap(null)
         });
 
         // set up the style rules and events for the states
@@ -118,7 +139,8 @@
 
     var selecting = false,
         deselecting = false,
-        selectedZipcodes = [];
+        selectedFeatures = new Set(),
+        selectedZipcodes = new Set();
 
     window.onkeydown = function (e) {
         if (selecting || deselecting)
@@ -143,10 +165,11 @@
      * param {google.maps.Data.Feature} feature
      */
     function styleStateFeature(feature) {
-        var outlineWeight = 0.5, zIndex = 1;
+        var outlineWeight = 0.5, zIndex = 3;
         var hidden = false;
         if (feature.getProperty('state') === 'hover') {
-            outlineWeight = zIndex = 2;
+            outlineWeight = 2;
+            zIndex = 4;
         } else if (feature.getProperty('state') === 'hidden') {
             hidden = true;
         }
@@ -194,24 +217,140 @@
         var state;
         if (hiddenStateFeature != null) {
             hiddenStateFeature.setProperty('state', 'normal');
-            state = hiddenStateFeature.getProperty('NAME')
+            state = hiddenStateFeature.getProperty('NAME');
             zipCodeFeatures[state].setStyle(styleZipFeatureHidden);
         }
         hiddenStateFeature = e.feature;
         hiddenStateFeature.setProperty('state', 'hidden');
-        state = hiddenStateFeature.getProperty('NAME')
+        state = hiddenStateFeature.getProperty('NAME');
+        if (zipCodeFeatures[state] == null) {
+            loadState(state, styleZipFeature, function () { });
+        }
+        else {
+            zipCodeFeatures[state].setStyle(styleZipFeature);
+        }
+    }
+
+    function stateAbbreviation(abbreviation) {
+        switch (abbreviation.toUpperCase()) {
+            case "AL": return "Alabama";
+            case "AK": return "Alaska";
+            case "AZ": return "Arizona";
+            case "AR": return "Arkansas";
+            case "CA": return "California";
+            case "CO": return "Colorado";
+            case "CT": return "Connecticut";
+            case "DE": return "Delaware";
+            case "FL": return "Florida";
+            case "GA": return "Georgia";
+            case "HI": return "Hawaii";
+            case "ID": return "Idaho";
+            case "IL": return "Illinois";
+            case "IN": return "Indiana";
+            case "IA": return "Iowa";
+            case "KS": return "Kansas";
+            case "KY": return "Kentucky";
+            case "LA": return "Louisiana";
+            case "ME": return "Maine";
+            case "MD": return "Maryland";
+            case "MA": return "Massachusetts";
+            case "MI": return "Michigan";
+            case "MN": return "Minnesota";
+            case "MS": return "Mississippi";
+            case "MO": return "Missouri";
+            case "MT": return "Montana";
+            case "NE": return "Nebraska";
+            case "NV": return "Nevada";
+            case "NH": return "New Hampshire";
+            case "NJ": return "New Jersey";
+            case "NM": return "New Mexico";
+            case "NY": return "New York";
+            case "NC": return "North Carolina";
+            case "ND": return "North Dakota";
+            case "OH": return "Ohio";
+            case "OK": return "Oklahoma";
+            case "OR": return "Oregon";
+            case "PA": return "Pennsylvania";
+            case "RI": return "Rhode Island";
+            case "SC": return "South Carolina";
+            case "SD": return "South Dakota";
+            case "TN": return "Tennessee";
+            case "TX": return "Texas";
+            case "UT": return "Utah";
+            case "VT": return "Vermont";
+            case "VA": return "Virginia";
+            case "WA": return "Washington";
+            case "WV": return "West Virginia";
+            case "WI": return "Wisconsin";
+            case "WY": return "Wyoming";
+            case "GU": return "Guam";
+            case "PR": return "Puerto Rico";
+            case "VI": return "Virgin Islands";
+            default: return abbreviation.toUpperCase();
+        }
+    }
+
+    function loadDistrict(district) {
+        $.getJSON('http://localhost:5000/Admin/RequestDistrict?districtName=' + district, function (data) {
+            var i;
+            if (data.result != null) {
+                alert(data.result);
+                return
+            }
+            var states = new Set();
+            var zips = new Set();
+
+            selectedFeatures.forEach(function (f) {
+                f.setProperty('selected', 'false');
+                var zipCode = f.getProperty('ZipCode')
+                selectedZipcodes.delete(zipCode);
+            });
+            selectedFeatures.clear();
+
+            for (i = 0; i < data.length; i++) {
+                var zip = data[i];
+                console.log(zip);
+                states.add(stateAbbreviation(zip.State));
+                zips.add(zip.ZipCode.toString());
+            }
+            states.forEach(function (state) {
+                if (zipCodeFeatures[state] == null) {
+                    loadState(state, styleZipFeatureHidden, function () {
+                        zipCodeFeatures[state].forEach(function (f) {
+                            var zipCode = f.getProperty('ZipCode')
+                            if (zips.has(zipCode)) {
+                                f.setProperty('selected', 'true');
+                                selectedZipcodes.add(zipCode);
+                                selectedFeatures.add(f);
+                            }
+                        });
+                    });
+                } else {
+                    zipCodeFeatures[state].forEach(function (f) {
+                        var zipCode = f.getProperty('ZipCode')
+                        if (zips.has(zipCode)) {
+                            f.setProperty('selected', 'true');
+                            selectedZipcodes.add(zipCode);
+                            selectedFeatures.add(f);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    function loadState(state, style, callback) {
         if (zipCodeFeatures[state] == null) {
             $.getJSON('http://localhost:5000/Admin/RequestZipCodes?state=' + state, function (data) {
                 zipCodeFeatures[state] = new google.maps.Data();
                 zipCodeFeatures[state].addGeoJson(data);
                 zipCodeFeatures[state].setMap(map);
-                zipCodeFeatures[state].setStyle(styleZipFeature);
+                zipCodeFeatures[state].setStyle(style);
                 zipCodeFeatures[state].addListener('mouseover', mouseInToZip);
                 zipCodeFeatures[state].addListener('mouseout', mouseOutOfZip);
-                zipCodeFeatures[state].addListener('click', addToDistrict)
+                zipCodeFeatures[state].addListener('click', addToDistrict);
+                callback();
             });
-        } else {
-            zipCodeFeatures[state].setStyle(styleZipFeature);
         }
     }
 
@@ -237,36 +376,63 @@
         if (selecting) {
             e.feature.setProperty('selected', 'true');
             var zipCode = e.feature.getProperty('ZipCode')
-            var index = selectedZipcodes.indexOf(zipCode)
-            if (index == -1) {
-                selectedZipcodes.push(zipCode);
-            }
+            selectedZipcodes.add(zipCode);
+            selectedFeatures.add(e.feature);
         }
         if (deselecting) {
             e.feature.setProperty('selected', 'false');
             var zipCode = e.feature.getProperty('ZipCode')
-            var index = selectedZipcodes.indexOf(zipCode)
-            if (index != -1) {
-                selectedZipcodes.splice(index, 1);
-            }
+            selectedZipcodes.delete(zipCode);
+            selectedFeatures.delete(e.feature);
         }
     }
 
-    $("form").submit(function () {
+    $("#createDistrict").click(function () {
         var postData = {
             districtName: $("#districtName").val(),
-            values: selectedZipcodes
+            values: [...selectedZipcodes]
         };
         $.ajax({
             type: "POST",
             url: "/Admin/AddDistrict",
             data: postData,
             success: function (data) {
-                alert(data.Result);
+                alert(data.result);
+                //console.log(data)
+            },
+            error: function (data) {
+                alert(data.result);
+                //console.log(data)
             },
             dataType: "json",
             traditional: true
         });
+    });
+
+    $("#updateDistrict").click(function () {
+        var postData = {
+            districtName: $("#districtName").val(),
+            values: [...selectedZipcodes]
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Admin/UpdateDistrict",
+            data: postData,
+            success: function (data) {
+                alert(data.result);
+                //console.log(data)
+            },
+            error: function (data) {
+                alert(data.result);
+                //console.log(data)
+            },
+            dataType: "json",
+            traditional: true
+        });
+    });
+
+    $("#viewDistrict").click(function () {
+        loadDistrict($("#districtName").val());
     });
 
     function styleZipFeature(feature) {

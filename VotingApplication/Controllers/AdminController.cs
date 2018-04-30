@@ -292,8 +292,14 @@ namespace VotingApplication.Controllers
             return RedirectToAction(nameof(UserManagement));
         }
         
+        [HttpPost]
         public JsonResult AddDistrict(string districtName, HashSet<string> values)
         {
+            if (string.IsNullOrWhiteSpace(districtName))
+                return Json(new { Result = "District name is required to create a district." });
+            if (values == null || values.Count() == 0)
+                return Json(new { Result = "A list of zipcodes is required to create a district." });
+            
             var district = new DistrictDataModel()
             {
                 DistrictName = districtName,
@@ -304,7 +310,49 @@ namespace VotingApplication.Controllers
 
             _Context.SaveChanges();
 
-            return Json(new { Result = string.Format("First item in list: '{0}'", districtName) });
+            return Json(new { Result = string.Format("District sucessfuly created with name '{0}'.", districtName) });
+        }
+
+        [HttpPost]
+        public JsonResult UpdateDistrict(string districtName, HashSet<string> values)
+        {
+            if (string.IsNullOrWhiteSpace(districtName))
+                return Json(new { Result = "District name is required to update the district." });
+            if(values == null || values.Count() == 0)
+                return Json(new { Result = "A list of zipcodes is required to update a district." });
+            
+            var district = _Context.District.Include(d => d.Zip).SingleOrDefault(d => d.DistrictName == districtName);
+
+            if (district == null)
+                return Json(new { Result = string.Format("There is no district with the name '{0}'.", districtName) });
+
+            HashSet<ZipFillsDistrict> zipCopy = new HashSet<ZipFillsDistrict>(district.Zip);
+            foreach(ZipFillsDistrict zfd in zipCopy)
+            {
+                if (values.Contains(zfd.ZipCode.ToString()) == false)
+                {
+                    district.Zip.Remove(zfd);
+                }
+                else
+                {
+                    values.Remove(zfd.ZipCode.ToString());
+                }
+            }
+
+            foreach (string zipcode in values)
+            {
+                district.Zip.Add(new ZipFillsDistrict()
+                {
+                    DistrictName = districtName,
+                    ZipCode = int.Parse(zipcode)
+                });
+            }
+            
+            _Context.District.Update(district);
+
+            _Context.SaveChanges();
+
+            return Json(new { Result = string.Format("District sucessfuly updated with name '{0}'.", districtName) });
         }
 
         [HttpGet]
@@ -370,7 +418,7 @@ namespace VotingApplication.Controllers
                 case "GUAM": return "GU";
                 case "PUERTO RICO": return "PR";
                 case "VIRGIN ISLANDS": return "VI";
-                default: return "IA";
+                default: return state;
             }
         }
         [HttpGet]
@@ -392,5 +440,15 @@ namespace VotingApplication.Controllers
             return Content(JsonConvert.SerializeObject(collection), "application/json");
         }
         
+        [HttpGet]
+        public IActionResult RequestDistrict(string districtName = null)
+        {
+            if (districtName == null)
+                return Json(new { Result = "District name is required to view a district." });
+            var districtData = _Context.District.Where(d => d.DistrictName == districtName).SelectMany(d => d.Zip).Select(zfd => zfd.Zip).ToList();
+            if (districtData == null || districtData.Count() == 0)
+                return Json(new { Result = string.Format("There is no district with the name '{0}'.", districtName) });
+            return Content(JsonConvert.SerializeObject(districtData));
+        }
     }
 }
