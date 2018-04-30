@@ -192,17 +192,24 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
-        
+
         // TODO: needs to use the user manager to display a form where a user can be edited.
         [HttpGet]
-        public IActionResult Edit(string Username)
+        public async Task<IActionResult> Edit(string Username)
         {
-            return RedirectToAction(nameof(UserManagement));
+            ApplicationUser user = await _UserManager.FindByNameAsync(Username);
+            return View(new ManageUserViewModel(user));
+            //return RedirectToAction(nameof(UserManagement));
         }
 
         [HttpPost]
-        public IActionResult Edit(ManageUserViewModel model)
+        public async Task<IActionResult> Edit(ManageUserViewModel model)
         {
+            ApplicationUser user = await _UserManager.FindByNameAsync(model.PrevUsername);
+            user.EmailConfirmed = model.EmailConfirmed == "Yes" ? true : model.EmailConfirmed == "No" ?false: user.EmailConfirmed;
+            user.UserName = model.Username;
+            _Context.Users.Update(user);
+            _Context.SaveChanges();
             return RedirectToAction(nameof(UserManagement));
         }
 
