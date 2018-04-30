@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
 using VotingApplication.ViewModels;
+using VotingApplication.Components;
+using VotingApplication.Controllers;
+using VotingApplication.CustomAttributes;
 using VotingApplication.Services;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Linq;
+
 
 namespace VotingApplication.Controllers
 {
@@ -30,8 +41,30 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Profile()
         {
-            ViewData["UserName"] = HttpContext.User.Identity.Name;
-            return View();
+            //List<ApplicationUser> users = new List<ApplicationUser>();
+            //ViewData["UserName"] = HttpContext.User.Identity.Name;
+            //users.AddRange(_Context.Users.Where(u => u.UserName == HttpContext.User.Identity.Name));
+            //foreach (ApplicationUser user in users)
+            //{
+            //    ViewData["Email"] = user.Email;
+            //    ViewData["MailAddress"] = user.Address;
+            //}
+            var user = _Context.Users.Where(u => u.UserName == User.Identity.Name).Include(u => u.Registration).Include(u => u.Address).FirstOrDefault();
+            var userData = new UserProfileViewModel()
+            {
+                FirstName = user.Registration.FirstName,
+                LastName = user.Registration.LastName,
+                AddressLineOne = user.Address.AddressLineOne,
+                AddressLineTwo = user.Address.AddressLineTwo,
+                City = user.Address.City,
+                State = user.Address.State,
+                ZipCode = (user.Address.ZipCode).ToString(),
+                Username = user.UserName,
+                Email = user.Email,
+                DOB = user.Registration.DOB
+            };
+
+            return View(userData);
         }
 
         [HttpGet]
