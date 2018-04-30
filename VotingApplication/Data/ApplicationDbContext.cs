@@ -22,7 +22,8 @@ namespace VotingApplication
         public DbSet<OfficeDataModel> Office { get; set; }
         public DbSet<BallotDataModel> Ballot { get; set; }
 
-
+        public DbSet<VoterVotesBallot> Votes { get; set; }
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             
@@ -46,7 +47,7 @@ namespace VotingApplication
                 .HasOne(zd => zd.District)
                 .WithMany(d => d.Zip)
                 .HasForeignKey(zd => zd.DistrictName);
-
+            
             // Sets up the many to many relationship of districts and regions
             modelBuilder.Entity<DistrictFillsRegion>()
                 .HasKey(dr => new { dr.DistrictName, dr.RegionName });
@@ -60,6 +61,20 @@ namespace VotingApplication
                 .HasOne(zd => zd.Region)
                 .WithMany(d => d.District)
                 .HasForeignKey(zd => zd.RegionName);
+
+            //sets up the many to many relationship of ballots and Voters
+            modelBuilder.Entity<VoterVotesBallot>()
+                .HasKey(vb => new { vb.VoterName, vb.BallotName });
+
+            modelBuilder.Entity<VoterVotesBallot>()
+                .HasOne(vb => vb.Voter)
+                .WithMany(u => u.VoteGiven)
+                .HasForeignKey(vb => vb.VoterName);
+
+            modelBuilder.Entity<VoterVotesBallot>()
+                .HasOne(vb => vb.Ballot)
+                .WithMany(b => b.Voter)
+                .HasForeignKey(vb => vb.BallotName);
         }
     }
 }

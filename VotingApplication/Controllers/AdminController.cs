@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VotingApplication.ViewModels;
 using VotingApplication.Components;
+using VotingApplication.Services;
 
 namespace VotingApplication.Controllers
 {
@@ -19,11 +20,17 @@ namespace VotingApplication.Controllers
     {
 
         protected ApplicationDbContext _Context;
+        protected UserManager<ApplicationUser> _UserManager;
+        protected IEmailService _EmailService;
 
         public AdminController(
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            EmailService emailService,
+            UserManager<ApplicationUser> userManager)
         {
             _Context = context;
+            _EmailService = emailService;
+            _UserManager = userManager;
         }
 
         [HttpGet]
@@ -36,7 +43,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult UserSearch()
         {
-            return View();
+            return View(new UserSearchViewModel());
         }
 
         [HttpGet]
@@ -95,25 +102,88 @@ namespace VotingApplication.Controllers
                     ElectionDay = model.ElectionDay,
                     OfficeName = model.OfficeName
                 };
-
+                IEnumerable<ApplicationUser> userList = new HashSet<ApplicationUser>();
                 switch (model.Zone)
                 {
                     case "ZipCode":
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
-                        
+                        userList = _Context.Zip
+                            // get the one zip
+                            .Where(z => z.ZipCode == data.ZipCode)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed);
                         break;
                     case "District":
                         data.RegionName = null;
                         data.ZipCode = null;
                         data.DistrictName = model.DistrictName;
+                        userList = _Context.District
+                            // get the one district
+                            .Where(d => d.DistrictName == data.DistrictName)
+                            // load its bridge table
+                            .Include(d => d.Zip)
+                            // convert bridge table to one list
+                            .SelectMany(d => d.Zip)
+                            // convert bridge table to zip
+                            .Select(zfd => zfd.Zip)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed);
                         break;
                     case "Region":
                         data.RegionName = model.RegionName;
                         data.ZipCode = null;
                         data.DistrictName = null;
+                        userList = _Context.Region
+                            // get the one region
+                            .Where(r => r.RegionName == data.RegionName)
+                            // load its bridge table
+                            .Include(r => r.District)
+                            // convert the bridge table to one list
+                            .SelectMany(r => r.District)
+                            // convert the bridge to district
+                            .Select(dfr => dfr.District)
+                            // load its bridge table
+                            .Include(d => d.Zip)
+                            // convert bridge table to one list
+                            .SelectMany(d => d.Zip)
+                            // convert bridge table to zip
+                            .Select(zfd => zfd.Zip)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed)
+                            .Distinct();
                         break;
+                }
+                string subject = "New Ballot Avaliable";
+                string body = "There is a new ballot that you can vote on.";
+                foreach (ApplicationUser user in userList)
+                {
+                    _EmailService.SendEmailAsync(user, subject, body);
                 }
 
                 _Context.Ballot.Add(data);
@@ -175,18 +245,14 @@ namespace VotingApplication.Controllers
         
         // TODO: use the page and usersPerPage fields to make a interactive table.
         [HttpGet]
-        public IActionResult UserManagement(int page = 0, int usersPerPage = 5)
+        public IActionResult UserManagement()
         {
-            // max 50 users
-            usersPerPage = Math.Min(usersPerPage, 50);
-            // min 5 users
-            usersPerPage = Math.Max(usersPerPage, 5);
-
+           
             // TODO: create an actual model so we can send additional information. (i.e total number of pages and number of users)
             List<ManageUserViewModel> model = new List<ManageUserViewModel>();
             ApplicationUser[] users = _Context.Users
-                .Skip(page * usersPerPage)
-                .Take(usersPerPage)
+                
+                .Take(1000)
                 .ToArray();
             for (int i = 0; i < users.Length; i++)
             {
@@ -195,19 +261,34 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
-        
+
         // TODO: needs to use the user manager to display a form where a user can be edited.
         [HttpGet]
-        public IActionResult Edit(string Username)
+        public async Task<IActionResult> Edit(string Username)
         {
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
+            return View(new ManageUserViewModel(user));
+            //return RedirectToAction(nameof(UserManagement));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ManageUserViewModel model)
+        {
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == model.PrevUsername).FirstOrDefault();
+            user.EmailConfirmed = model.EmailConfirmed == "Yes" ? true : model.EmailConfirmed == "No" ?false: user.EmailConfirmed;
+            user.UserName = model.Username;
+            _Context.Users.Update(user);
+            _Context.SaveChanges();
             return RedirectToAction(nameof(UserManagement));
         }
 
         // TODO: needs to use the user manager to delete a user.
         /******IMPORTANT****** TODO: need to change in CSHTML so that the button performs a POST instead of a GET ***********/
         [HttpGet] // change to [HttpPost]
-        public IActionResult Delete(string Username)
+        public async Task<IActionResult> Delete(string Username)
         {
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
+            await _UserManager.DeleteAsync(user);
             return RedirectToAction(nameof(UserManagement));
         }
         

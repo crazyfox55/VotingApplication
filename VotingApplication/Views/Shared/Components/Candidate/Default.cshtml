@@ -1,0 +1,68 @@
+﻿@model FilteredCandidateViewModel
+
+<div class="table-responsive">
+    @if (Model.FilteredCandidates.Count() > 0)
+    {
+        <table id="tableCandidateData" class="display table" role="grid" style="width:100%">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredCandidates.FirstOrDefault().FirstName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredCandidates.FirstOrDefault().LastName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FilteredCandidates.FirstOrDefault().Party)
+                    </th>
+                    <th scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FilteredCandidates)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Party)
+                        </td>
+                        <td>
+                            @if (Model.CandidateSelected)
+                            {
+                                <button class="btn btn-dark" onclick="deselectUser();">Deselect</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-dark" onclick="selectUser('@item.UserId');">Select</button>
+
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (Model.FilteredCandidates.Count() > 1)
+        {
+            <script>
+                $(function () {
+                    $('#tableCandidateData').DataTable();
+                });
+            </script>
+        }
+    }
+    else
+    {
+        <h4 class="text-danger">
+            There are no candidates to vote for at this time.
+        </h4>
+    }
+</div>
+

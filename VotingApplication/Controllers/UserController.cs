@@ -26,13 +26,16 @@ namespace VotingApplication.Controllers
     {
         protected UserManager<ApplicationUser> _UserManager;
         protected ApplicationDbContext _Context;
+        protected IEmailService _EmailService;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IEmailService emailService)
         {
             _UserManager = userManager;
             _Context = context;
+            _EmailService = emailService;
         }
         
         [HttpGet]
@@ -82,6 +85,7 @@ namespace VotingApplication.Controllers
                     var result = await _UserManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
                     if (result.Succeeded)
                     {
+                        await _EmailService.SendEmailAsync(user, "Password Change", "Your password has been changed.");
                         return RedirectToAction(nameof(Profile));
                     }
                     foreach (IdentityError error in result.Errors)
@@ -94,7 +98,7 @@ namespace VotingApplication.Controllers
                     ModelState.AddModelError(string.Empty, "Invalid password.");
                 }
             }
-
+           
             return View("ChangePassword", model);
         }
         
