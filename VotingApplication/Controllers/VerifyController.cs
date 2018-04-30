@@ -96,11 +96,6 @@ namespace VotingApplication.Controllers
             {
                 return Json($"Email \"{email}\" is not valid for any user.");
             }
-            else if (user.EmailConfirmed == false)
-            {
-                // TODO: allow the reset password to also confirm their email.
-                return Json($"Email \"{email}\" is not confirmed yet, please confirm your email first.");
-            }
 
             return Json(true);
         }

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VotingApplication.ViewModels;
 using VotingApplication.Components;
+using VotingApplication.Services;
 
 namespace VotingApplication.Controllers
 {
@@ -20,11 +21,14 @@ namespace VotingApplication.Controllers
 
         protected ApplicationDbContext _Context;
         protected UserManager<ApplicationUser> _UserManager;
+        protected IEmailService _EmailService;
 
         public AdminController(
-            ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+            ApplicationDbContext context, 
+            UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _Context = context;
+            _EmailService = emailService;
             _UserManager = userManager;
         }
 
@@ -97,24 +101,88 @@ namespace VotingApplication.Controllers
                     ElectionDay = model.ElectionDay,
                     OfficeName = model.OfficeName
                 };
-
+                IEnumerable<ApplicationUser> userList = new HashSet<ApplicationUser>();
                 switch (model.Zone)
                 {
                     case "ZipCode":
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
+                        userList = _Context.Zip
+                            // get the one zip
+                            .Where(z => z.ZipCode == data.ZipCode)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed);
                         break;
                     case "District":
                         data.RegionName = null;
                         data.ZipCode = null;
                         data.DistrictName = model.DistrictName;
+                        userList = _Context.District
+                            // get the one district
+                            .Where(d => d.DistrictName == data.DistrictName)
+                            // load its bridge table
+                            .Include(d => d.Zip)
+                            // convert bridge table to one list
+                            .SelectMany(d => d.Zip)
+                            // convert bridge table to zip
+                            .Select(zfd => zfd.Zip)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed);
                         break;
                     case "Region":
                         data.RegionName = model.RegionName;
                         data.ZipCode = null;
                         data.DistrictName = null;
+                        userList = _Context.Region
+                            // get the one region
+                            .Where(r => r.RegionName == data.RegionName)
+                            // load its bridge table
+                            .Include(r => r.District)
+                            // convert the bridge table to one list
+                            .SelectMany(r => r.District)
+                            // convert the bridge to district
+                            .Select(dfr => dfr.District)
+                            // load its bridge table
+                            .Include(d => d.Zip)
+                            // convert bridge table to one list
+                            .SelectMany(d => d.Zip)
+                            // convert bridge table to zip
+                            .Select(zfd => zfd.Zip)
+                            // load its addresses
+                            .Include(z => z.Residents)
+                            // convert addresses to one list
+                            .SelectMany(z => z.Residents)
+                            // load the user
+                            .Include(a => a.User)
+                            // convert address to user
+                            .Select(a => a.User)
+                            // return users with confirmed emails
+                            .Where(u => u.EmailConfirmed)
+                            .Distinct();
                         break;
+                }
+                string subject = "New Ballot Avaliable";
+                string body = "There is a new ballot that you can vote on.";
+                foreach (ApplicationUser user in userList)
+                {
+                    _EmailService.SendEmailAsync(user, subject, body);
                 }
 
                 _Context.Ballot.Add(data);

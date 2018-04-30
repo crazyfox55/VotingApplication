@@ -34,23 +34,23 @@ namespace VotingApplication
         public virtual ApplicationUser User { get; set; }
 
         [Required]
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string Party { get; set; }
 
         [Required]
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string Ethnicity { get; set; }
 
         [Required]
-        [MaxLength(16)]
+        [MaxLength(32)]
         public string Sex { get; set; }
 
         [Required]
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string IncomeRange { get; set; }
 
         [Required]
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string VoterReadiness { get; set; }
     }
 }

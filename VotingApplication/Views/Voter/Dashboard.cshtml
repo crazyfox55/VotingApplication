@@ -1,6 +1,10 @@
 ﻿@using VotingApplication.Controllers
 @model VoterBallotSearchViewModel
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+
 <h1>Welcome to your dashboard</h1>
 <!-- replace with better information later-->
 <p>
@@ -47,7 +51,7 @@
                             @Html.DisplayFor(modelItem => item.Zone)
                         </td>
                         <td>
-                            <!--await Component.InvokeAsync(Model.ActionViewComponent, item)-->
+                            @await Component.InvokeAsync(Model.ActionViewComponent, item)
                         </td>
                     </tr>
                 }
@@ -69,3 +73,4 @@
         </h4>
     }
 </div>
+

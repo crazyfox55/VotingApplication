@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
+    <button id ="RegistrationButton" type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
 <a asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.Login)" class="nav-link">Already have an account?</a>
 <a asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link">Resend Email Confirmation?</a>
