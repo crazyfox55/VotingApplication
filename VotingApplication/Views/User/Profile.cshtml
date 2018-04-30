@@ -1,4 +1,5 @@
 ﻿@using VotingApplication.Controllers
+
 @model UserProfileViewModel
 <head>
     
@@ -30,4 +31,5 @@
 </body>
 <a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.ChangePassword)">Change Password</a><br />
 <a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.SecurityQuestionsAsync)">Add Security Questions</a>
+
 
