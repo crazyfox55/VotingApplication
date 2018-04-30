@@ -265,7 +265,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string Username)
         {
-            ApplicationUser user = await _UserManager.FindByNameAsync(Username);
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
             return View(new ManageUserViewModel(user));
             //return RedirectToAction(nameof(UserManagement));
         }
@@ -273,7 +273,7 @@ namespace VotingApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(ManageUserViewModel model)
         {
-            ApplicationUser user = await _UserManager.FindByNameAsync(model.PrevUsername);
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == model.PrevUsername).FirstOrDefault();
             user.EmailConfirmed = model.EmailConfirmed == "Yes" ? true : model.EmailConfirmed == "No" ?false: user.EmailConfirmed;
             user.UserName = model.Username;
             _Context.Users.Update(user);
@@ -286,7 +286,7 @@ namespace VotingApplication.Controllers
         [HttpGet] // change to [HttpPost]
         public async Task<IActionResult> Delete(string Username)
         {
-            ApplicationUser user = await _UserManager.FindByNameAsync(Username);
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
             await _UserManager.DeleteAsync(user);
             return RedirectToAction(nameof(UserManagement));
         }
