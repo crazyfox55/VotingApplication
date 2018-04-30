@@ -417,7 +417,7 @@ namespace VotingApplication.Controllers
             ApplicationUser user = _Context.Users.Where(u => u.UserName == model.PrevUsername).FirstOrDefault();
             user.EmailConfirmed = model.EmailConfirmed == "Yes" ? true : model.EmailConfirmed == "No" ?false: user.EmailConfirmed;
             user.UserName = model.Username;
-            _Context.Users.Update(user);
+            _UserManager.UpdateAsync(user);
             _Context.SaveChanges();
             return RedirectToAction(nameof(UserManagement));
         }
