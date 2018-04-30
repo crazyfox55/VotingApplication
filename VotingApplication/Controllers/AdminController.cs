@@ -24,8 +24,9 @@ namespace VotingApplication.Controllers
         protected IEmailService _EmailService;
 
         public AdminController(
-            ApplicationDbContext context, 
-            UserManager<ApplicationUser> userManager, IEmailService emailService)
+            ApplicationDbContext context,
+            EmailService emailService,
+            UserManager<ApplicationUser> userManager)
         {
             _Context = context;
             _EmailService = emailService;
