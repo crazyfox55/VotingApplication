@@ -352,6 +352,12 @@ namespace VotingApplication.Controllers
             return View(model);
         }
         
+        [HttpGet]
+        public IActionResult ViewAllBallots()
+        {
+            return View(new BasicBallotSearchViewModel());
+        }
+
         [HttpPost]
         public IActionResult SearchBallot(BasicBallotSearchViewModel model)
         {
