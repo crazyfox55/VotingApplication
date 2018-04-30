@@ -4,9 +4,10 @@
 <h2>Email Confirmation Sent</h2>
 <p>
     Check your email for a confirmation letter, once your email is confirmed you will be able to login.
-
-    <a asp-area="" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link" onclick="$('#sameEmailRequest').submit(); return false;">Email missing or lost? Resquest a new link.</a>
 </p>
+<br />
+    <a asp-area="" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)"  onclick="$('#sameEmailRequest').submit(); return false;">Email missing or lost? Resquest a new link.</a>
+
 <form id="sameEmailRequest" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" method="post">
     <input asp-for="Email" type="hidden" />
 </form>
