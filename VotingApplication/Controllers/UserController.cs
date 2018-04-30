@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
 using VotingApplication.ViewModels;
+using VotingApplication.Components;
+using VotingApplication.Controllers;
+using VotingApplication.CustomAttributes;
 using VotingApplication.Services;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Linq;
+
 
 namespace VotingApplication.Controllers
 {
@@ -30,8 +41,22 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Profile()
         {
-            ViewData["UserName"] = HttpContext.User.Identity.Name;
-            return View();
+            var user = _Context.Users.Where(u => u.UserName == User.Identity.Name).Include(u => u.Registration).Include(u => u.Address).FirstOrDefault();
+            var userData = new UserProfileViewModel()
+            {
+                FirstName = user.Registration?.FirstName ?? "Missing First Name",
+                LastName = user.Registration?.LastName ?? "Missing Last Name",
+                AddressLineOne = user.Address?.AddressLineOne ?? "Missing Address",
+                AddressLineTwo = user.Address?.AddressLineTwo,
+                City = user.Address?.City,
+                State = user.Address?.State,
+                ZipCode = (user.Address?.ZipCode ?? 0).ToString(),
+                Username = user.UserName,
+                Email = user.Email,
+                DOB = user.Registration?.DOB ?? new DateTime()
+            };
+
+            return View(userData);
         }
 
         [HttpGet]
