@@ -1,10 +1,35 @@
 ﻿@using VotingApplication.Controllers
-<h1>User Profile</h1>
 
-<p>
-    Username:   @(ViewData["UserName"])
-    <!-- get other info as well later-->
-</p>
-<a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.ChangePassword)" class="nav-link">Change Password</a>
-<a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.SecurityQuestionsAsync)" class="nav-link">Add Security Questions</a>
+@model UserProfileViewModel
+<head>
+    
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <profile>
+                    <strong>Full Name: @Model.FirstName @Model.LastName</strong> <br />
+                    <email>Email: </email><a href="mailto:#">@Model.Email</a> <br />
+                    <dob >Date of Birth: @Model.DOB</dob> <br />
+                                                          <address>
+                                                              Address:
+                                                              @Model.AddressLineOne<br />
+                                                              <bp>    </bp>&emsp;&emsp;&emsp;&emsp;@Model.AddressLineTwo<br />
+                                                              <bp>    </bp>&emsp;&emsp;&emsp;&emsp;@Model.City<br />
+                                                              <bp>    </bp>&emsp;&emsp;&emsp;&emsp;@Model.State<br />
+                                                              <bp>    </bp>&emsp;&emsp;&emsp;&emsp;@Model.ZipCode<br />
+                                                          </address>
+                </profile>
+            </div>
+        </div>
+    </div>
+</body>
+<a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.ChangePassword)">Change Password</a><br />
+<a asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.SecurityQuestionsAsync)">Add Security Questions</a>
+
 
