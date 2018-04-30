@@ -1,4 +1,4 @@
 ﻿@using VotingApplication.Controllers
 @model FilteredBallotViewModel.BallotViewModel
 
-<button class="btn btn-dark" onclick="location.href = '@Url.Action(nameof(AdminController.ViewBallot), nameof(AdminController).RemoveController(), new { ballotname = Model.BallotName })'" >Vote</button>
+<button class="btn btn-dark" onclick="location.href = '@Url.Action(nameof(AdminController.ViewBallot), nameof(AdminController).RemoveController(), new { ballotname = Model.BallotName })'" >View</button>

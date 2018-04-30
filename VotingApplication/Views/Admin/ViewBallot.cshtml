@@ -1,0 +1,68 @@
+﻿@using VotingApplication.Controllers
+@model ViewBallotViewModel
+
+
+<h2>View Ballot</h2>
+<h4>@Html.DisplayFor(m => m.BallotName) - @Html.DisplayFor(m => m.ElectionDay)</h4>
+<h5>Voting Progress</h5>
+<div class="progress" style="height:20px">
+    <div class="progress-bar" style="width:@((int)(Model.CompleteVotePercent * 100)) %;height:20px"></div>
+</div>
+<h5>Cadidates</h5>
+@if (Model.PerCandidatePercent.Count == 0)
+{
+    <div>There are no candidates for this ballot</div>
+}
+@foreach (KeyValuePair<string, float> entry in Model.PerCandidatePercent)
+{
+    <div>@entry.Key - @entry.Value</div>
+}
+
+<h5>Voting Demographics</h5>
+<h6>Ethnicity</h6>
+@if (Model.EthnicityPercent.Count == 0)
+{
+    <div>There are no demographics for this catagory</div>
+}
+@foreach (KeyValuePair<string, float> entry in Model.EthnicityPercent)
+{
+    <div>@entry.Key - @entry.Value</div>
+}
+
+<h6>Income</h6>
+@if (Model.IncomePercent.Count == 0)
+{
+    <div>There are no demographics for this catagory</div>
+}
+@foreach (KeyValuePair<string, float> entry in Model.IncomePercent)
+{
+    <div>@entry.Key - @entry.Value</div>
+}
+
+<h6>Party</h6>
+@if (Model.PartyPercent.Count == 0)
+{
+    <div>There are no demographics for this catagory</div>
+}
+@foreach (KeyValuePair<string, float> entry in Model.PartyPercent)
+{
+    <div>@entry.Key - @entry.Value</div>
+}
+<h6>Readiness</h6>
+@if (Model.ReadinessPercent.Count == 0)
+{
+    <div>There are no demographics for this catagory</div>
+}
+@foreach (KeyValuePair<string, float> entry in Model.ReadinessPercent)
+{
+    <div>@entry.Key - @entry.Value</div>
+}
+<h6>Gender</h6>
+@if (Model.SexPercent.Count == 0)
+{
+    <div>There are no demographics for this catagory</div>
+}
+@foreach (KeyValuePair<string, float> entry in Model.SexPercent)
+{
+    <div>@entry.Key - @entry.Value</div>
+}
