@@ -11,7 +11,7 @@
 <h5>Cadidates</h5>
 @if (Model.PerCandidatePercent.Count == 0)
 {
-    <div>There are no candidates for this ballot</div>
+    <div>There are no votes for any candidates at this time</div>
 }
 @foreach (KeyValuePair<string, float> entry in Model.PerCandidatePercent)
 {
