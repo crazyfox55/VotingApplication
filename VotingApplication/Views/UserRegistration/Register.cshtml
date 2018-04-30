@@ -34,5 +34,5 @@
     </div>
     <button id ="RegistrationButton" type="submit" class="btn btn-primary">@ViewData["Submit"]</button>
 </form>
-<a asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.Login)" class="nav-link">Already have an account?</a>
-<a asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" class="nav-link">Resend Email Confirmation?</a>
+<a asp-controller="@nameof(AuthenticationController).RemoveController()" asp-action="@nameof(AuthenticationController.Login)" >Already have an account?</a><br />
+<a asp-controller="@nameof(UserRegistrationController).RemoveController()" asp-action="@nameof(UserRegistrationController.RequestEmailConfirmation)" >Resend Email Confirmation?</a><br />
