@@ -41,27 +41,19 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Profile()
         {
-            //List<ApplicationUser> users = new List<ApplicationUser>();
-            //ViewData["UserName"] = HttpContext.User.Identity.Name;
-            //users.AddRange(_Context.Users.Where(u => u.UserName == HttpContext.User.Identity.Name));
-            //foreach (ApplicationUser user in users)
-            //{
-            //    ViewData["Email"] = user.Email;
-            //    ViewData["MailAddress"] = user.Address;
-            //}
             var user = _Context.Users.Where(u => u.UserName == User.Identity.Name).Include(u => u.Registration).Include(u => u.Address).FirstOrDefault();
             var userData = new UserProfileViewModel()
             {
-                FirstName = user.Registration.FirstName,
-                LastName = user.Registration.LastName,
-                AddressLineOne = user.Address.AddressLineOne,
-                AddressLineTwo = user.Address.AddressLineTwo,
-                City = user.Address.City,
-                State = user.Address.State,
-                ZipCode = (user.Address.ZipCode).ToString(),
+                FirstName = user.Registration?.FirstName ?? "Missing First Name",
+                LastName = user.Registration?.LastName ?? "Missing Last Name",
+                AddressLineOne = user.Address?.AddressLineOne ?? "Missing Address",
+                AddressLineTwo = user.Address?.AddressLineTwo,
+                City = user.Address?.City,
+                State = user.Address?.State,
+                ZipCode = (user.Address?.ZipCode ?? 0).ToString(),
                 Username = user.UserName,
                 Email = user.Email,
-                DOB = user.Registration.DOB
+                DOB = user.Registration?.DOB ?? new DateTime()
             };
 
             return View(userData);

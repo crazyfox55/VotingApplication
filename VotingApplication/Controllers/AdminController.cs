@@ -25,7 +25,7 @@ namespace VotingApplication.Controllers
 
         public AdminController(
             ApplicationDbContext context,
-            EmailService emailService,
+            IEmailService emailService,
             UserManager<ApplicationUser> userManager)
         {
             _Context = context;
