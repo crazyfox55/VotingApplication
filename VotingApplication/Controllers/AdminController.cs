@@ -20,14 +20,16 @@ namespace VotingApplication.Controllers
     {
 
         protected ApplicationDbContext _Context;
+        protected UserManager<ApplicationUser> _UserManager;
         protected IEmailService _EmailService;
 
         public AdminController(
-            ApplicationDbContext context,
-            IEmailService emailService)
+            ApplicationDbContext context, 
+            UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _Context = context;
             _EmailService = emailService;
+            _UserManager = userManager;
         }
 
         [HttpGet]
@@ -40,7 +42,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult UserSearch()
         {
-            return View();
+            return View(new UserSearchViewModel());
         }
 
         [HttpGet]
@@ -242,18 +244,14 @@ namespace VotingApplication.Controllers
         
         // TODO: use the page and usersPerPage fields to make a interactive table.
         [HttpGet]
-        public IActionResult UserManagement(int page = 0, int usersPerPage = 5)
+        public IActionResult UserManagement()
         {
-            // max 50 users
-            usersPerPage = Math.Min(usersPerPage, 50);
-            // min 5 users
-            usersPerPage = Math.Max(usersPerPage, 5);
-
+           
             // TODO: create an actual model so we can send additional information. (i.e total number of pages and number of users)
             List<ManageUserViewModel> model = new List<ManageUserViewModel>();
             ApplicationUser[] users = _Context.Users
-                .Skip(page * usersPerPage)
-                .Take(usersPerPage)
+                
+                .Take(1000)
                 .ToArray();
             for (int i = 0; i < users.Length; i++)
             {
@@ -262,19 +260,34 @@ namespace VotingApplication.Controllers
 
             return View(model);
         }
-        
+
         // TODO: needs to use the user manager to display a form where a user can be edited.
         [HttpGet]
-        public IActionResult Edit(string Username)
+        public async Task<IActionResult> Edit(string Username)
         {
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
+            return View(new ManageUserViewModel(user));
+            //return RedirectToAction(nameof(UserManagement));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ManageUserViewModel model)
+        {
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == model.PrevUsername).FirstOrDefault();
+            user.EmailConfirmed = model.EmailConfirmed == "Yes" ? true : model.EmailConfirmed == "No" ?false: user.EmailConfirmed;
+            user.UserName = model.Username;
+            _Context.Users.Update(user);
+            _Context.SaveChanges();
             return RedirectToAction(nameof(UserManagement));
         }
 
         // TODO: needs to use the user manager to delete a user.
         /******IMPORTANT****** TODO: need to change in CSHTML so that the button performs a POST instead of a GET ***********/
         [HttpGet] // change to [HttpPost]
-        public IActionResult Delete(string Username)
+        public async Task<IActionResult> Delete(string Username)
         {
+            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
+            await _UserManager.DeleteAsync(user);
             return RedirectToAction(nameof(UserManagement));
         }
         
