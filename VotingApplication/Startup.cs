@@ -348,64 +348,63 @@ namespace VotingApplication
                 #endregion
 
                 #region Add District for each state
-                string StateAbbreviation(string abbreviation)
-                {
+                string StateAbbreviation(string abbreviation) {
                     switch (abbreviation.ToUpper())
                     {
-                        case "AL": return "ALABAMA";
-                        case "AK": return "ALASKA";
-                        case "AZ": return "ARIZONA";
-                        case "AR": return "ARKANSAS";
-                        case "CA": return "CALIFORNIA";
-                        case "CO": return "COLORADO";
-                        case "CT": return "CONNECTICUT";
-                        case "DE": return "DELAWARE";
-                        case "FL": return "FLORIDA";
-                        case "GA": return "GEORGIA";
-                        case "HI": return "HAWAII";
-                        case "ID": return "IDAHO";
-                        case "IL": return "ILLINOIS";
-                        case "IN": return "INDIANA";
-                        case "IA": return "IOWA";
-                        case "KS": return "KANSAS";
-                        case "KY": return "KENTUCKY";
-                        case "LA": return "LOUISIANA";
-                        case "ME": return "MAINE";
-                        case "MD": return "MARYLAND";
-                        case "MA": return "MASSACHUSETTS";
-                        case "MI": return "MICHIGAN";
-                        case "MN": return "MINNESOTA";
-                        case "MS": return "MISSISSIPPI";
-                        case "MO": return "MISSOURI";
-                        case "MT": return "MONTANA";
-                        case "NE": return "NEBRASKA";
-                        case "NV": return "NEVADA";
-                        case "NH": return "NEW HAMPSHIRE";
-                        case "NJ": return "NEW JERSEY";
-                        case "NM": return "NEW MEXICO";
-                        case "NY": return "NEW YORK";
-                        case "NC": return "NORTH CAROLINA";
-                        case "ND": return "NORTH DAKOTA";
-                        case "OH": return "OHIO";
-                        case "OK": return "OKLAHOMA";
-                        case "OR": return "OREGON";
-                        case "PA": return "PENNSYLVANIA";
-                        case "RI": return "RHODE ISLAND";
-                        case "SC": return "SOUTH CAROLINA";
-                        case "SD": return "SOUTH DAKOTA";
-                        case "TN": return "TENNESSEE";
-                        case "TX": return "TEXAS";
-                        case "UT": return "UTAH";
-                        case "VT": return "VERMONT";
-                        case "VA": return "VIRGINIA";
-                        case "WA": return "WASHINGTON";
-                        case "WV": return "WEST VIRGINIA";
-                        case "WI": return "WISCONSIN";
-                        case "WY": return "WYOMING";
-                        case "GU": return "GUAM";
-                        case "PR": return "PUERTO RICO";
-                        case "VI": return "VIRGIN ISLANDS";
-                        default: return "Empty";
+                        case "AL": return "Alabama";
+                        case "AK": return "Alaska";
+                        case "AZ": return "Arizona";
+                        case "AR": return "Arkansas";
+                        case "CA": return "California";
+                        case "CO": return "Colorado";
+                        case "CT": return "Connecticut";
+                        case "DE": return "Delaware";
+                        case "FL": return "Florida";
+                        case "GA": return "Georgia";
+                        case "HI": return "Hawaii";
+                        case "ID": return "Idaho";
+                        case "IL": return "Illinois";
+                        case "IN": return "Indiana";
+                        case "IA": return "Iowa";
+                        case "KS": return "Kansas";
+                        case "KY": return "Kentucky";
+                        case "LA": return "Louisiana";
+                        case "ME": return "Maine";
+                        case "MD": return "Maryland";
+                        case "MA": return "Massachusetts";
+                        case "MI": return "Michigan";
+                        case "MN": return "Minnesota";
+                        case "MS": return "Mississippi";
+                        case "MO": return "Missouri";
+                        case "MT": return "Montana";
+                        case "NE": return "Nebraska";
+                        case "NV": return "Nevada";
+                        case "NH": return "New Hampshire";
+                        case "NJ": return "New Jersey";
+                        case "NM": return "New Mexico";
+                        case "NY": return "New York";
+                        case "NC": return "North Carolina";
+                        case "ND": return "North Dakota";
+                        case "OH": return "Ohio";
+                        case "OK": return "Oklahoma";
+                        case "OR": return "Oregon";
+                        case "PA": return "Pennsylvania";
+                        case "RI": return "Rhode Island";
+                        case "SC": return "South Carolina";
+                        case "SD": return "South Dakota";
+                        case "TN": return "Tennessee";
+                        case "TX": return "Texas";
+                        case "UT": return "Utah";
+                        case "VT": return "Vermont";
+                        case "VA": return "Virginia";
+                        case "WA": return "Washington";
+                        case "WV": return "West Virginia";
+                        case "WI": return "Wisconsin";
+                        case "WY": return "Wyoming";
+                        case "GU": return "Guam";
+                        case "PR": return "Puerto Rico";
+                        case "VI": return "Virgin Islands";
+                        default: return abbreviation;
                     }
                 }
                 if (context.Zip.Any() == true)
@@ -438,8 +437,7 @@ namespace VotingApplication
                 }
                 #endregion
             }
-
-
+            
             // setup identity
             app.UseAuthentication();
 

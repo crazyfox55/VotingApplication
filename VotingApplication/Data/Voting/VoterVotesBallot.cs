@@ -9,15 +9,15 @@ namespace VotingApplication
 {
     public class VoterVotesBallot
     {
-        public String VoterName { get; set; }
-        public String BallotName { get; set; }
+        public string VoterName { get; set; }
+        public string BallotName { get; set; }
         
         public ApplicationUser Voter { get; set; }
         public BallotDataModel Ballot { get; set; }
 
         [Required]
         [ForeignKey(nameof(ApplicationUser))]
-        public String CandidateName { get; set; }
+        public string CandidateName { get; set; }
 
         public virtual CandidateDataModel Candidate { get; set; }
     }

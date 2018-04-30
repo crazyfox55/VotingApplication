@@ -48,6 +48,7 @@ namespace VotingApplication.Controllers
                 .Select(dfr => dfr.Region)
                 .Include(r => r.Ballots)
                 .SelectMany(r => r.Ballots)
+                .Where(b => b.Voter.SingleOrDefault(v => v.VoterName == userId) == null)
                 .Select(b => new FilteredBallotViewModel.BallotViewModel()
                 {
                     BallotName = b.BallotName,
@@ -64,6 +65,7 @@ namespace VotingApplication.Controllers
                     .SelectMany(z => z.District)
                     .Select(zfd => zfd.District)
                     .SelectMany(d => d.Ballots)
+                    .Where(b => b.Voter.SingleOrDefault(v => v.VoterName == userId) == null)
                     .Select(b => new FilteredBallotViewModel.BallotViewModel()
                     {
                         BallotName = b.BallotName,
@@ -79,6 +81,7 @@ namespace VotingApplication.Controllers
                     .Select(u => u.Address)
                     .Select(a => a.Zip)
                     .SelectMany(z => z.Ballots)
+                    .Where(b => b.Voter.SingleOrDefault(v => v.VoterName == userId) == null)
                     .Select(b => new FilteredBallotViewModel.BallotViewModel()
                     {
                         BallotName = b.BallotName,
@@ -96,6 +99,9 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult BallotVote(string ballotName)
         {
+            if (_Context.Ballot.SingleOrDefault(b => b.BallotName == ballotName) == null)
+                return BadRequest();
+
             return View(new BallotVoteViewModel()
             {
                 BallotId = ballotName
@@ -125,6 +131,9 @@ namespace VotingApplication.Controllers
                     CandidateName = model.UserId
                 };
 
+                if (_Context.Votes.SingleOrDefault(v => v.BallotName == model.BallotId && v.VoterName == userId) != null)
+                    return Unauthorized();
+                
                 _Context.Votes.Add(data);
 
                 _Context.SaveChanges();
