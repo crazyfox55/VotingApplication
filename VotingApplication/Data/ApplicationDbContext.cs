@@ -75,6 +75,11 @@ namespace VotingApplication
                 .HasOne(vb => vb.Ballot)
                 .WithMany(b => b.Voter)
                 .HasForeignKey(vb => vb.BallotName);
+
+            modelBuilder.Entity<VoterVotesBallot>()
+                .HasOne(vb => vb.Candidate)
+                .WithMany(c => c.VoteReceived)
+                .HasForeignKey(vb => vb.CandidateName);
         }
     }
 }

@@ -48,10 +48,13 @@ namespace VotingApplication.Controllers
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> VerifyUniqueUserAsync(string username, string email)
+        public async Task<IActionResult> VerifyUniqueUserAsync(string username, string email, string prevUsername = null)
         {
-            string errorTarget = username == null ? "Email" : "UserName";
+            if (username != null && prevUsername == username)
+                return Json(true);
 
+            string errorTarget = username == null ? "Email" : "UserName";
+            
             var user = new ApplicationUser
             {
                 UserName = username,

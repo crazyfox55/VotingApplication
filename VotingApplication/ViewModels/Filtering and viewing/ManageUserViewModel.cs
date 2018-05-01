@@ -29,7 +29,7 @@ namespace VotingApplication.ViewModels
         public string PrevUsername { get; set; }
 
         [Required]
-        [Remote(action: nameof(VerifyController.VerifyUniqueUserAsync), controller: "Verify")]
+        [Remote(action: nameof(VerifyController.VerifyUniqueUserAsync), controller: "Verify", AdditionalFields = nameof(PrevUsername))]
         [Display(Name = "Username")]
         public string Username { get; set; }
 

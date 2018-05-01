@@ -5,8 +5,8 @@
 <h2>View Ballot</h2>
 <h4>@Html.DisplayFor(m => m.BallotName) - @Html.DisplayFor(m => m.ElectionDay)</h4>
 <h5>Voting Progress</h5>
-<div class="progress" style="height:20px">
-    <div class="progress-bar" style="width:@((int)(Model.CompleteVotePercent * 100)) %;height:20px"></div>
+<div class="progress" style="height:45px">
+    <div class="progress-bar" style="width: @((int)(Model.CompleteVotePercent * 100))%; height:45px; font-size: 25px;">@((int)(Model.CompleteVotePercent * 100))%</div>
 </div>
 <h5>Cadidates</h5>
 @if (Model.PerCandidatePercent.Count == 0)
