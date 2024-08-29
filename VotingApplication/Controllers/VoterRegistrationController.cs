@@ -7,31 +7,24 @@ using System.Threading.Tasks;
 namespace VotingApplication.Controllers
 {
     [Authorize(Roles = "GenericUser")]
-    public class VoterRegistrationController : Controller
+    public class VoterRegistrationController(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        ApplicationDbContext context
+            ) : Controller
     {
-        protected UserManager<ApplicationUser> _UserManager;
-        protected SignInManager<ApplicationUser> _SignInManager;
-        protected ApplicationDbContext _Context;
-
-        public VoterRegistrationController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ApplicationDbContext context
-            )
-        {
-            _UserManager = userManager;
-            _SignInManager = signInManager;
-            _Context = context;
-        }
+        protected UserManager<ApplicationUser> _userManager = userManager;
+        protected SignInManager<ApplicationUser> _signInManager = signInManager;
+        protected ApplicationDbContext _context = context;
 
         [HttpGet]
         public IActionResult Dashboard()
         {
-            string userId = _UserManager.GetUserId(User);
-            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
-            VoterAddressDataModel addressData = _Context.Address.Find(userId);
-            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
-            VoterDashboardViewModel model = new VoterDashboardViewModel(
+            string userId = _userManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _context.Demographics.Find(userId);
+            VoterDashboardViewModel model = new(
                 registrationData != null, 
                 addressData != null,
                 demographicsData != null);
@@ -42,12 +35,12 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult FinalizeRegistration()
         {
-            string userId = _UserManager.GetUserId(User);
-            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
-            VoterAddressDataModel addressData = _Context.Address.Find(userId);
-            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
+            string userId = _userManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _context.Demographics.Find(userId);
 
-            VoterFinalizeRegistrationViewModel model = new VoterFinalizeRegistrationViewModel(registrationData, addressData, demographicsData);
+            VoterFinalizeRegistrationViewModel model = new(registrationData, addressData, demographicsData);
 
             if (registrationData == null || addressData == null || demographicsData == null)
                 // TODO change to some error page -- not done with other registration
@@ -56,24 +49,24 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FinalizeRegistrationAsync(VoterFinalizeRegistrationViewModel model)
+        public async Task<IActionResult> FinalizeRegistration(VoterFinalizeRegistrationViewModel model)
         {
-            string userId = _UserManager.GetUserId(User);
-            VoterRegistrationDataModel registrationData = _Context.Registration.Find(userId);
-            VoterAddressDataModel addressData = _Context.Address.Find(userId);
-            VoterDemographicsDataModel demographicsData = _Context.Demographics.Find(userId);
+            string userId = _userManager.GetUserId(User);
+            VoterRegistrationDataModel registrationData = _context.Registration.Find(userId);
+            VoterAddressDataModel addressData = _context.Address.Find(userId);
+            VoterDemographicsDataModel demographicsData = _context.Demographics.Find(userId);
 
             if (registrationData == null || addressData == null || demographicsData == null)
                 // TODO change to some error page -- not done with other registration
                 return RedirectToAction(nameof(Dashboard));
 
-            ApplicationUser user = await _UserManager.GetUserAsync(User);
-            _UserManager.AddToRoleAsync(user, "RegisteredVoter").Wait();
-            _UserManager.RemoveFromRoleAsync(user, "GenericUser").Wait();
+            ApplicationUser user = await _userManager.GetUserAsync(User);
+            _userManager.AddToRoleAsync(user, "RegisteredVoter").Wait();
+            _userManager.RemoveFromRoleAsync(user, "GenericUser").Wait();
 
             // this is needed to update the cookie so it has the correct roles
             // otherwise the user will sill have access as a genericUser.
-            _SignInManager.RefreshSignInAsync(user).Wait();
+            _signInManager.RefreshSignInAsync(user).Wait();
 
             return RedirectToAction(nameof(VoterController.Dashboard), nameof(VoterController).RemoveController());
         }
@@ -81,33 +74,33 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            VoterRegistrationDataModel data = _Context.Registration.Find(_UserManager.GetUserId(User));
-            VoterRegistrationViewModel model = new VoterRegistrationViewModel(data);
+            VoterRegistrationDataModel data = _context.Registration.Find(_userManager.GetUserId(User));
+            VoterRegistrationViewModel model = new(data);
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(VoterRegistrationViewModel model)
+        public async Task<IActionResult> Register(VoterRegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
-                string userId = _UserManager.GetUserId(User);
-                VoterRegistrationDataModel registration = await _Context.Registration.FindAsync(userId);
+                string userId = _userManager.GetUserId(User);
+                VoterRegistrationDataModel registration = await _context.Registration.FindAsync(userId);
                 if (registration == null)
                 {
                     registration = new VoterRegistrationDataModel(userId, model);
 
-                    _Context.Registration.Add(registration);
+                    _context.Registration.Add(registration);
                 }
                 else
                 {
                     registration.Update(model);
 
-                    _Context.Registration.Update(registration);
+                    _context.Registration.Update(registration);
                 }
 
-                await _Context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Dashboard));
             }
@@ -118,33 +111,33 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Address()
         {
-            VoterAddressDataModel data = _Context.Address.Find(_UserManager.GetUserId(User));
-            VoterAddressViewModel model = new VoterAddressViewModel(data);
+            VoterAddressDataModel data = _context.Address.Find(_userManager.GetUserId(User));
+            VoterAddressViewModel model = new(data);
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddressAsync(VoterAddressViewModel model)
+        public async Task<IActionResult> Address(VoterAddressViewModel model)
         {
             if (ModelState.IsValid)
             {
-                string userId = _UserManager.GetUserId(User);
-                VoterAddressDataModel address = await _Context.Address.FindAsync(userId);
+                string userId = _userManager.GetUserId(User);
+                VoterAddressDataModel address = await _context.Address.FindAsync(userId);
                 if (address == null)
                 {
                     address = new VoterAddressDataModel(userId, model);
 
-                    _Context.Address.Add(address);
+                    _context.Address.Add(address);
                 }
                 else
                 {
                     address.Update(model);
 
-                    _Context.Address.Update(address);
+                    _context.Address.Update(address);
                 }
 
-                await _Context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Dashboard));
             }
@@ -155,33 +148,33 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Demographics()
         {
-            VoterDemographicsDataModel data = _Context.Demographics.Find(_UserManager.GetUserId(User));
-            VoterDemographicsViewModel model = new VoterDemographicsViewModel(data);
+            VoterDemographicsDataModel data = _context.Demographics.Find(_userManager.GetUserId(User));
+            VoterDemographicsViewModel model = new(data);
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DemographicsAsync(VoterDemographicsViewModel model)
+        public async Task<IActionResult> Demographics(VoterDemographicsViewModel model)
         {
             if (ModelState.IsValid)
             {
-                string userId = _UserManager.GetUserId(User);
-                VoterDemographicsDataModel demographics = await _Context.Demographics.FindAsync(userId);
+                string userId = _userManager.GetUserId(User);
+                VoterDemographicsDataModel demographics = await _context.Demographics.FindAsync(userId);
                 if (demographics == null)
                 {
                     demographics = new VoterDemographicsDataModel(userId, model);
 
-                    _Context.Demographics.Add(demographics);
+                    _context.Demographics.Add(demographics);
                 }
                 else
                 {
                     demographics.Update(model);
 
-                    _Context.Demographics.Update(demographics);
+                    _context.Demographics.Update(demographics);
                 }
 
-                await _Context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Dashboard));
             }

@@ -7,31 +7,25 @@ using System.Threading.Tasks;
 
 namespace VotingApplication.Controllers
 {
-    public class VerifyController : Controller
+    public class VerifyController(
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager) : Controller
     {
-        private ApplicationDbContext _Context;
-        private UserManager<ApplicationUser> _UserManager;
+        private ApplicationDbContext _context = context;
+        private UserManager<ApplicationUser> _userManager = userManager;
 
-        public VerifyController(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
-        {
-            _Context = context;
-            _UserManager = userManager;
-        }
-        
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> VerifyStrongPasswordAsync(string password)
+        public async Task<IActionResult> VerifyStrongPassword(string password)
         {
             string errors = "";
 
             IdentityResult result;
 
-            foreach (var validator in _UserManager.PasswordValidators)
+            foreach (var validator in _userManager.PasswordValidators)
             {
-                result = await validator.ValidateAsync(_UserManager, null, password);
+                result = await validator.ValidateAsync(_userManager, null, password);
                 foreach (var error in result.Errors)
                 {
                     errors += error.Description + "\n";
@@ -48,7 +42,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> VerifyUniqueUserAsync(string username, string email, string prevUsername = null)
+        public async Task<IActionResult> VerifyUniqueUser(string username, string email, string prevUsername = null)
         {
             if (username != null && prevUsername == username)
                 return Json(true);
@@ -65,9 +59,9 @@ namespace VotingApplication.Controllers
 
             IdentityResult result;
 
-            foreach (var validator in _UserManager.UserValidators)
+            foreach (var validator in _userManager.UserValidators)
             {
-                result = await validator.ValidateAsync(_UserManager, user);
+                result = await validator.ValidateAsync(_userManager, user);
 
                 foreach (var error in result.Errors)
                 {
@@ -91,9 +85,9 @@ namespace VotingApplication.Controllers
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> VerifyEmailExistsAsync(string email)
+        public async Task<IActionResult> VerifyEmailExists(string email)
         {
-            ApplicationUser user = await _UserManager.FindByEmailAsync(email);
+            ApplicationUser user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
             {
@@ -106,9 +100,9 @@ namespace VotingApplication.Controllers
         [HttpGet]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> VerifyUserExistsAsync(string username)
+        public async Task<IActionResult> VerifyUserExists(string username)
         {
-            ApplicationUser user = await _UserManager.FindByNameAsync(username);
+            ApplicationUser user = await _userManager.FindByNameAsync(username);
 
             if (user == null)
             {
@@ -119,13 +113,13 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VerifyZipExistsAsync(string zipcode)
+        public async Task<IActionResult> VerifyZipExists(string zipcode)
         {
             ZipDataModel result = null;
 
             if (int.TryParse(zipcode, out int key))
             {
-                result = await _Context.Zip.FindAsync(key);
+                result = await _context.Zip.FindAsync(key);
             }
 
             if (result == null)
@@ -137,9 +131,9 @@ namespace VotingApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VerifyDistrictExistsAsync(string districtName)
+        public async Task<IActionResult> VerifyDistrictExists(string districtName)
         {
-            DistrictDataModel result = await _Context.District.FindAsync(districtName);
+            DistrictDataModel result = await _context.District.FindAsync(districtName);
 
             if (result == null)
             {
@@ -152,7 +146,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> VerifyRegionExistsAsync(string regionName)
         {
-            RegionDataModel result = await _Context.Region.FindAsync(regionName);
+            RegionDataModel result = await _context.Region.FindAsync(regionName);
 
             if (result == null)
             {
@@ -165,7 +159,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> VerifyBallotExistsAsync(string ballotName)
         {
-            BallotDataModel result = await _Context.Ballot.FindAsync(ballotName);
+            BallotDataModel result = await _context.Ballot.FindAsync(ballotName);
             
             if (result == null)
             {

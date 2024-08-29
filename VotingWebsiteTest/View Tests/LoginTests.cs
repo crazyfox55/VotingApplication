@@ -20,11 +20,11 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
             
-            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            Assert.Contains(username, _chrome.FindElement(By.Id("DashboardMsg")).Text);
 
             _chrome.Close();
         }
@@ -36,17 +36,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
 
-            Assert.Contains(username, _chrome.FindElementById("DashboardMsg").Text);
+            Assert.Contains(username, _chrome.FindElement(By.Id("DashboardMsg")).Text);
             
             //logout
-            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/LogoutAsync");
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Logout");
             try
             {
-                Assert.NotNull(_chrome.FindElementById("Login"));
+                Assert.NotNull(_chrome.FindElement(By.Id("Login")));
             }
             catch (NoSuchElementException) { }
 
@@ -60,11 +60,11 @@ namespace VotingWebsiteTest.View_Tests
             var username = "DDfbsgdnkdsjlF";
             var password = "dsgljkep124";
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
 
-            Assert.Equal("Invalid username or password.", _chrome.FindElementByClassName("validation-summary-errors").Text);
+            Assert.Equal("Invalid username or password.", _chrome.FindElement(By.ClassName("validation-summary-errors")).Text);
 
             _chrome.Close();
         }
@@ -77,7 +77,7 @@ namespace VotingWebsiteTest.View_Tests
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
 
             //Error messages should not be there yet
-            Assert.Throws<NoSuchElementException>(() => { _chrome.FindElementById(id); });
+            Assert.Throws<NoSuchElementException>(() => { _chrome.FindElement(By.Id(id)); });
 
             _chrome.Close();
         }
@@ -88,10 +88,10 @@ namespace VotingWebsiteTest.View_Tests
         public void LoginRequiredFieldsErrorShownOnSubmit(string id)
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Login").Click();
+            _chrome.FindElement(By.Id("Login")).Click();
 
             //Error messages should now be there
-            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            Assert.Contains("required", _chrome.FindElement(By.Id(id)).Text);
 
             _chrome.Close();
         }
@@ -100,9 +100,9 @@ namespace VotingWebsiteTest.View_Tests
         public void LoginNewUserLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementByLinkText("New User?").Click();
+            _chrome.FindElement(By.LinkText("New User?")).Click();
 
-            Assert.NotNull(_chrome.FindElementById("RegistrationButton"));
+            Assert.NotNull(_chrome.FindElement(By.Id("RegistrationButton")));
 
             _chrome.Close();
         }
@@ -111,9 +111,9 @@ namespace VotingWebsiteTest.View_Tests
         public void LoginForgotPasswordLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementByLinkText("Forgot Password?").Click();
+            _chrome.FindElement(By.LinkText("Forgot Password?")).Click();
 
-            Assert.Contains("Send Email", _chrome.FindElementByClassName("btn-primary").Text);
+            Assert.Contains("Send Email", _chrome.FindElement(By.ClassName("btn-primary")).Text);
 
             _chrome.Close();
         }
@@ -122,9 +122,9 @@ namespace VotingWebsiteTest.View_Tests
         public void LoginResendEmailConfirmationLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementByLinkText("Resend Email Confirmation?").Click();
+            _chrome.FindElement(By.LinkText("Resend Email Confirmation?")).Click();
 
-            Assert.Contains("Send Email", _chrome.FindElementByClassName("btn-primary").Text);
+            Assert.Contains("Send Email", _chrome.FindElement(By.ClassName("btn-primary")).Text);
 
             _chrome.Close();
         }

@@ -8,21 +8,14 @@ using VotingApplication.ViewModels;
 namespace VotingApplication.Controllers
 {
     [AllowAnonymous]
-    public class AuthenticationController : Controller
+    public class AuthenticationController(
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        IEmailService emailService) : Controller
     {
-        protected SignInManager<ApplicationUser> _SignInManager;
-        protected UserManager<ApplicationUser> _UserManager;
-        protected IEmailService _EmailService;
-
-        public AuthenticationController(
-            SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager,
-            IEmailService emailService)
-        {
-            _SignInManager = signInManager;
-            _UserManager = userManager;
-            _EmailService = emailService;
-        }
+        protected SignInManager<ApplicationUser> _signInManager = signInManager;
+        protected UserManager<ApplicationUser> _userManager = userManager;
+        protected IEmailService _emailService = emailService;
 
         #region Login User
         [HttpGet]
@@ -38,17 +31,17 @@ namespace VotingApplication.Controllers
         [HttpPost]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> LoginAsync(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             ViewData["Purpose"] = "User Login";
             ViewData["Submit"] = "Login";
             
-            await _SignInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
 
             if (ModelState.IsValid)
             {
-                var result = await _SignInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: false, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: false, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
@@ -56,13 +49,13 @@ namespace VotingApplication.Controllers
                     {
                         string action = "";
                         string controller = "";
-                        var user = await _UserManager.FindByNameAsync(model.Username);
-                        if (await _UserManager.IsInRoleAsync(user, "Administrator"))
+                        var user = await _userManager.FindByNameAsync(model.Username);
+                        if (await _userManager.IsInRoleAsync(user, "Administrator"))
                         {
                             action = nameof(AdminController.Dashboard);
                             controller = nameof(AdminController).RemoveController();
                         }
-                        else if(await _UserManager.IsInRoleAsync(user, "GenericUser"))
+                        else if(await _userManager.IsInRoleAsync(user, "GenericUser"))
                         {
                             action = nameof(VoterRegistrationController.Dashboard);
                             controller = nameof(VoterRegistrationController).RemoveController();
@@ -104,9 +97,9 @@ namespace VotingApplication.Controllers
 
         #region Logout User
         [HttpGet]
-        public async Task<IActionResult> LogoutAsync()
+        public async Task<IActionResult> Logout()
         {
-            await _SignInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
 
             return RedirectToAction(nameof(Login));
         }
@@ -122,11 +115,11 @@ namespace VotingApplication.Controllers
         /// <param name="token">The token to verify the password change.</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> ResetPasswordAsync(string username, string token)
+        public async Task<IActionResult> ResetPassword(string username, string token)
         {
             if (username != null && token != null)
             {
-                var user = await _UserManager.FindByNameAsync(username);
+                var user = await _userManager.FindByNameAsync(username);
                 if (user != null)
                 {
                     var temp = new ResetPasswordViewModel
@@ -147,16 +140,16 @@ namespace VotingApplication.Controllers
         /// <param name="model">Contains the new password, the users email, and the token.</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await _UserManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if(user != null)
                 {
-                    var result = await _UserManager.ResetPasswordAsync(user, model.Token, model.Password);
-                    string emailToken = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
-                    await _UserManager.ConfirmEmailAsync(user, emailToken);
+                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                    string emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    await _userManager.ConfirmEmailAsync(user, emailToken);
                     if (result.Succeeded)
                     {
                         return View("ResetPasswordComplete");
@@ -191,16 +184,16 @@ namespace VotingApplication.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> SendResetPasswordEmailAsync(EmailViewModel model)
+        public async Task<IActionResult> SendResetPasswordEmail(EmailViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await _UserManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 
                 // message setup.
-                string resetToken = await _UserManager.GeneratePasswordResetTokenAsync(user);
+                string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                string action = nameof(ResetPasswordAsync);
+                string action = nameof(ResetPassword);
                 string controller = nameof(AuthenticationController).RemoveController();
                 string resetTokenLink = Url.Action(action, controller, new
                 {
@@ -212,7 +205,7 @@ namespace VotingApplication.Controllers
                 string body = $"Hello {user.UserName}.\nYou can reset your password by following this <a href=\"{resetTokenLink}\">link</a>.";
 
                 // actual send
-                await _EmailService.SendEmailAsync(user, subject, body);
+                await _emailService.SendEmailAsync(user, subject, body);
                 
                 return View("ResetPasswordEmailSent", model);
             }

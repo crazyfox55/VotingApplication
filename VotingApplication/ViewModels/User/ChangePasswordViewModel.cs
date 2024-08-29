@@ -13,7 +13,7 @@ namespace VotingApplication.ViewModels
         public string OldPassword { get; set; }
 
         [Required]
-        [Remote(action: nameof(VerifyController.VerifyStrongPasswordAsync), controller: "Verify")]
+        [Remote(action: nameof(VerifyController.VerifyStrongPassword), controller: "Verify")]
         [DataType(DataType.Password)]
         [DifferentFrom(nameof(OldPassword), ErrorMessage = "Cannot be same as old password")]
         [Display(Name = "New Password")]

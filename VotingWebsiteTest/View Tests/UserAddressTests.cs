@@ -19,12 +19,12 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             _chrome.Close();
         }
 
@@ -38,17 +38,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.ClassName("btn")).Click();
 
             //Error messages now are there
-            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            Assert.Contains("required", _chrome.FindElement(By.Id(id)).Text);
             _chrome.Dispose();
         }
 
@@ -58,17 +58,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             var invalidState = "iz";
-            _chrome.FindElementById("State").SendKeys(invalidState);
-            _chrome.FindElementById("City").Click();
-            Assert.Contains("Invalid State", _chrome.FindElementById("State-error").Text);
+            _chrome.FindElement(By.Id("State")).SendKeys(invalidState);
+            _chrome.FindElement(By.Id("City")).Click();
+            Assert.Contains("Invalid State", _chrome.FindElement(By.Id("State-error")).Text);
             _chrome.Dispose();
         }
 
@@ -78,25 +78,25 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             //check that must be correct length
             var invalidZipcode = "1234123";
-            _chrome.FindElementById("ZipCode").SendKeys(invalidZipcode);
-            _chrome.FindElementById("City").Click();
-            Assert.Contains("5 digits", _chrome.FindElementById("ZipCode-error").Text);
+            _chrome.FindElement(By.Id("ZipCode")).SendKeys(invalidZipcode);
+            _chrome.FindElement(By.Id("City")).Click();
+            Assert.Contains("5 digits", _chrome.FindElement(By.Id("ZipCode-error")).Text);
 
             //check that must be a valid zip code
             invalidZipcode = "12345";
-            _chrome.FindElementById("ZipCode").SendKeys(Keys.Control + "a");
-            _chrome.FindElementById("ZipCode").SendKeys(invalidZipcode);
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.Contains("does not exist", _chrome.FindElementById("ZipCode-error").Text);
+            _chrome.FindElement(By.Id("ZipCode")).SendKeys(Keys.Control + "a");
+            _chrome.FindElement(By.Id("ZipCode")).SendKeys(invalidZipcode);
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.Contains("does not exist", _chrome.FindElement(By.Id("ZipCode-error")).Text);
             _chrome.Dispose();
         }
         
@@ -107,76 +107,76 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             var AddressLineOne = "1234 test street";
             var City = "iowa city";
             var State = "IA";
             var ZipCode = "52240"; 
 
-            _chrome.FindElementById("AddressLineOne").SendKeys(AddressLineOne);
-            _chrome.FindElementById("City").SendKeys(City);
-            _chrome.FindElementById("State").SendKeys(State);
-            _chrome.FindElementById("ZipCode").SendKeys(ZipCode);
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.Id("AddressLineOne")).SendKeys(AddressLineOne);
+            _chrome.FindElement(By.Id("City")).SendKeys(City);
+            _chrome.FindElement(By.Id("State")).SendKeys(State);
+            _chrome.FindElement(By.Id("ZipCode")).SendKeys(ZipCode);
+            _chrome.FindElement(By.ClassName("btn")).Click();
            
             //will now say Edit Registration instead of Basic Registration
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Address"));
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Address")));
 
             //Info should be saved and can click submit without any errors
-            _chrome.FindElementByLinkText("Edit Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
-            Assert.Contains(AddressLineOne, _chrome.FindElementById("AddressLineOne").GetAttribute("value"));
-            Assert.Contains(City, _chrome.FindElementById("City").GetAttribute("value"));
-            Assert.Contains(State, _chrome.FindElementById("State").GetAttribute("value"));
-            Assert.Contains(ZipCode, _chrome.FindElementById("ZipCode").GetAttribute("value"));
+            _chrome.FindElement(By.LinkText("Edit Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
+            Assert.Contains(AddressLineOne, _chrome.FindElement(By.Id("AddressLineOne")).GetAttribute("value"));
+            Assert.Contains(City, _chrome.FindElement(By.Id("City")).GetAttribute("value"));
+            Assert.Contains(State, _chrome.FindElement(By.Id("State")).GetAttribute("value"));
+            Assert.Contains(ZipCode, _chrome.FindElement(By.Id("ZipCode")).GetAttribute("value"));
 
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Address"));
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Address")));
 
             //logout
-            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/LogoutAsync");
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Logout");
 
             //log back in
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
 
             //should still say edit registration
-            _chrome.FindElementByLinkText("Edit Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Edit Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
 
             //should be saved and still be able to click submit without any errors
-            Assert.Contains(AddressLineOne, _chrome.FindElementById("AddressLineOne").GetAttribute("value"));
-            Assert.Contains(City, _chrome.FindElementById("City").GetAttribute("value"));
-            Assert.Contains(State, _chrome.FindElementById("State").GetAttribute("value"));
-            Assert.Contains(ZipCode, _chrome.FindElementById("ZipCode").GetAttribute("value"));
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Address"));
+            Assert.Contains(AddressLineOne, _chrome.FindElement(By.Id("AddressLineOne")).GetAttribute("value"));
+            Assert.Contains(City, _chrome.FindElement(By.Id("City")).GetAttribute("value"));
+            Assert.Contains(State, _chrome.FindElement(By.Id("State")).GetAttribute("value"));
+            Assert.Contains(ZipCode, _chrome.FindElement(By.Id("ZipCode")).GetAttribute("value"));
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Address")));
 
-            _chrome.FindElementByLinkText("Edit Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Edit Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             //able to edit fields
-            _chrome.FindElementById("AddressLineOne").SendKeys(Keys.Control + "a");
+            _chrome.FindElement(By.Id("AddressLineOne")).SendKeys(Keys.Control + "a");
             AddressLineOne = "12 other address lane";
-            _chrome.FindElementById("AddressLineOne").SendKeys(AddressLineOne);
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Address"));
+            _chrome.FindElement(By.Id("AddressLineOne")).SendKeys(AddressLineOne);
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Address")));
 
             //FirstName and LastName should now be swapped
-            _chrome.FindElementByLinkText("Edit Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
-            Assert.Contains(AddressLineOne, _chrome.FindElementById("AddressLineOne").GetAttribute("value"));
-            Assert.Contains(City, _chrome.FindElementById("City").GetAttribute("value"));
-            Assert.Contains(State, _chrome.FindElementById("State").GetAttribute("value"));
-            Assert.Contains(ZipCode, _chrome.FindElementById("ZipCode").GetAttribute("value"));
+            _chrome.FindElement(By.LinkText("Edit Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
+            Assert.Contains(AddressLineOne, _chrome.FindElement(By.Id("AddressLineOne")).GetAttribute("value"));
+            Assert.Contains(City, _chrome.FindElement(By.Id("City")).GetAttribute("value"));
+            Assert.Contains(State, _chrome.FindElement(By.Id("State")).GetAttribute("value"));
+            Assert.Contains(ZipCode, _chrome.FindElement(By.Id("ZipCode")).GetAttribute("value"));
 
             _chrome.Dispose();
         }

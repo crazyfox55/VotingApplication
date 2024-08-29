@@ -34,7 +34,7 @@ namespace VotingApplication.Controllers
         [HttpPost]
         // this is not implemented yet
         //[RequireHttps]
-        public async Task<IActionResult> RegisterAsync(RegistrationViewModel model)
+        public async Task<IActionResult> Register(RegistrationViewModel model)
         {
             ViewData["Purpose"] = "Create Account";
             ViewData["Submit"] = "Create";
@@ -56,7 +56,7 @@ namespace VotingApplication.Controllers
                     // message setup.
                     string confirmationToken = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
 
-                    string action = nameof(EmailConfirmedAsync);
+                    string action = nameof(EmailConfirmed);
                     string controller = nameof(UserRegistrationController).RemoveController();
                     string confirmationTokenLink = Url.Action(action, controller, new
                     {
@@ -80,7 +80,7 @@ namespace VotingApplication.Controllers
         
         #region Confirmation Email: Affirm, Request, Resend
         [HttpGet]
-        public async Task<IActionResult> EmailConfirmedAsync(string username, string token)
+        public async Task<IActionResult> EmailConfirmed(string username, string token)
         {
             if (username != null && token != null)
             {
@@ -111,7 +111,7 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EmailConfirmationSentAsync(EmailViewModel model)
+        public async Task<IActionResult> EmailConfirmationSent(EmailViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -120,7 +120,7 @@ namespace VotingApplication.Controllers
                 // send email confirmation.
                 // message setup.
                 string confirmationToken = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
-                string action = nameof(EmailConfirmedAsync);
+                string action = nameof(EmailConfirmed);
                 string controller = nameof(UserRegistrationController).RemoveController();
                 string confirmationTokenLink = Url.Action(action, controller, new
                 {

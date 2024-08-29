@@ -19,15 +19,15 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Profile").Click();
-            Assert.Contains("User Profile", _chrome.FindElementById("Profile").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Profile")).Click();
+            Assert.Contains("User Profile", _chrome.FindElement(By.Id("Profile")).Text);
 
-            _chrome.FindElementByLinkText("Add Security Questions").Click();
-            Assert.Contains("Add Security Questions", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Add Security Questions")).Click();
+            Assert.Contains("Add Security Questions", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             _chrome.Close();
         }
@@ -42,20 +42,20 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Profile").Click();
-            Assert.Contains("User Profile", _chrome.FindElementById("Profile").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Profile")).Click();
+            Assert.Contains("User Profile", _chrome.FindElement(By.Id("Profile")).Text);
 
-            _chrome.FindElementByLinkText("Add Security Questions").Click();
-            Assert.Contains("Add Security Questions", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Add Security Questions")).Click();
+            Assert.Contains("Add Security Questions", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.ClassName("btn")).Click();
 
             //Error messages now are there
-            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            Assert.Contains("required", _chrome.FindElement(By.Id(id)).Text);
             _chrome.Dispose();
 
         }
@@ -65,29 +65,29 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Profile").Click();
-            Assert.Contains("User Profile", _chrome.FindElementById("Profile").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Profile")).Click();
+            Assert.Contains("User Profile", _chrome.FindElement(By.Id("Profile")).Text);
 
-            _chrome.FindElementByLinkText("Add Security Questions").Click();
-            Assert.Contains("Add Security Questions", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Add Security Questions")).Click();
+            Assert.Contains("Add Security Questions", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             //choose the same question
-            _chrome.FindElementById("SecurityQuestionOne").Click();
-            _chrome.FindElementById("SecurityQuestionOne").SendKeys(Keys.ArrowDown);
-            _chrome.FindElementById("SecurityAnswerOne").Click();
-            _chrome.FindElementById("SecurityAnswerOne").SendKeys("yes");
+            _chrome.FindElement(By.Id("SecurityQuestionOne")).Click();
+            _chrome.FindElement(By.Id("SecurityQuestionOne")).SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("SecurityAnswerOne")).Click();
+            _chrome.FindElement(By.Id("SecurityAnswerOne")).SendKeys("yes");
 
-            _chrome.FindElementById("SecurityQuestionTwo").Click();
-            _chrome.FindElementById("SecurityQuestionTwo").SendKeys(Keys.ArrowDown);
-            _chrome.FindElementById("SecurityAnswerTwo").Click();
-            _chrome.FindElementById("SecurityAnswerTwo").SendKeys("yes");
+            _chrome.FindElement(By.Id("SecurityQuestionTwo")).Click();
+            _chrome.FindElement(By.Id("SecurityQuestionTwo")).SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("SecurityAnswerTwo")).Click();
+            _chrome.FindElement(By.Id("SecurityAnswerTwo")).SendKeys("yes");
 
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.Contains("cannot be the same", _chrome.FindElementByClassName("field-validation-error").Text);
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.Contains("cannot be the same", _chrome.FindElement(By.ClassName("field-validation-error")).Text);
 
             _chrome.Dispose();
         }
@@ -98,41 +98,41 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Profile").Click();
-            Assert.Contains("User Profile", _chrome.FindElementById("Profile").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Profile")).Click();
+            Assert.Contains("User Profile", _chrome.FindElement(By.Id("Profile")).Text);
 
-            _chrome.FindElementByLinkText("Add Security Questions").Click();
-            Assert.Contains("Add Security Questions", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Add Security Questions")).Click();
+            Assert.Contains("Add Security Questions", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             var answerOne = "answer is one";
             var answerTwo = "answer is two";
             //Fill out with different questions
-            _chrome.FindElementById("SecurityQuestionOne").Click();
-            _chrome.FindElementById("SecurityQuestionOne").SendKeys(Keys.ArrowDown);
-            _chrome.FindElementById("SecurityQuestionOne").SendKeys(Keys.ArrowDown);
-            _chrome.FindElementById("SecurityAnswerOne").Click();
-            _chrome.FindElementById("SecurityAnswerOne").SendKeys(answerOne);
+            _chrome.FindElement(By.Id("SecurityQuestionOne")).Click();
+            _chrome.FindElement(By.Id("SecurityQuestionOne")).SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("SecurityQuestionOne")).SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("SecurityAnswerOne")).Click();
+            _chrome.FindElement(By.Id("SecurityAnswerOne")).SendKeys(answerOne);
 
-            _chrome.FindElementById("SecurityQuestionTwo").Click();
-            _chrome.FindElementById("SecurityQuestionTwo").SendKeys(Keys.ArrowDown);
-            _chrome.FindElementById("SecurityAnswerTwo").Click();
-            _chrome.FindElementById("SecurityAnswerTwo").SendKeys(answerTwo);
+            _chrome.FindElement(By.Id("SecurityQuestionTwo")).Click();
+            _chrome.FindElement(By.Id("SecurityQuestionTwo")).SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("SecurityAnswerTwo")).Click();
+            _chrome.FindElement(By.Id("SecurityAnswerTwo")).SendKeys(answerTwo);
 
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.ClassName("btn")).Click();
 
             //back at profile
-            Assert.Contains("User Profile", _chrome.FindElementById("Profile").Text);
+            Assert.Contains("User Profile", _chrome.FindElement(By.Id("Profile")).Text);
 
-            _chrome.FindElementByLinkText("Add Security Questions").Click();
-            Assert.Contains("Add Security Questions", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Add Security Questions")).Click();
+            Assert.Contains("Add Security Questions", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             //answers are still there
-            Assert.Contains(answerOne, _chrome.FindElementById("SecurityAnswerOne").GetAttribute("value"));
-            Assert.Contains(answerTwo, _chrome.FindElementById("SecurityAnswerTwo").GetAttribute("value"));
+            Assert.Contains(answerOne, _chrome.FindElement(By.Id("SecurityAnswerOne")).GetAttribute("value"));
+            Assert.Contains(answerTwo, _chrome.FindElement(By.Id("SecurityAnswerTwo")).GetAttribute("value"));
 
             _chrome.Dispose();
         }

@@ -13,7 +13,7 @@ namespace VotingApplication.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [Remote(action: nameof(VerifyController.VerifyStrongPasswordAsync), controller: "Verify")]
+        [Remote(action: nameof(VerifyController.VerifyStrongPassword), controller: "Verify")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }

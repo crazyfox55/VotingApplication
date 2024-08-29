@@ -1,47 +1,30 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Mail;
-using VotingApplication.ViewModels;
-using VotingApplication.Components;
-using VotingApplication.Controllers;
-using VotingApplication.CustomAttributes;
-using VotingApplication.Services;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
+using VotingApplication.Services;
+using VotingApplication.ViewModels;
 
 
 namespace VotingApplication.Controllers
 {
     [Authorize]
-    public class UserController : Controller
+    public class UserController(
+        UserManager<ApplicationUser> userManager,
+        ApplicationDbContext context,
+        IEmailService emailService) : Controller
     {
-        protected UserManager<ApplicationUser> _UserManager;
-        protected ApplicationDbContext _Context;
-        protected IEmailService _EmailService;
+        protected UserManager<ApplicationUser> _userManager = userManager;
+        protected ApplicationDbContext _context = context;
+        protected IEmailService _emailService = emailService;
 
-        public UserController(
-            UserManager<ApplicationUser> userManager,
-            ApplicationDbContext context,
-            IEmailService emailService)
-        {
-            _UserManager = userManager;
-            _Context = context;
-            _EmailService = emailService;
-        }
-        
         [HttpGet]
         public IActionResult Profile()
         {
-            var user = _Context.Users.Where(u => u.UserName == User.Identity.Name).Include(u => u.Registration).Include(u => u.Address).FirstOrDefault();
+            var user = _context.Users.Where(u => u.UserName == User.Identity.Name).Include(u => u.Registration).Include(u => u.Address).FirstOrDefault();
             var userData = new UserProfileViewModel()
             {
                 FirstName = user.Registration?.FirstName ?? "Missing First Name",
@@ -66,18 +49,18 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await _UserManager.FindByNameAsync(User.Identity.Name);
-                var authenticate = await _UserManager.CheckPasswordAsync(user, model.OldPassword);
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                var authenticate = await _userManager.CheckPasswordAsync(user, model.OldPassword);
                 if (authenticate)
                 {
-                    var result = await _UserManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
+                    var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
                     if (result.Succeeded)
                     {
-                        await _EmailService.SendEmailAsync(user, "Password Change", "Your password has been changed.");
+                        await _emailService.SendEmailAsync(user, "Password Change", "Your password has been changed.");
                         return RedirectToAction(nameof(Profile));
                     }
                     foreach (IdentityError error in result.Errors)
@@ -95,9 +78,9 @@ namespace VotingApplication.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> SecurityQuestionsAsync()
+        public async Task<IActionResult> SecurityQuestions()
         {
-            var user = await _UserManager.FindByNameAsync(User.Identity.Name);
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var model = new SecurityQuestionViewModel
             {
                 SecurityQuestionOne = user.SecurityQuestionOne,
@@ -110,12 +93,12 @@ namespace VotingApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SecurityQuestionsAsync(SecurityQuestionViewModel model)
+        public async Task<IActionResult> SecurityQuestions(SecurityQuestionViewModel model)
         {
             if (ModelState.IsValid)
             {
                 // get the current user
-                var user = await _UserManager.FindByNameAsync(User.Identity.Name);
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 user.SecurityQuestionOne = model.SecurityQuestionOne;
                 user.SecurityQuestionTwo = model.SecurityQuestionTwo;
@@ -123,7 +106,7 @@ namespace VotingApplication.Controllers
                 user.SecurityAnswerTwo = model.SecurityAnswerTwo;
 
                 // update the database
-                var result = await _UserManager.UpdateAsync(user);
+                var result = await _userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
                 {

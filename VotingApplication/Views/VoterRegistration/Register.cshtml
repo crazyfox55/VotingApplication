@@ -6,7 +6,7 @@
     ViewData["Submit"] = "Submit";
 }
 
-<form asp-action="@nameof(VoterRegistrationController.RegisterAsync)" method="post">
+<form asp-action="@nameof(VoterRegistrationController.Register)" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="FirstName"></label>

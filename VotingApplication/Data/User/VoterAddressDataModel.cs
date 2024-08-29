@@ -27,7 +27,7 @@ namespace VotingApplication
         }
 
         [Key]
-        [ForeignKey(nameof(ApplicationUser))]
+        [ForeignKey(nameof(User))]
         public string UserId { get; set; }
 
         // virtual is required for EF to override these navigation properties
@@ -45,7 +45,7 @@ namespace VotingApplication
         public string City { get; set; }
 
         [Required]
-        [ForeignKey(nameof(ZipDataModel))]
+        [ForeignKey(nameof(Zip))]
         public int? ZipCode { get; set; }
 
         public virtual ZipDataModel Zip { get; set; }

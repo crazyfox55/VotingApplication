@@ -19,12 +19,12 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Demographics").Click();
-            Assert.Contains("Voter Demographics", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Demographics")).Click();
+            Assert.Contains("Voter Demographics", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             _chrome.Close();
         }
 
@@ -39,17 +39,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Demographics").Click();
-            Assert.Contains("Voter Demographics", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Demographics")).Click();
+            Assert.Contains("Voter Demographics", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.ClassName("btn")).Click();
 
             //Error messages now are there
-            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            Assert.Contains("required", _chrome.FindElement(By.Id(id)).Text);
             _chrome.Dispose();
         }
 
@@ -60,30 +60,30 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Register Demographics").Click();
-            Assert.Contains("Voter Demographics", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Register Demographics")).Click();
+            Assert.Contains("Voter Demographics", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
-            _chrome.FindElementById("Party").Click();
-            _chrome.FindElementById("Party").SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("Party")).Click();
+            _chrome.FindElement(By.Id("Party")).SendKeys(Keys.ArrowDown);
 
-            _chrome.FindElementById("Ethnicity").Click();
-            _chrome.FindElementById("Ethnicity").SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("Ethnicity")).Click();
+            _chrome.FindElement(By.Id("Ethnicity")).SendKeys(Keys.ArrowDown);
 
-            _chrome.FindElementById("Sex").Click();
-            _chrome.FindElementById("Sex").SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("Sex")).Click();
+            _chrome.FindElement(By.Id("Sex")).SendKeys(Keys.ArrowDown);
 
-            _chrome.FindElementById("IncomeRange").Click();
-            _chrome.FindElementById("IncomeRange").SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("IncomeRange")).Click();
+            _chrome.FindElement(By.Id("IncomeRange")).SendKeys(Keys.ArrowDown);
 
-            _chrome.FindElementById("VoterReadiness").Click();
-            _chrome.FindElementById("VoterReadiness").SendKeys(Keys.ArrowDown);
+            _chrome.FindElement(By.Id("VoterReadiness")).Click();
+            _chrome.FindElement(By.Id("VoterReadiness")).SendKeys(Keys.ArrowDown);
 
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Demographics"));
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Demographics")));
 
             _chrome.Dispose();
         }

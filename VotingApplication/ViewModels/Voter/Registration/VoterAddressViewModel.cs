@@ -40,7 +40,7 @@ namespace VotingApplication.ViewModels
         [StringLength(maximumLength: 5, ErrorMessage = "Maximum length of 5")]
         [Display(Name = "Zip Code")]
         [RegularExpression(@"^\d{5}$",ErrorMessage = "Must be 5 digits")]
-        [Remote(action: nameof(VerifyController.VerifyZipExistsAsync), controller: "Verify")]
+        [Remote(action: nameof(VerifyController.VerifyZipExists), controller: "Verify")]
         public string ZipCode { get; set; }
 
         [Required]

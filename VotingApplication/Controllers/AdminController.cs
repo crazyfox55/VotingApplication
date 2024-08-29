@@ -1,38 +1,28 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Threading.Tasks;
-using VotingApplication.ViewModels;
 using VotingApplication.Components;
 using VotingApplication.Services;
-using Microsoft.EntityFrameworkCore.Query;
+using VotingApplication.ViewModels;
 
 namespace VotingApplication.Controllers
 {
     [Authorize(Roles = "Administrator")]
-    public class AdminController : Controller
+    public sealed class AdminController(
+        ApplicationDbContext context,
+        IEmailService emailService,
+        UserManager<ApplicationUser> userManager) : Controller
     {
-
-        protected ApplicationDbContext _Context;
-        protected UserManager<ApplicationUser> _UserManager;
-        protected IEmailService _EmailService;
-
-        public AdminController(
-            ApplicationDbContext context,
-            IEmailService emailService,
-            UserManager<ApplicationUser> userManager)
-        {
-            _Context = context;
-            _EmailService = emailService;
-            _UserManager = userManager;
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IEmailService _emailService = emailService;
 
         [HttpGet]
         public IActionResult Dashboard()
@@ -71,9 +61,9 @@ namespace VotingApplication.Controllers
                     OfficeLevel = model.OfficeLevel
                 };
 
-                _Context.Office.Add(data);
+                _context.Office.Add(data);
 
-                _Context.SaveChanges();
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Dashboard));
             }
@@ -86,7 +76,7 @@ namespace VotingApplication.Controllers
         {
             var model = new AddBallotViewModel()
             {
-                OfficeNames = _Context.Office.Select(o => o.OfficeName)
+                OfficeNames = _context.Office.Select(o => o.OfficeName)
             };
 
             return View(model);
@@ -110,7 +100,7 @@ namespace VotingApplication.Controllers
                         data.RegionName = null;
                         data.ZipCode = int.Parse(model.ZipCode);
                         data.DistrictName = null;
-                        userList = _Context.Zip
+                        userList = _context.Zip
                             // get the one zip
                             .Where(z => z.ZipCode == data.ZipCode)
                             // load its addresses
@@ -128,21 +118,22 @@ namespace VotingApplication.Controllers
                         data.RegionName = null;
                         data.ZipCode = null;
                         data.DistrictName = model.DistrictName;
-                        userList = _Context.District
+                        userList = _context.District
                             // get the one district
                             .Where(d => d.DistrictName == data.DistrictName)
                             // load its bridge table
                             .Include(d => d.Zip)
+                            // load its addresses
+                            .ThenInclude(zfd => zfd.Zip)
+                            .ThenInclude(z => z.Residents)
+                            // load the user
+                            .ThenInclude (r => r.User)
                             // convert bridge table to one list
                             .SelectMany(d => d.Zip)
                             // convert bridge table to zip
                             .Select(zfd => zfd.Zip)
-                            // load its addresses
-                            .Include(z => z.Residents)
                             // convert addresses to one list
                             .SelectMany(z => z.Residents)
-                            // load the user
-                            .Include(a => a.User)
                             // convert address to user
                             .Select(a => a.User)
                             // return users with confirmed emails
@@ -152,27 +143,29 @@ namespace VotingApplication.Controllers
                         data.RegionName = model.RegionName;
                         data.ZipCode = null;
                         data.DistrictName = null;
-                        userList = _Context.Region
+                        userList = _context.Region
                             // get the one region
                             .Where(r => r.RegionName == data.RegionName)
                             // load its bridge table
                             .Include(r => r.District)
+                            // load its bridge table
+                            .ThenInclude(dfr => dfr.District)
+                            .ThenInclude(d => d.Zip)
+                            // load its addresses
+                            .ThenInclude(zfd => zfd.Zip)
+                            .ThenInclude(z => z.Residents)
+                            // load the user
+                            .ThenInclude(r => r.User)
                             // convert the bridge table to one list
                             .SelectMany(r => r.District)
                             // convert the bridge to district
                             .Select(dfr => dfr.District)
-                            // load its bridge table
-                            .Include(d => d.Zip)
                             // convert bridge table to one list
                             .SelectMany(d => d.Zip)
                             // convert bridge table to zip
                             .Select(zfd => zfd.Zip)
-                            // load its addresses
-                            .Include(z => z.Residents)
                             // convert addresses to one list
                             .SelectMany(z => z.Residents)
-                            // load the user
-                            .Include(a => a.User)
                             // convert address to user
                             .Select(a => a.User)
                             // return users with confirmed emails
@@ -184,12 +177,12 @@ namespace VotingApplication.Controllers
                 string body = "There is a new ballot that you can vote on.";
                 foreach (ApplicationUser user in userList)
                 {
-                    _EmailService.SendEmailAsync(user, subject, body);
+                    _emailService.SendEmailAsync(user, subject, body);
                 }
 
-                _Context.Ballot.Add(data);
+                _context.Ballot.Add(data);
 
-                _Context.SaveChanges();
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Dashboard));
             }
@@ -200,8 +193,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult ViewBallot(string ballotname)
         {
-            var ballotQuery = _Context
-                .Ballot
+            var ballotQuery = _context.Ballot
                 .Where(b => b.BallotName == ballotname)
                 .Include(b => b.Cadidates)
                 .Include(b => b.Voter);
@@ -215,11 +207,11 @@ namespace VotingApplication.Controllers
             if (ballot == null)
                 return BadRequest("Not a valid ballot name");
 
-            //_Context.Entry(ballot).Collection(b => b.Cadidates).Load();
-            //_Context.Entry(ballot).Collection(b => b.Voter).Load();
-            //_Context.Entry(ballot).Reference(b => b.Office).Load();
+            //_context.Entry(ballot).Collection(b => b.Cadidates).Load();
+            //_context.Entry(ballot).Collection(b => b.Voter).Load();
+            //_context.Entry(ballot).Reference(b => b.Office).Load();
 
-            /*List<ApplicationUser> completeVoters = _Context
+            /*List<ApplicationUser> completeVoters = _context
                 .Ballot
                 .Where(b => b.BallotName == ballotname)
                 .SelectMany(b => b.Voter)
@@ -231,42 +223,22 @@ namespace VotingApplication.Controllers
             IIncludableQueryable<ApplicationUser, VoterDemographicsDataModel> allVoters = null;
             if (location == ballot.ZipCode.ToString())
             {
-                allVoters = _Context
-                    .Zip
-                    .Where(z => z.ZipCode == ballot.ZipCode)
-                    .SelectMany(z => z.Residents)
-                    .Select(r => r.User)
+                allVoters = _context.Users
+                    .Where(u => u.Address.ZipCode == ballot.ZipCode)
                     .Include(u => u.Demographics);
             }
             else if (location == ballot.DistrictName)
             {
-                allVoters = _Context
-                    .District
-                    .Where(d => d.DistrictName == ballot.DistrictName)
-                    .SelectMany(d => d.Zip)
-                    .Select(zfd => zfd.Zip)
-                    .SelectMany(z => z.Residents)
-                    .Select(r => r.User)
+                allVoters = _context.Users
+                    .Where(u => u.Address.Zip.District.Any(zfd => zfd.DistrictName == ballot.DistrictName))
                     .Include(u => u.Demographics);
             }
             else if (location == ballot.RegionName)
             {
-                allVoters = _Context
-                    .Region
-                    .Where(r => r.RegionName == ballot.RegionName)
-                    .SelectMany(r => r.District)
-                    .Select(dfr => dfr.District)
-                    .SelectMany(d => d.Zip)
-                    .Select(zfd => zfd.Zip)
-                    .SelectMany(z => z.Residents)
-                    .Select(r => r.User)
+                allVoters = _context.Users
+                    .Where(u => u.Address.Zip.District.Any(zfd => zfd.District.Region.Any(dfr => dfr.RegionName == ballot.RegionName)))
                     .Include(u => u.Demographics);
             }
-
-            /*foreach (ApplicationUser user in allVoters)
-            {
-                _Context.Entry(user).Reference(u => u.Demographics).Load();
-            }*/
 
             int totalComplete = completeVoters.Count();
             int totalUsers = allVoters?.Count() ?? 0;
@@ -384,9 +356,9 @@ namespace VotingApplication.Controllers
                     BallotName = model.BallotId
                 };
 
-                _Context.Candidate.Add(data);
+                _context.Candidate.Add(data);
 
-                _Context.SaveChanges();
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Dashboard));
             }
@@ -401,7 +373,7 @@ namespace VotingApplication.Controllers
            
             // TODO: create an actual model so we can send additional information. (i.e total number of pages and number of users)
             List<ManageUserViewModel> model = new List<ManageUserViewModel>();
-            ApplicationUser[] users = _Context.Users
+            ApplicationUser[] users = _context.Users
                 
                 .Take(1000)
                 .ToArray();
@@ -417,7 +389,7 @@ namespace VotingApplication.Controllers
         [HttpGet]
         public IActionResult Edit(string Username)
         {
-            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
+            ApplicationUser user = _context.Users.Where(u => u.UserName == Username).FirstOrDefault();
             return View(new ManageUserViewModel(user));
             //return RedirectToAction(nameof(UserManagement));
         }
@@ -425,10 +397,10 @@ namespace VotingApplication.Controllers
         [HttpPost]
         public IActionResult Edit(ManageUserViewModel model)
         {
-            ApplicationUser user = _Context.Users.Where(u => u.UserName == model.PrevUsername).FirstOrDefault();
+            ApplicationUser user = _context.Users.Where(u => u.UserName == model.PrevUsername).FirstOrDefault();
             user.EmailConfirmed = model.EmailConfirmed == "Yes" ? true : model.EmailConfirmed == "No" ? false: user.EmailConfirmed;
             user.UserName = model.Username;
-            _UserManager.UpdateAsync(user).Wait();
+            _userManager.UpdateAsync(user).Wait();
             return RedirectToAction(nameof(UserManagement));
         }
 
@@ -437,8 +409,8 @@ namespace VotingApplication.Controllers
         [HttpGet] // change to [HttpPost]
         public async Task<IActionResult> Delete(string Username)
         {
-            ApplicationUser user = _Context.Users.Where(u => u.UserName == Username).FirstOrDefault();
-            await _UserManager.DeleteAsync(user);
+            ApplicationUser user = _context.Users.Where(u => u.UserName == Username).FirstOrDefault();
+            await _userManager.DeleteAsync(user);
             return RedirectToAction(nameof(UserManagement));
         }
         
@@ -456,9 +428,9 @@ namespace VotingApplication.Controllers
                 Zip = values.Select(z => new ZipFillsDistrict() { ZipCode = int.Parse(z), DistrictName = districtName }).ToList()
             };
             
-            _Context.District.Add(district);
+            _context.District.Add(district);
 
-            _Context.SaveChanges();
+            _context.SaveChanges();
 
             return Json(new { Result = string.Format("District sucessfuly created with name '{0}'.", districtName) });
         }
@@ -471,7 +443,7 @@ namespace VotingApplication.Controllers
             if(values == null || values.Count() == 0)
                 return Json(new { Result = "A list of zipcodes is required to update a district." });
             
-            var district = _Context.District.Include(d => d.Zip).SingleOrDefault(d => d.DistrictName == districtName);
+            var district = _context.District.Include(d => d.Zip).SingleOrDefault(d => d.DistrictName == districtName);
 
             if (district == null)
                 return Json(new { Result = string.Format("There is no district with the name '{0}'.", districtName) });
@@ -498,9 +470,9 @@ namespace VotingApplication.Controllers
                 });
             }
             
-            _Context.District.Update(district);
+            _context.District.Update(district);
 
-            _Context.SaveChanges();
+            _context.SaveChanges();
 
             return Json(new { Result = string.Format("District sucessfuly updated with name '{0}'.", districtName) });
         }
@@ -577,7 +549,7 @@ namespace VotingApplication.Controllers
             ZipCodeFeatureCollection collection = new ZipCodeFeatureCollection();
             if (state != null)
             {
-                foreach (ZipDataModel zipCode in _Context.Zip.Where(zip => zip.State == StateAbbreviation(state)))
+                foreach (ZipDataModel zipCode in _context.Zip.Where(zip => zip.State == StateAbbreviation(state)))
                 {
                     ZipCodeFeature feature = new ZipCodeFeature
                     {
@@ -595,7 +567,7 @@ namespace VotingApplication.Controllers
         {
             if (districtName == null)
                 return Json(new { Result = "District name is required to view a district." });
-            var districtData = _Context.District.Where(d => d.DistrictName == districtName).SelectMany(d => d.Zip).Select(zfd => zfd.Zip).ToList();
+            var districtData = _context.District.Where(d => d.DistrictName == districtName).SelectMany(d => d.Zip).Select(zfd => zfd.Zip).ToList();
             if (districtData == null || districtData.Count() == 0)
                 return Json(new { Result = string.Format("There is no district with the name '{0}'.", districtName) });
             return Content(JsonConvert.SerializeObject(districtData));

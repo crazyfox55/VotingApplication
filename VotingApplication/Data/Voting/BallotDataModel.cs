@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace VotingApplication
 {
@@ -18,7 +16,7 @@ namespace VotingApplication
         public DateTime ElectionDay { get; set; }
         
         [Required]
-        [ForeignKey(nameof(OfficeDataModel))]
+        [ForeignKey(nameof(Office))]
         public string OfficeName { get; set; }
         
         public virtual OfficeDataModel Office { get; set; }
@@ -28,17 +26,17 @@ namespace VotingApplication
         public ICollection<VoterVotesBallot> Voter { get; set; }
 
         #region One of the three is required
-        [ForeignKey(nameof(RegionDataModel))]
+        [ForeignKey(nameof(Region))]
         public string RegionName { get; set; }
 
         public virtual RegionDataModel Region { get; set; }
 
-        [ForeignKey(nameof(ZipDataModel))]
+        [ForeignKey(nameof(Zip))]
         public int? ZipCode { get; set; }
 
         public virtual ZipDataModel Zip { get; set; }
 
-        [ForeignKey(nameof(DistrictDataModel))]
+        [ForeignKey(nameof(District))]
         public string DistrictName { get; set; }
 
         public virtual DistrictDataModel District { get; set; }

@@ -20,10 +20,10 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
             _chrome.Close();
         }
         [Fact]
@@ -32,17 +32,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
             //all still say register
-            Assert.NotNull(_chrome.FindElementByLinkText("Basic Registration"));
-            Assert.NotNull(_chrome.FindElementByLinkText("Register Address"));
-            Assert.NotNull(_chrome.FindElementByLinkText("Register Demographics"));
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Basic Registration")));
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Register Address")));
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Register Demographics")));
             //check that the finalize button does not do anything yet
-            _chrome.FindElementByClassName("btn-primary").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            _chrome.FindElement(By.ClassName("btn-primary")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
             _chrome.Close();
         }
 
@@ -52,28 +52,28 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
 
             //Basic Registration
-            _chrome.FindElementByLinkText("Basic Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Basic Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             _chrome.Navigate().GoToUrl("http://localhost:5000/VoterRegistration/Dashboard");
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
 
             //Address
-            _chrome.FindElementByLinkText("Register Address").Click();
-            Assert.Contains("Voter Address", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Register Address")).Click();
+            Assert.Contains("Voter Address", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             _chrome.Navigate().GoToUrl("http://localhost:5000/VoterRegistration/Dashboard");
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
 
             //Demographics
-            _chrome.FindElementByLinkText("Register Demographics").Click();
-            Assert.Contains("Voter Demographics", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Register Demographics")).Click();
+            Assert.Contains("Voter Demographics", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             _chrome.Navigate().GoToUrl("http://localhost:5000/VoterRegistration/Dashboard");
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
             
             _chrome.Close();
         }

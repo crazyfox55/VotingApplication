@@ -30,13 +30,13 @@ namespace VotingWebsiteTest
             var password = "123123";
             var email = username + "@gmail.com";
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Email").SendKeys(email);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("ConfirmPassword").SendKeys(password);
-            _chrome.FindElementById("RegistrationButton").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Email")).SendKeys(email);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("ConfirmPassword")).SendKeys(password);
+            _chrome.FindElement(By.Id("RegistrationButton")).Click();
 
-            Assert.Equal("Email Confirmation Sent", _chrome.FindElementById("sucMsg").Text);
+            Assert.Equal("Email Confirmation Sent", _chrome.FindElement(By.Id("sucMsg")).Text);
 
             _chrome.Close();
         }
@@ -50,21 +50,21 @@ namespace VotingWebsiteTest
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Email").SendKeys(email);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("ConfirmPassword").SendKeys(password);
-            _chrome.FindElementById("RegistrationButton").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Email")).SendKeys(email);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("ConfirmPassword")).SendKeys(password);
+            _chrome.FindElement(By.Id("RegistrationButton")).Click();
 
             //check if user was created
-            Assert.Equal("Email Confirmation Sent", _chrome.FindElementById("sucMsg").Text);
+            Assert.Equal("Email Confirmation Sent", _chrome.FindElement(By.Id("sucMsg")).Text);
 
             //check that putting the same username causes an error message
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Email").SendKeys("");
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Email")).SendKeys("");
 
-            Assert.Contains(username, _chrome.FindElementById("Username-error").Text);
+            Assert.Contains(username, _chrome.FindElement(By.Id("Username-error")).Text);
 
             _chrome.Close();
         }
@@ -78,21 +78,21 @@ namespace VotingWebsiteTest
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Email").SendKeys(email);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("ConfirmPassword").SendKeys(password);
-            _chrome.FindElementById("RegistrationButton").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Email")).SendKeys(email);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("ConfirmPassword")).SendKeys(password);
+            _chrome.FindElement(By.Id("RegistrationButton")).Click();
 
             //check if was created
-            Assert.Equal("Email Confirmation Sent", _chrome.FindElementById("sucMsg").Text);
+            Assert.Equal("Email Confirmation Sent", _chrome.FindElement(By.Id("sucMsg")).Text);
 
             //check that putting the same email causes error message
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("Email").SendKeys(email);
-            _chrome.FindElementById("Username").SendKeys("");
+            _chrome.FindElement(By.Id("Email")).SendKeys(email);
+            _chrome.FindElement(By.Id("Username")).SendKeys("");
 
-            Assert.Contains(email, _chrome.FindElementById("Email-error").Text);
+            Assert.Contains(email, _chrome.FindElement(By.Id("Email-error")).Text);
 
             _chrome.Close();
         }
@@ -107,7 +107,7 @@ namespace VotingWebsiteTest
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
 
             //Error messages should not be there yet
-            Assert.Throws<NoSuchElementException>(() => { _chrome.FindElementById(id); });
+            Assert.Throws<NoSuchElementException>(() => { _chrome.FindElement(By.Id(id)); });
 
             _chrome.Close();
 
@@ -121,10 +121,10 @@ namespace VotingWebsiteTest
         public void RegistrationRequiredFieldsErrorShownOnSubmit(string id)
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("RegistrationButton").Click();
+            _chrome.FindElement(By.Id("RegistrationButton")).Click();
 
             //Error messages should now be there
-            Assert.NotNull(_chrome.FindElementById(id));
+            Assert.NotNull(_chrome.FindElement(By.Id(id)));
 
             _chrome.Close();
         }
@@ -139,14 +139,14 @@ namespace VotingWebsiteTest
 
             //create user
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Email").SendKeys(email);
-            _chrome.FindElementById("Password").SendKeys(password1);
-            _chrome.FindElementById("ConfirmPassword").SendKeys(password2);
-            _chrome.FindElementById("RegistrationButton").Click();
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Email")).SendKeys(email);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password1);
+            _chrome.FindElement(By.Id("ConfirmPassword")).SendKeys(password2);
+            _chrome.FindElement(By.Id("RegistrationButton")).Click();
 
             var passwordMissmatch =
-                _chrome.FindElementById("ConfirmPassword-error").
+                _chrome.FindElement(By.Id("ConfirmPassword-error")).
                 Text.Equals("The password and confirmation password do not match.");
             Assert.True(passwordMissmatch);
 
@@ -157,8 +157,8 @@ namespace VotingWebsiteTest
         public void RegistrationAlreadyHaveAccountLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementByLinkText("Already have an account?").Click();
-            Assert.Contains("Login", _chrome.FindElementById("Login").Text);
+            _chrome.FindElement(By.LinkText("Already have an account?")).Click();
+            Assert.Contains("Login", _chrome.FindElement(By.Id("Login")).Text);
 
             _chrome.Close();
         }
@@ -167,8 +167,8 @@ namespace VotingWebsiteTest
         public void RegistrationResendEmailConfirmationLinkWorks()
         {
             _chrome.Navigate().GoToUrl("http://localhost:5000/UserRegistration/Register");
-            _chrome.FindElementByLinkText("Resend Email Confirmation?").Click();
-            Assert.Contains("Send Email", _chrome.FindElementByClassName("btn-primary").Text);
+            _chrome.FindElement(By.LinkText("Resend Email Confirmation?")).Click();
+            Assert.Contains("Send Email", _chrome.FindElement(By.ClassName("btn-primary")).Text);
 
             _chrome.Close();
         }

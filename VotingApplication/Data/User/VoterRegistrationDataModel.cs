@@ -32,7 +32,7 @@ namespace VotingApplication
         }
 
         [Key]
-        [ForeignKey(nameof(ApplicationUser))]
+        [ForeignKey(nameof(User))]
         public string UserId { get; set; }
         
         // virtual is required for EF to override these navigation properties

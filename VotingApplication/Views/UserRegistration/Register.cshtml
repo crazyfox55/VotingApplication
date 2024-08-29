@@ -7,7 +7,7 @@
     })
 </script>
 
-<form asp-action="@nameof(UserRegistrationController.RegisterAsync)" method="post" autocomplete="off">
+<form asp-action="@nameof(UserRegistrationController.Register)" method="post" autocomplete="off">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>

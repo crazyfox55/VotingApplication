@@ -7,7 +7,7 @@
     })
 </script>
 
-<form asp-action="@nameof(AuthenticationController.LoginAsync)" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+<form asp-action="@nameof(AuthenticationController.Login)" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
     <h2 class="form-signin-heading">@ViewData["Purpose"]</h2>
     <div class="form-group">
         <label asp-for="Username"></label>

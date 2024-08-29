@@ -19,12 +19,12 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Basic Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Basic Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             _chrome.Close();
         }
 
@@ -38,17 +38,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Basic Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Basic Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.ClassName("btn")).Click();
 
             //Error messages now are there
-            Assert.Contains("required", _chrome.FindElementById(id).Text);
+            Assert.Contains("required", _chrome.FindElement(By.Id(id)).Text);
             _chrome.Dispose();
         }
 
@@ -58,17 +58,17 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Basic Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Basic Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             var invalidSSN = "12-12-123";
-            _chrome.FindElementById("SSNumber").SendKeys(invalidSSN);
-            _chrome.FindElementById("Identification").Click();
-            Assert.Contains("provide a proper social security number", _chrome.FindElementById("SSNumber-error").Text);
+            _chrome.FindElement(By.Id("SSNumber")).SendKeys(invalidSSN);
+            _chrome.FindElement(By.Id("Identification")).Click();
+            Assert.Contains("provide a proper social security number", _chrome.FindElement(By.Id("SSNumber-error)")).Text);
             _chrome.Dispose();
         }
 
@@ -79,12 +79,12 @@ namespace VotingWebsiteTest.View_Tests
             var username = user;
             var password = pass;
             _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Login");
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
-            _chrome.FindElementByLinkText("Basic Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
+            _chrome.FindElement(By.LinkText("Basic Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
             var firstName = "testFirst";
             var lastName = "testLast";
@@ -92,69 +92,69 @@ namespace VotingWebsiteTest.View_Tests
             var DOBcheck = "2000-11-11"; //value reverses
             var ID = "12346224235";
             var SSN = "123-12-1234";
-            _chrome.FindElementById("FirstName").SendKeys(firstName);
-            _chrome.FindElementById("LastName").SendKeys(lastName);
-            _chrome.FindElementById("DOB").SendKeys(DOB);
-            _chrome.FindElementById("Identification").SendKeys(ID);
-            _chrome.FindElementById("SSNumber").SendKeys(SSN);
-            _chrome.FindElementByClassName("btn").Click();
+            _chrome.FindElement(By.Id("FirstName")).SendKeys(firstName);
+            _chrome.FindElement(By.Id("LastName")).SendKeys(lastName);
+            _chrome.FindElement(By.Id("DOB")).SendKeys(DOB);
+            _chrome.FindElement(By.Id("Identification")).SendKeys(ID);
+            _chrome.FindElement(By.Id("SSNumber")).SendKeys(SSN);
+            _chrome.FindElement(By.ClassName("btn")).Click();
            
             //will now say Edit Registration instead of Basic Registration
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Registration"));
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Registration")));
 
             //Info should be saved and can click submit without any errors
-            _chrome.FindElementByLinkText("Edit Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
-            Assert.Contains(firstName, _chrome.FindElementById("FirstName").GetAttribute("value"));
-            Assert.Contains(lastName, _chrome.FindElementById("LastName").GetAttribute("value"));
-            Assert.Contains(DOBcheck, _chrome.FindElementById("DOB").GetAttribute("value"));
-            Assert.Contains(ID, _chrome.FindElementById("Identification").GetAttribute("value"));
-            Assert.Contains(SSN, _chrome.FindElementById("SSNumber").GetAttribute("value"));
+            _chrome.FindElement(By.LinkText("Edit Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
+            Assert.Contains(firstName, _chrome.FindElement(By.Id("FirstName")).GetAttribute("value"));
+            Assert.Contains(lastName, _chrome.FindElement(By.Id("LastName")).GetAttribute("value"));
+            Assert.Contains(DOBcheck, _chrome.FindElement(By.Id("DOB")).GetAttribute("value"));
+            Assert.Contains(ID, _chrome.FindElement(By.Id("Identification")).GetAttribute("value"));
+            Assert.Contains(SSN, _chrome.FindElement(By.Id("SSNumber")).GetAttribute("value"));
 
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Registration"));
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Registration")));
 
             //logout
-            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/LogoutAsync");
+            _chrome.Navigate().GoToUrl("http://localhost:5000/Authentication/Logout");
 
             //log back in
-            _chrome.FindElementById("Username").SendKeys(username);
-            _chrome.FindElementById("Password").SendKeys(password);
-            _chrome.FindElementById("Login").Click();
-            Assert.Contains(username.ToLower(), _chrome.FindElementById("DashboardMsg").Text.ToLower());
+            _chrome.FindElement(By.Id("Username")).SendKeys(username);
+            _chrome.FindElement(By.Id("Password")).SendKeys(password);
+            _chrome.FindElement(By.Id("Login")).Click();
+            Assert.Contains(username.ToLower(), _chrome.FindElement(By.Id("DashboardMsg")).Text.ToLower());
 
             //should still say edit registration
-            _chrome.FindElementByLinkText("Edit Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Edit Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
 
 
             //should be saved and still be able to click submit without any errors
-            Assert.Contains(firstName, _chrome.FindElementById("FirstName").GetAttribute("value"));
-            Assert.Contains(lastName, _chrome.FindElementById("LastName").GetAttribute("value"));
-            Assert.Contains(DOBcheck, _chrome.FindElementById("DOB").GetAttribute("value"));
-            Assert.Contains(ID, _chrome.FindElementById("Identification").GetAttribute("value"));
-            Assert.Contains(SSN, _chrome.FindElementById("SSNumber").GetAttribute("value"));
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Registration"));
+            Assert.Contains(firstName, _chrome.FindElement(By.Id("FirstName")).GetAttribute("value"));
+            Assert.Contains(lastName, _chrome.FindElement(By.Id("LastName")).GetAttribute("value"));
+            Assert.Contains(DOBcheck, _chrome.FindElement(By.Id("DOB")).GetAttribute("value"));
+            Assert.Contains(ID, _chrome.FindElement(By.Id("Identification")).GetAttribute("value"));
+            Assert.Contains(SSN, _chrome.FindElement(By.Id("SSNumber")).GetAttribute("value"));
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Registration")));
 
-            _chrome.FindElementByLinkText("Edit Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
+            _chrome.FindElement(By.LinkText("Edit Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
             //able to edit fields
-            _chrome.FindElementById("FirstName").SendKeys(Keys.Control + "a");
-            _chrome.FindElementById("FirstName").SendKeys(lastName);
-            _chrome.FindElementById("LastName").SendKeys(Keys.Control + "a");
-            _chrome.FindElementById("LastName").SendKeys(firstName);
-            _chrome.FindElementByClassName("btn").Click();
-            Assert.NotNull(_chrome.FindElementByLinkText("Edit Registration"));
+            _chrome.FindElement(By.Id("FirstName")).SendKeys(Keys.Control + "a");
+            _chrome.FindElement(By.Id("FirstName")).SendKeys(lastName);
+            _chrome.FindElement(By.Id("LastName")).SendKeys(Keys.Control + "a");
+            _chrome.FindElement(By.Id("LastName")).SendKeys(firstName);
+            _chrome.FindElement(By.ClassName("btn")).Click();
+            Assert.NotNull(_chrome.FindElement(By.LinkText("Edit Registration")));
 
             //FirstName and LastName should now be swapped
-            _chrome.FindElementByLinkText("Edit Registration").Click();
-            Assert.Contains("Voter Registration", _chrome.FindElementByClassName("form-signin-heading").Text);
-            Assert.Contains(lastName, _chrome.FindElementById("FirstName").GetAttribute("value"));
-            Assert.Contains(firstName, _chrome.FindElementById("LastName").GetAttribute("value"));
-            Assert.Contains(DOBcheck, _chrome.FindElementById("DOB").GetAttribute("value"));
-            Assert.Contains(ID, _chrome.FindElementById("Identification").GetAttribute("value"));
-            Assert.Contains(SSN, _chrome.FindElementById("SSNumber").GetAttribute("value"));
+            _chrome.FindElement(By.LinkText("Edit Registration")).Click();
+            Assert.Contains("Voter Registration", _chrome.FindElement(By.ClassName("form-signin-heading")).Text);
+            Assert.Contains(lastName, _chrome.FindElement(By.Id("FirstName")).GetAttribute("value"));
+            Assert.Contains(firstName, _chrome.FindElement(By.Id("LastName")).GetAttribute("value"));
+            Assert.Contains(DOBcheck, _chrome.FindElement(By.Id("DOB")).GetAttribute("value"));
+            Assert.Contains(ID, _chrome.FindElement(By.Id("Identification")).GetAttribute("value"));
+            Assert.Contains(SSN, _chrome.FindElement(By.Id("SSNumber")).GetAttribute("value"));
 
             _chrome.Dispose();
         }
